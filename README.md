@@ -6,10 +6,7 @@ TODO: Describe the prod run
 
 ## Used Frameworks
 
-TODO: Write it down! For OCR we probably use the Tesseract framework
-
-- `git clone https://github.com/tesseract-ocr/tesseract`
-
+TODO: Write it down! For OCR we probably use the [Tesseract](https://github.com/rmtheis/tess-two) framework
 
 ## Credits
 
