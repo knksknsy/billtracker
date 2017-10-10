@@ -1,4 +1,4 @@
-# BillTracker Android-Verrsion
+# BillTracker Android-Version
 
 ## Installation
 
@@ -8,7 +8,7 @@ TODO: Describe the prod run
 
 TODO: Write it down! For OCR we probably use the Tesseract framework
 
-- `git clone https://code.google.com/p/tesseract-android-tools/`
+- `git clone https://github.com/tesseract-ocr/tesseract`
 
 
 ## Credits
