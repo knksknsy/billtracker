@@ -4,16 +4,16 @@
     <item
         android:id="@+id/navigation_chart"
         android:icon="@drawable/ic_pie_chart_black_24dp"
-        android:title="Chart" />
+        android:title="@string/title_chart" />
 
     <item
         android:id="@+id/navigation_camera"
         android:icon="@drawable/ic_photo_camera_black_24dp"
-        android:title="Camera" />
+        android:title="@string/title_camera" />
 
     <item
         android:id="@+id/navigation_folder"
         android:icon="@drawable/ic_folder_black_24dp"
-        android:title="Folder" />
+        android:title="@string/title_folder" />
 
 </menu>
