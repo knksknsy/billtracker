@@ -1,6 +1,7 @@
 package de.hdm.project.billtracker;
 
 import android.app.FragmentManager;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
@@ -13,6 +14,7 @@ import android.view.MenuItem;
 public class MainActivity extends AppCompatActivity {
 
     private void navigationView() {
+
         BottomNavigationView bottomNavigationView = (BottomNavigationView) findViewById(R.id.navigation);
         if (bottomNavigationView != null) {
 
@@ -25,8 +27,8 @@ public class MainActivity extends AppCompatActivity {
                 new BottomNavigationView.OnNavigationItemSelectedListener() {
                     @Override
                     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                        activeFragment(item);
-                        return false;
+                    activeFragment(item);
+                    return false;
                     }
                 }
             );
@@ -34,7 +36,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * Do sth. when navigation item is clicked.
+     * Switch navigation item when clicked.
      *
      * @param item Item that is active.
      */
@@ -43,16 +45,13 @@ public class MainActivity extends AppCompatActivity {
         item.setChecked(true);
         switch (item.getItemId()) {
             case R.id.navigation_chart:
-                // Action to perform when Home Menu item is selected.
                 pushFragment(new ChartFragment());
                 break;
             case R.id.navigation_camera:
-                // Action to perform when Bag Menu item is selected.
                 pushFragment(new CameraFragment());
                 break;
-            case R.id.navigation_folder:
-                // Action to perform when Account Menu item is selected.
-                pushFragment(new FolderFragment());
+            case R.id.navigation_content:
+                pushFragment(new ContentFragment());
                 break;
         }
     }
@@ -74,6 +73,11 @@ public class MainActivity extends AppCompatActivity {
                 transaction.commit();
             }
         }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
     @Override

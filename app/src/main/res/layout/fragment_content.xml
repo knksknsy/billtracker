@@ -15,7 +15,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/android_image"
         android:layout_centerHorizontal="true"
-        android:text="@string/title_folder"
+        android:text="@string/title_content"
 
         android:textSize="20sp" />
 

@@ -7,12 +7,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-public class FolderFragment extends Fragment {
+public class ContentFragment extends Fragment {
 
-    public static FolderFragment newInstance() {
-        FolderFragment fragment = new FolderFragment();
+    public static ContentFragment newInstance() {
+        ContentFragment fragment = new ContentFragment();
         return fragment;
-        //return new FolderFragment();
+        //return new ContentFragment();
     }
 
     @Override
@@ -23,6 +23,6 @@ public class FolderFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_folder, container, false);
+        return inflater.inflate(R.layout.fragment_content, container, false);
     }
 }
