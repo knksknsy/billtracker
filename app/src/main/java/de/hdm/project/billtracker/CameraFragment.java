@@ -1,12 +1,13 @@
 package de.hdm.project.billtracker;
 
+import android.support.annotation.Nullable;
+import android.support.annotation.NonNull;
 import android.graphics.SurfaceTexture;
 import android.hardware.camera2.CameraCaptureSession;
 import android.hardware.camera2.CameraDevice;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
-import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.FileProvider;
@@ -40,7 +41,6 @@ import android.media.Image;
 import android.media.ImageReader;
 import android.os.Handler;
 import android.os.HandlerThread;
-import android.support.annotation.NonNull;
 import android.util.Log;
 import android.util.Size;
 import android.widget.Toast;
@@ -56,6 +56,7 @@ public class CameraFragment extends Fragment {
     private static final String TAG = "AndroidCameraApi";
     private TextureView textureView;
     private Button photoButton;
+    private Button saveButton;
 
     private static final SparseIntArray ORIENTATIONS = new SparseIntArray();
 
@@ -79,6 +80,12 @@ public class CameraFragment extends Fragment {
 
     private View inflatedView;
     private String currentPhotoPath;
+    private String fileName;
+    private boolean pictureTaken = false;
+
+    private File photoFile;
+    private List<Surface> outputSurfaces;
+    private CaptureRequest.Builder captureBuilder;
 
 
     public static ChartFragment newInstance() {
@@ -95,13 +102,27 @@ public class CameraFragment extends Fragment {
         assert textureView != null;
         textureView.setSurfaceTextureListener(textureListener);
 
+        saveButton = inflatedView.findViewById(R.id.saveButton);
+        assert saveButton != null;
+
         photoButton = inflatedView.findViewById(R.id.photoButton);
         assert photoButton != null;
 
         photoButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                takePicture();
+                if (!pictureTaken) {
+                    takePicture();
+                } else {
+                    retakePicture();
+                }
+            }
+        });
+
+        saveButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                categorizeAndSavePicture();
             }
         });
 
@@ -151,14 +172,15 @@ public class CameraFragment extends Fragment {
         }
     };
 
-/*    final CameraCaptureSession.CaptureCallback captureCallbackListener = new CameraCaptureSession.CaptureCallback() {
+    final CameraCaptureSession.CaptureCallback captureCallbackListener = new CameraCaptureSession.CaptureCallback() {
         @Override
         public void onCaptureCompleted(@NonNull CameraCaptureSession session, @NonNull CaptureRequest request, @NonNull TotalCaptureResult result) {
             super.onCaptureCompleted(session, request, result);
-            Toast.makeText(getContext(), "Saved: " + file, Toast.LENGTH_SHORT).show();
+            Log.e(TAG, "onCaptureCompleted");
+            Toast.makeText(getContext(), "Saved: " + photoFile, Toast.LENGTH_SHORT).show();
             createCameraPreview();
         }
-    };*/
+    };
 
     protected void startBackgroundThread() {
         mBackgroundThread = new HandlerThread("Camera Background");
@@ -177,6 +199,10 @@ public class CameraFragment extends Fragment {
         }
     }
 
+    private void categorizeAndSavePicture() {
+        // TODO: assign picture to a category and move photo to category file directory
+    }
+
     private File createImageFile() {
         try {
             // Create an image file name
@@ -191,11 +217,18 @@ public class CameraFragment extends Fragment {
 
             // Save a file: path for use with ACTION_VIEW intents
             currentPhotoPath = image.getAbsolutePath();
+            fileName = currentPhotoPath.replace(image.getParent() + "/", "");
             return image;
         } catch (IOException e) {
             e.printStackTrace();
             return null;
         }
+    }
+
+    private void retakePicture() {
+        pictureTaken = false;
+        photoButton.setText("Take Photo");
+        createCameraPreview();
     }
 
     protected void takePicture() {
@@ -223,10 +256,12 @@ public class CameraFragment extends Fragment {
             }
 
             ImageReader reader = ImageReader.newInstance(width, height, ImageFormat.JPEG, 1);
-            List<Surface> outputSurfaces = new ArrayList<>(2);
+
+            outputSurfaces = new ArrayList<>(2);
             outputSurfaces.add(reader.getSurface());
             outputSurfaces.add(new Surface(textureView.getSurfaceTexture()));
-            final CaptureRequest.Builder captureBuilder = cameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_STILL_CAPTURE);
+
+            captureBuilder = cameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_STILL_CAPTURE);
             captureBuilder.addTarget(reader.getSurface());
             captureBuilder.set(CaptureRequest.CONTROL_MODE, CameraMetadata.CONTROL_MODE_AUTO);
 
@@ -234,9 +269,8 @@ public class CameraFragment extends Fragment {
             int rotation = getActivity().getWindowManager().getDefaultDisplay().getRotation();
             captureBuilder.set(CaptureRequest.JPEG_ORIENTATION, ORIENTATIONS.get(rotation));
 
-            final File photoFile;
-
             photoFile = createImageFile();
+
             // Continue only if the File was successfully created
             if (photoFile != null) {
                 String authorities = getActivity().getApplicationContext().getPackageName() + ".fileprovider";
@@ -246,6 +280,7 @@ public class CameraFragment extends Fragment {
             ImageReader.OnImageAvailableListener readerListener = new ImageReader.OnImageAvailableListener() {
                 @Override
                 public void onImageAvailable(ImageReader reader) {
+                    Log.e(TAG, "onImageAvailable() called.");
                     Image image = null;
                     try {
                         image = reader.acquireLatestImage();
@@ -265,6 +300,7 @@ public class CameraFragment extends Fragment {
                 }
 
                 private void save(byte[] bytes) throws IOException {
+                    Log.e(TAG, "save() called.");
                     OutputStream output = null;
                     try {
                         output = new FileOutputStream(photoFile);
@@ -283,14 +319,23 @@ public class CameraFragment extends Fragment {
                 @Override
                 public void onCaptureCompleted(@NonNull CameraCaptureSession session, @NonNull CaptureRequest request, @NonNull TotalCaptureResult result) {
                     super.onCaptureCompleted(session, request, result);
-                    Toast.makeText(getContext(), "Saved: " + photoFile, Toast.LENGTH_SHORT).show();
-                    createCameraPreview();
+                    Log.e(TAG, "onCaptureCompleted() called.");
+                    pictureTaken = true;
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            photoButton.setText("Retake Photo");
+                        }
+                    });
+                    // Toast.makeText(getContext(), "Saved: " + photoFile, Toast.LENGTH_SHORT).show();
+                    // createCameraPreview();
                 }
             };
 
             cameraDevice.createCaptureSession(outputSurfaces, new CameraCaptureSession.StateCallback() {
                 @Override
                 public void onConfigured(@NonNull CameraCaptureSession session) {
+                    Log.e(TAG, "onConfigured() called.");
                     try {
                         session.capture(captureBuilder.build(), captureListener, mBackgroundHandler);
                     } catch (CameraAccessException e) {
@@ -300,9 +345,10 @@ public class CameraFragment extends Fragment {
 
                 @Override
                 public void onConfigureFailed(@NonNull CameraCaptureSession session) {
-
                 }
             }, mBackgroundHandler);
+
+            // setPicture();
 
         } catch (CameraAccessException e) {
             e.printStackTrace();

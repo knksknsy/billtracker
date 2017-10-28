@@ -8,24 +8,25 @@
     android:weightSum="4"
     tools:context=".MainActivity">
 
-    <LinearLayout
+    <RelativeLayout
         android:id="@+id/ImageContainer"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_weight="1" >
+
         <TextureView
             android:id="@+id/textureView"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
-    </LinearLayout>
+
+    </RelativeLayout>
 
     <LinearLayout
         android:id="@+id/PhotoButtonContainer"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_weight="3"
-        android:orientation="horizontal"
-        android:weightSum="3">
+        android:orientation="horizontal" >
 
         <EditText
             android:id="@+id/totalSum"
@@ -47,7 +48,7 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:text="Button" />
+            android:text="Save Picture" />
 
     </LinearLayout>
 
