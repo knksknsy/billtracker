@@ -1,5 +1,7 @@
 package de.hdm.project.billtracker;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.support.annotation.Nullable;
 import android.support.annotation.NonNull;
 import android.graphics.SurfaceTexture;
@@ -9,7 +11,9 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.Fragment;
+import android.app.DialogFragment;
+import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.support.v4.content.FileProvider;
 import android.util.SparseIntArray;
 import android.view.LayoutInflater;
@@ -87,6 +91,9 @@ public class CameraFragment extends Fragment {
     private List<Surface> outputSurfaces;
     private CaptureRequest.Builder captureBuilder;
 
+    int mStackLevel = 0;
+    public static final int DIALOG_FRAGMENT = 1;
+
 
     public static ChartFragment newInstance() {
         return new ChartFragment();
@@ -96,6 +103,11 @@ public class CameraFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
+
+        if (savedInstanceState != null) {
+            mStackLevel = savedInstanceState.getInt("level");
+        }
+
         inflatedView = inflater.inflate(R.layout.fragment_camera, container, false);
 
         textureView = inflatedView.findViewById(R.id.textureView);
@@ -122,85 +134,76 @@ public class CameraFragment extends Fragment {
         saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                categorizeAndSavePicture();
+                showCategoryDialog(DIALOG_FRAGMENT);
             }
         });
 
         return inflatedView;
     }
 
-    TextureView.SurfaceTextureListener textureListener = new TextureView.SurfaceTextureListener() {
-        @Override
-        public void onSurfaceTextureAvailable(SurfaceTexture surfaceTexture, int i, int i1) {
-            openCamera();
-        }
-
-        @Override
-        public void onSurfaceTextureSizeChanged(SurfaceTexture surfaceTexture, int i, int i1) {
-            // Transform captured image size according to the surface width and height
-        }
-
-        @Override
-        public boolean onSurfaceTextureDestroyed(SurfaceTexture surfaceTexture) {
-            return false;
-        }
-
-        @Override
-        public void onSurfaceTextureUpdated(SurfaceTexture surfaceTexture) {
-
-        }
-    };
-
-    private final CameraDevice.StateCallback stateCallback = new CameraDevice.StateCallback() {
-        @Override
-        public void onOpened(@NonNull CameraDevice camera) {
-            // This is called when the camera is open
-            Log.e(TAG, "onOpened");
-            cameraDevice = camera;
-            createCameraPreview();
-        }
-
-        @Override
-        public void onDisconnected(@NonNull CameraDevice camera) {
-            cameraDevice.close();
-        }
-
-        @Override
-        public void onError(@NonNull CameraDevice camera, int error) {
-            cameraDevice.close();
-            cameraDevice = null;
-        }
-    };
-
-    final CameraCaptureSession.CaptureCallback captureCallbackListener = new CameraCaptureSession.CaptureCallback() {
-        @Override
-        public void onCaptureCompleted(@NonNull CameraCaptureSession session, @NonNull CaptureRequest request, @NonNull TotalCaptureResult result) {
-            super.onCaptureCompleted(session, request, result);
-            Log.e(TAG, "onCaptureCompleted");
-            Toast.makeText(getContext(), "Saved: " + photoFile, Toast.LENGTH_SHORT).show();
-            createCameraPreview();
-        }
-    };
-
-    protected void startBackgroundThread() {
-        mBackgroundThread = new HandlerThread("Camera Background");
-        mBackgroundThread.start();
-        mBackgroundHandler = new Handler(mBackgroundThread.getLooper());
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt("level", mStackLevel);
     }
 
-    protected void stopBackgroundThread() {
-        mBackgroundThread.quitSafely();
+    private void showCategoryDialog(int type) {
+        mStackLevel++;
+
+        FragmentTransaction ft = getActivity().getFragmentManager().beginTransaction();
+        Fragment prev = getActivity().getFragmentManager().findFragmentByTag("dialog");
+        if (prev != null) {
+            ft.remove(prev);
+        }
+        ft.addToBackStack(null);
+
+        switch (type) {
+            case DIALOG_FRAGMENT:
+                DialogFragment dialogFrag = CategoryDialogFragment.newInstance(123);
+                dialogFrag.setTargetFragment(this, DIALOG_FRAGMENT);
+                dialogFrag.show(getFragmentManager().beginTransaction(), "dialog");
+                break;
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode) {
+            case DIALOG_FRAGMENT:
+                if (resultCode == Activity.RESULT_OK) {
+                    categorizePicture(data.getStringExtra("category"));
+                } else if (resultCode == Activity.RESULT_CANCELED){
+                    Log.e(TAG, "negative Clicked!");
+                }
+                break;
+        }
+    }
+
+    private void categorizePicture(String category) {
+        // Make new directory for category
+        /*String root = Environment.getExternalStorageDirectory().toString();
+        System.out.println("category: " + category);
+        System.out.println("root: " + root);
+        File myDir = new File(root + "/" + category);
+        myDir.mkdirs();
+        File file = new File(myDir, fileName);
+        if (file.exists()) {
+            file.delete();
+        }
         try {
-            mBackgroundThread.join();
-            mBackgroundThread = null;
-            mBackgroundHandler = null;
-        } catch (InterruptedException e) {
+            FileOutputStream out = new FileOutputStream(root + "/" + category + "/" + file);
+            out.flush();
+            out.close();
+        } catch (Exception e) {
             e.printStackTrace();
-        }
+        }*/
     }
 
-    private void categorizeAndSavePicture() {
-        // TODO: assign picture to a category and move photo to category file directory
+    private void retakePicture() {
+        pictureTaken = false;
+        photoButton.setText("Take Photo");
+        createCameraPreview();
     }
 
     private File createImageFile() {
@@ -223,12 +226,6 @@ public class CameraFragment extends Fragment {
             e.printStackTrace();
             return null;
         }
-    }
-
-    private void retakePicture() {
-        pictureTaken = false;
-        photoButton.setText("Take Photo");
-        createCameraPreview();
     }
 
     protected void takePicture() {
@@ -274,7 +271,7 @@ public class CameraFragment extends Fragment {
             // Continue only if the File was successfully created
             if (photoFile != null) {
                 String authorities = getActivity().getApplicationContext().getPackageName() + ".fileprovider";
-                Uri photoURI = FileProvider.getUriForFile(getContext(), authorities, photoFile);
+                Uri photoURI = FileProvider.getUriForFile(getActivity().getBaseContext(), authorities, photoFile);
             }
 
             ImageReader.OnImageAvailableListener readerListener = new ImageReader.OnImageAvailableListener() {
@@ -348,9 +345,77 @@ public class CameraFragment extends Fragment {
                 }
             }, mBackgroundHandler);
 
-            // setPicture();
-
         } catch (CameraAccessException e) {
+            e.printStackTrace();
+        }
+    }
+
+    TextureView.SurfaceTextureListener textureListener = new TextureView.SurfaceTextureListener() {
+        @Override
+        public void onSurfaceTextureAvailable(SurfaceTexture surfaceTexture, int i, int i1) {
+            openCamera();
+        }
+
+        @Override
+        public void onSurfaceTextureSizeChanged(SurfaceTexture surfaceTexture, int i, int i1) {
+            // Transform captured image size according to the surface width and height
+        }
+
+        @Override
+        public boolean onSurfaceTextureDestroyed(SurfaceTexture surfaceTexture) {
+            return false;
+        }
+
+        @Override
+        public void onSurfaceTextureUpdated(SurfaceTexture surfaceTexture) {
+
+        }
+    };
+
+    private final CameraDevice.StateCallback stateCallback = new CameraDevice.StateCallback() {
+        @Override
+        public void onOpened(@NonNull CameraDevice camera) {
+            // This is called when the camera is open
+            Log.e(TAG, "onOpened");
+            cameraDevice = camera;
+            createCameraPreview();
+        }
+
+        @Override
+        public void onDisconnected(@NonNull CameraDevice camera) {
+            cameraDevice.close();
+        }
+
+        @Override
+        public void onError(@NonNull CameraDevice camera, int error) {
+            cameraDevice.close();
+            cameraDevice = null;
+        }
+    };
+
+    final CameraCaptureSession.CaptureCallback captureCallbackListener = new CameraCaptureSession.CaptureCallback() {
+        @Override
+        public void onCaptureCompleted(@NonNull CameraCaptureSession session, @NonNull CaptureRequest request, @NonNull TotalCaptureResult result) {
+            super.onCaptureCompleted(session, request, result);
+            Log.e(TAG, "onCaptureCompleted");
+            Toast.makeText(getActivity().getBaseContext(), "Saved: " + photoFile, Toast.LENGTH_SHORT).show();
+            createCameraPreview();
+        }
+    };
+
+    protected void startBackgroundThread() {
+        mBackgroundThread = new HandlerThread("Camera Background");
+        mBackgroundThread.start();
+        mBackgroundHandler = new Handler(mBackgroundThread.getLooper());
+    }
+
+    protected void stopBackgroundThread() {
+        mBackgroundThread.quitSafely();
+        try {
+            mBackgroundThread.join();
+            mBackgroundThread = null;
+            mBackgroundHandler = null;
+        } catch (InterruptedException e) {
             e.printStackTrace();
         }
     }
@@ -376,7 +441,7 @@ public class CameraFragment extends Fragment {
 
                 @Override
                 public void onConfigureFailed(@NonNull CameraCaptureSession session) {
-                    Toast.makeText(getContext(), "Configuration change", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity().getBaseContext(), "Configuration change", Toast.LENGTH_SHORT).show();
                 }
             }, null);
         } catch (CameraAccessException e) {
@@ -394,8 +459,8 @@ public class CameraFragment extends Fragment {
             assert map != null;
             imageDimension = map.getOutputSizes(SurfaceTexture.class)[0];
             // Add permission for camera and let user grant the permission
-            if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED &&
-                    ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            if (ActivityCompat.checkSelfPermission(getActivity().getBaseContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED &&
+                    ActivityCompat.checkSelfPermission(getActivity().getBaseContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
                 ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_CAMERA_PERMISSION);
                 return;
             }
@@ -434,7 +499,7 @@ public class CameraFragment extends Fragment {
         if (requestCode == REQUEST_CAMERA_PERMISSION) {
             if (grantResults[0] == PackageManager.PERMISSION_DENIED) {
                 // close the app
-                Toast.makeText(getContext(), "You can't use this app without granting permission", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity().getBaseContext(), "You can't use this app without granting permission", Toast.LENGTH_SHORT).show();
                 System.exit(0);
             }
         }

@@ -6,7 +6,8 @@
     android:layout_marginBottom="@dimen/bottomNavigationViewHeight"
     android:orientation="vertical"
     android:weightSum="4"
-    tools:context=".MainActivity">
+    tools:context=".MainActivity"
+    android:id="@+id/fragmentCamera">
 
     <RelativeLayout
         android:id="@+id/ImageContainer"
