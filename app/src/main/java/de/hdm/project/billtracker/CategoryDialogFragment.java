@@ -2,19 +2,34 @@ package de.hdm.project.billtracker;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import android.app.DialogFragment;
 import android.app.AlertDialog;
+import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 public class CategoryDialogFragment extends DialogFragment {
 
-    EditText category;
+    AutoCompleteTextView autocompleteCategory;
+    LinearLayout radioGroupLayout;
+    List<String> categoriesList;
+    List<RadioButton> categoryRadioButtons;
 
     public static CategoryDialogFragment newInstance(int num) {
         CategoryDialogFragment dialogFragment = new CategoryDialogFragment();
@@ -33,7 +48,20 @@ public class CategoryDialogFragment extends DialogFragment {
 
         View view = inflater.inflate(R.layout.fragment_category_dialog, null);
 
-        category = view.findViewById(R.id.category);
+        // radioGroupLayout = view.findViewById(R.id.radioGroupLayout);
+
+        // Retrieve categories from shared preference
+        Context context = getActivity().getBaseContext();
+        final SharedPreferences CATEGORY_PREF = context.getSharedPreferences(getString(R.string.category_preference), Context.MODE_PRIVATE);
+
+        categoriesList = new ArrayList(CATEGORY_PREF.getAll().values());
+        // createRadioButton();
+
+        autocompleteCategory = view.findViewById(R.id.autocompleteCategory);
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity().getBaseContext(), R.layout.category_autocomplete, R.id.autoTextView, categoriesList);
+
+        autocompleteCategory.setAdapter(adapter);
 
         // Inflate and set the layout for the dialog
         // Pass null as the parent view because its going in the dialog layout
@@ -42,10 +70,18 @@ public class CategoryDialogFragment extends DialogFragment {
                 .setPositiveButton("Save", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int i) {
+                        String categoryString = autocompleteCategory.getText().toString().toUpperCase();
+
+                        // Save category in shared preference
+                        boolean categoryExists = CATEGORY_PREF.contains(categoryString);
+                        if (!categoryExists) {
+                            SharedPreferences.Editor editor = CATEGORY_PREF.edit();
+                            editor.putString(categoryString, categoryString);
+                            editor.commit();
+                        }
+
                         // Send the positive button event back to the host activity
-                        Intent intent = getActivity().getIntent();
-                        intent.putExtra("category", category.getText().toString());
-                        getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, intent);
+                        getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, getIntent());
                     }
                 })
                 .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -58,5 +94,40 @@ public class CategoryDialogFragment extends DialogFragment {
         // Create the AlertDialog object and return it
         return builder.create();
     }
+
+    private Intent getIntent() {
+        Intent intent = getActivity().getIntent();
+        /*for (RadioButton radio: categoryRadioButtons) {
+            if (radio.isChecked()) {
+                intent.putExtra("category", radio.getText().toString());
+                return intent;
+            }
+        }*/
+        intent.putExtra("category", autocompleteCategory.getText().toString());
+        return intent;
+    }
+
+    /*private void createRadioButton() {
+        categoryRadioButtons = new ArrayList<>();
+        RadioGroup rg = new RadioGroup(getActivity().getBaseContext());
+        rg.setOrientation(RadioGroup.VERTICAL);
+        int id = 0;
+        for (String category : categoriesList) {
+            id++;
+            final RadioButton RADIO = new RadioButton(getActivity().getBaseContext());
+            RADIO.setText(category.toString());
+            RADIO.setId(id);
+            RADIO.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    radioCategory = RADIO.getText().toString();
+                    System.out.println(radioCategory);
+                }
+            });
+            categoryRadioButtons.add(RADIO);
+            rg.addView(RADIO);
+        }
+        radioGroupLayout.addView(rg);
+    }*/
 
 }

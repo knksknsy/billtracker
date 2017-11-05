@@ -6,6 +6,7 @@
     <string name="title_content">Content</string>
     <string name="take_picture">Take Picture</string>
     <string name="title_category_dialog">Choose a category</string>
+    <string name="category_preference">CategoryPreference</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
