@@ -1,8 +1,11 @@
 package de.hdm.project.billtracker;
 
 import android.app.Activity;
+import android.content.ContentValues;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.support.annotation.Nullable;
 import android.support.annotation.NonNull;
 import android.graphics.SurfaceTexture;
@@ -63,12 +66,16 @@ import java.util.List;
 
 public class CameraFragment extends Fragment {
 
+    private ScansDbHelper dbHelper;
+
     private static final String TAG = "AndroidCameraApi";
     private TextureView textureView;
     private Button photoButton;
     private Button saveButton;
     private EditText totalSum;
     private boolean isSumEmpty;
+
+    private Double totalSumValue;
 
     private static final SparseIntArray ORIENTATIONS = new SparseIntArray();
 
@@ -111,6 +118,8 @@ public class CameraFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
+
+        dbHelper = new ScansDbHelper(getActivity().getBaseContext());
 
         if (savedInstanceState != null) {
             mStackLevel = savedInstanceState.getInt("level");
@@ -192,6 +201,8 @@ public class CameraFragment extends Fragment {
         }
         ft.addToBackStack(null);
 
+        totalSumValue = Double.parseDouble(totalSum.getText().toString());
+
         switch (type) {
             case DIALOG_FRAGMENT:
                 DialogFragment dialogFrag = CategoryDialogFragment.newInstance(123);
@@ -236,7 +247,8 @@ public class CameraFragment extends Fragment {
 
         try {
             in = new FileInputStream(photoFile.toString());
-            out = new FileOutputStream(outputPath + "/" + fileName);
+            String outFile = outputPath + "/" + fileName;
+            out = new FileOutputStream(outFile);
 
             byte[] buffer = new byte[1024];
             int read;
@@ -253,6 +265,11 @@ public class CameraFragment extends Fragment {
 
             // delete the original file
             new File(photoFile.toString()).delete();
+
+            // persist scan in db
+            SQLiteDatabase db = dbHelper.getWritableDatabase();
+
+            dbHelper.createScan(db, outFile, totalSumValue);
 
         } catch (FileNotFoundException e) {
             e.printStackTrace();
@@ -589,6 +606,12 @@ public class CameraFragment extends Fragment {
         closeCamera();
         stopBackgroundThread();
         super.onPause();
+    }
+
+    @Override
+    public void onDestroy() {
+        dbHelper.close();
+        super.onDestroy();
     }
 
 }
