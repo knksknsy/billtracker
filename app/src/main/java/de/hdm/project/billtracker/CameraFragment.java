@@ -16,6 +16,8 @@ import android.app.DialogFragment;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.support.v4.content.FileProvider;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.SparseIntArray;
 import android.view.LayoutInflater;
 import android.view.Surface;
@@ -50,6 +52,7 @@ import android.os.Handler;
 import android.os.HandlerThread;
 import android.util.Log;
 import android.util.Size;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import java.io.FileOutputStream;
@@ -64,6 +67,8 @@ public class CameraFragment extends Fragment {
     private TextureView textureView;
     private Button photoButton;
     private Button saveButton;
+    private EditText totalSum;
+    private boolean isSumEmpty;
 
     private static final SparseIntArray ORIENTATIONS = new SparseIntArray();
 
@@ -113,6 +118,29 @@ public class CameraFragment extends Fragment {
 
         inflatedView = inflater.inflate(R.layout.fragment_camera, container, false);
 
+        totalSum = inflatedView.findViewById(R.id.totalSum);
+        assert totalSum != null;
+
+        totalSum.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                isSumEmpty = totalSum.getText().toString().isEmpty();
+                saveButton.setEnabled(!isSumEmpty && pictureTaken);
+            }
+        });
+
+        isSumEmpty = totalSum.getText().toString().isEmpty();
+
         textureView = inflatedView.findViewById(R.id.textureView);
         assert textureView != null;
         textureView.setSurfaceTextureListener(textureListener);
@@ -141,6 +169,8 @@ public class CameraFragment extends Fragment {
             }
         });
 
+        saveButton.setEnabled(!isSumEmpty && pictureTaken);
+
         return inflatedView;
     }
 
@@ -149,6 +179,8 @@ public class CameraFragment extends Fragment {
         super.onSaveInstanceState(outState);
         outState.putInt("level", mStackLevel);
     }
+
+
 
     private void showCategoryDialog(int type) {
         mStackLevel++;
@@ -176,6 +208,12 @@ public class CameraFragment extends Fragment {
             case DIALOG_FRAGMENT:
                 if (resultCode == Activity.RESULT_OK) {
                     categorizePicture(data.getStringExtra("category"));
+                    pictureTaken = false;
+                    saveButton.setEnabled(!isSumEmpty && pictureTaken);
+                    photoButton.setText("Take Photo");
+                    totalSum.getText().clear();
+                    createCameraPreview();
+                    Toast.makeText(getActivity().getBaseContext(), "Picture saved in " + data.getStringExtra("category") + " category.", Toast.LENGTH_SHORT).show();
                 } else if (resultCode == Activity.RESULT_CANCELED){
                     Log.e(TAG, "negative Clicked!");
                 }
@@ -344,6 +382,7 @@ public class CameraFragment extends Fragment {
                         @Override
                         public void run() {
                             photoButton.setText("Retake Photo");
+                            saveButton.setEnabled(!isSumEmpty && pictureTaken);
                         }
                     });
                     // Toast.makeText(getContext(), "Saved: " + photoFile, Toast.LENGTH_SHORT).show();
@@ -532,6 +571,9 @@ public class CameraFragment extends Fragment {
         super.onResume();
         Log.e(TAG, "onResume");
         startBackgroundThread();
+        pictureTaken = false;
+        photoButton.setText("Take picture");
+        saveButton.setEnabled(!isSumEmpty && pictureTaken);
         if (textureView.isAvailable()) {
             openCamera();
         } else {
