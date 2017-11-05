@@ -2,6 +2,7 @@ package de.hdm.project.billtracker;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.annotation.Nullable;
 import android.support.annotation.NonNull;
 import android.graphics.SurfaceTexture;
@@ -24,8 +25,10 @@ import android.view.ViewGroup;
 import android.widget.Button;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -181,23 +184,42 @@ public class CameraFragment extends Fragment {
     }
 
     private void categorizePicture(String category) {
-        // Make new directory for category
-        /*String root = Environment.getExternalStorageDirectory().toString();
-        System.out.println("category: " + category);
-        System.out.println("root: " + root);
-        File myDir = new File(root + "/" + category);
-        myDir.mkdirs();
-        File file = new File(myDir, fileName);
-        if (file.exists()) {
-            file.delete();
+        String categoriesPath = photoFile.toString().replace(fileName, "");
+        String outputPath = categoriesPath + "/" + category;
+
+        File outDir = new File(outputPath);
+        if (!outDir.exists()) {
+            outDir.mkdirs();
         }
+
+        InputStream in = null;
+        OutputStream out = null;
+
         try {
-            FileOutputStream out = new FileOutputStream(root + "/" + category + "/" + file);
+            in = new FileInputStream(photoFile.toString());
+            out = new FileOutputStream(outputPath + "/" + fileName);
+
+            byte[] buffer = new byte[1024];
+            int read;
+            while ((read = in.read(buffer)) != -1) {
+                out.write(buffer, 0, read);
+            }
+            in.close();
+            in = null;
+
+            // write the output file
             out.flush();
             out.close();
-        } catch (Exception e) {
+            out = null;
+
+            // delete the original file
+            new File(photoFile.toString()).delete();
+
+        } catch (FileNotFoundException e) {
             e.printStackTrace();
-        }*/
+        } catch (Exception e2) {
+            e2.printStackTrace();
+        }
     }
 
     private void retakePicture() {
