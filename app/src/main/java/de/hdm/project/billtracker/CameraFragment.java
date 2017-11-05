@@ -197,6 +197,7 @@ public class CameraFragment extends Fragment {
                 DialogFragment dialogFrag = CategoryDialogFragment.newInstance(123);
                 dialogFrag.setTargetFragment(this, DIALOG_FRAGMENT);
                 dialogFrag.show(getFragmentManager().beginTransaction(), "dialog");
+
                 break;
         }
     }
@@ -263,6 +264,7 @@ public class CameraFragment extends Fragment {
     private void retakePicture() {
         pictureTaken = false;
         photoButton.setText("Take Photo");
+        saveButton.setEnabled(!isSumEmpty && pictureTaken);
         createCameraPreview();
     }
 
