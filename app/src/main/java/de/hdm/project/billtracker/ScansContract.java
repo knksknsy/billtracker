@@ -12,6 +12,7 @@ public class ScansContract {
         public static final String COLUMN_NAME_IMAGE_PATH = "image_path";
         public static final String COLUMN_NAME_DATE = "date";
         public static final String COLUMN_NAME_SUM = "sum";
+        public static final String COLUMN_NAME_CATEGORY = "category";
 
     }
 

@@ -1,10 +1,7 @@
 package de.hdm.project.billtracker;
 
 import android.app.Activity;
-import android.content.ContentValues;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.annotation.Nullable;
 import android.support.annotation.NonNull;
@@ -234,8 +231,7 @@ public class CameraFragment extends Fragment {
     }
 
     private void categorizePicture(String category) {
-        String categoriesPath = photoFile.toString().replace(fileName, "");
-        String outputPath = categoriesPath + "/" + category;
+        String outputPath = photoFile.toString().replace(fileName, "") + "/" + category;
 
         File outDir = new File(outputPath);
         if (!outDir.exists()) {
@@ -266,10 +262,13 @@ public class CameraFragment extends Fragment {
             // delete the original file
             new File(photoFile.toString()).delete();
 
-            // persist scan in db
-            SQLiteDatabase db = dbHelper.getWritableDatabase();
+            dbHelper.createScan(dbHelper, outFile, totalSumValue, category);
 
-            dbHelper.createScan(db, outFile, totalSumValue);
+            /*List<Scan> scanList = dbHelper.getScans(dbHelper);
+
+            for (Scan scan: scanList) {
+                scan.printScan();
+            }*/
 
         } catch (FileNotFoundException e) {
             e.printStackTrace();
@@ -291,9 +290,10 @@ public class CameraFragment extends Fragment {
             String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
             String imageFileName = "JPEG_" + timeStamp + "_";
             File storageDir = getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+            String suffix = ".jpg";
             File image = File.createTempFile(
                     imageFileName,   // prefix
-                    ".jpg",          // suffix
+                    suffix,          // suffix
                     storageDir       // directory
             );
 
