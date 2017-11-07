@@ -27,6 +27,7 @@ proguard-project.txt
 tests/proguard-project.txt
 
 # Android Studio and Gradle specific entries
+app/google-services.json
 .gradle
 .idea
 *.iml
