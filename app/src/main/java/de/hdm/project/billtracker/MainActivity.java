@@ -86,5 +86,9 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         navigationView();
+
+        // TODO If user is already logged in, skip LoginActivity
+        Intent intent = new Intent(this, LoginActivity.class);
+        startActivity(intent);
     }
 }
