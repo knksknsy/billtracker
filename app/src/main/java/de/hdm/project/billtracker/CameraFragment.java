@@ -26,6 +26,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -54,6 +55,9 @@ import android.util.Log;
 import android.util.Size;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.io.FileOutputStream;
 import java.nio.ByteBuffer;
@@ -105,6 +109,10 @@ public class CameraFragment extends Fragment {
 
     int mStackLevel = 0;
     public static final int DIALOG_FRAGMENT = 1;
+
+
+    /*private FirebaseStorage storage = FirebaseStorage.getInstance();
+    private StorageReference storageRef = storage.getReferenceFromUrl("gs://ws17-billtracker-8d080.appspot.com");*/
 
 
     public static ChartFragment newInstance() {
@@ -186,8 +194,6 @@ public class CameraFragment extends Fragment {
         outState.putInt("level", mStackLevel);
     }
 
-
-
     private void showCategoryDialog(int type) {
         mStackLevel++;
 
@@ -222,6 +228,7 @@ public class CameraFragment extends Fragment {
                     photoButton.setText("Take Photo");
                     totalSum.getText().clear();
                     createCameraPreview();
+
                     Toast.makeText(getActivity().getBaseContext(), "Picture saved in " + data.getStringExtra("category") + " category.", Toast.LENGTH_SHORT).show();
                 } else if (resultCode == Activity.RESULT_CANCELED){
                     Log.e(TAG, "negative Clicked!");
