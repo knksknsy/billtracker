@@ -264,11 +264,11 @@ public class CameraFragment extends Fragment {
 
             dbHelper.createScan(dbHelper, outFile, totalSumValue, category);
 
-            /*List<Scan> scanList = dbHelper.getScans(dbHelper);
+            List<Scan> scanList = dbHelper.getScans(dbHelper);
 
             for (Scan scan: scanList) {
                 scan.printScan();
-            }*/
+            }
 
         } catch (FileNotFoundException e) {
             e.printStackTrace();

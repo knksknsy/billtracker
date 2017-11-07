@@ -131,15 +131,13 @@ public class ScansDbHelper extends SQLiteOpenHelper {
 
         List<Scan> scanList = new ArrayList<>();
 
-        if (cursor.moveToFirst()) {
-            while (!cursor.isAfterLast()) {
-                int date = cursor.getInt(cursor.getColumnIndexOrThrow(ScansContract.ScanEntry.COLUMN_NAME_DATE));
-                String category = cursor.getString(cursor.getColumnIndexOrThrow(ScansContract.ScanEntry.COLUMN_NAME_CATEGORY));
-                Double sum = cursor.getDouble(cursor.getColumnIndexOrThrow(ScansContract.ScanEntry.COLUMN_NAME_SUM));
-                String imagePath = cursor.getString(cursor.getColumnIndexOrThrow(ScansContract.ScanEntry.COLUMN_NAME_IMAGE_PATH));
+        while(cursor.moveToNext()) {
+            int date = cursor.getInt(cursor.getColumnIndexOrThrow(ScansContract.ScanEntry.COLUMN_NAME_DATE));
+            String category = cursor.getString(cursor.getColumnIndexOrThrow(ScansContract.ScanEntry.COLUMN_NAME_CATEGORY));
+            Double sum = cursor.getDouble(cursor.getColumnIndexOrThrow(ScansContract.ScanEntry.COLUMN_NAME_SUM));
+            String imagePath = cursor.getString(cursor.getColumnIndexOrThrow(ScansContract.ScanEntry.COLUMN_NAME_IMAGE_PATH));
 
-                scanList.add(new Scan(date, category, sum, imagePath));
-            }
+            scanList.add(new Scan(date, category, sum, imagePath));
         }
         cursor.close();
 
@@ -166,15 +164,13 @@ public class ScansDbHelper extends SQLiteOpenHelper {
 
         List<Scan> scanList = new ArrayList<>();
 
-        if (cursor.moveToFirst()) {
-            while (!cursor.isAfterLast()) {
-                int date = cursor.getInt(cursor.getColumnIndexOrThrow(ScansContract.ScanEntry.COLUMN_NAME_DATE));
-                String cat = cursor.getString(cursor.getColumnIndexOrThrow(ScansContract.ScanEntry.COLUMN_NAME_CATEGORY));
-                Double sum = cursor.getDouble(cursor.getColumnIndexOrThrow(ScansContract.ScanEntry.COLUMN_NAME_SUM));
-                String imagePath = cursor.getString(cursor.getColumnIndexOrThrow(ScansContract.ScanEntry.COLUMN_NAME_IMAGE_PATH));
+        while(cursor.moveToNext()) {
+            int date = cursor.getInt(cursor.getColumnIndexOrThrow(ScansContract.ScanEntry.COLUMN_NAME_DATE));
+            String cat = cursor.getString(cursor.getColumnIndexOrThrow(ScansContract.ScanEntry.COLUMN_NAME_CATEGORY));
+            Double sum = cursor.getDouble(cursor.getColumnIndexOrThrow(ScansContract.ScanEntry.COLUMN_NAME_SUM));
+            String imagePath = cursor.getString(cursor.getColumnIndexOrThrow(ScansContract.ScanEntry.COLUMN_NAME_IMAGE_PATH));
 
-                scanList.add(new Scan(date, cat, sum, imagePath));
-            }
+            scanList.add(new Scan(date, cat, sum, imagePath));
         }
         cursor.close();
 
