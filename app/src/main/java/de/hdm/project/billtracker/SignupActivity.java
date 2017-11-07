@@ -2,6 +2,7 @@ package de.hdm.project.billtracker;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -10,6 +11,12 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 public class SignupActivity extends AppCompatActivity {
 
@@ -21,10 +28,16 @@ public class SignupActivity extends AppCompatActivity {
     Button signupButton;
     TextView loginLink;
 
+    ProgressDialog progressDialog;
+
+    private FirebaseAuth mAuth;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signup);
+
+        mAuth = FirebaseAuth.getInstance();
 
         emailText = (EditText) findViewById(R.id.input_email);
         passwordText = (EditText) findViewById(R.id.input_password);
@@ -51,6 +64,24 @@ public class SignupActivity extends AppCompatActivity {
         });
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        // Check if user is signed in (non-null) and update UI accordingly
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        if (currentUser != null) {
+            onSignupSuccess();
+        }
+    }
+
+    public void updateUI(FirebaseUser user) {
+        if (user != null) {
+            onSignupSuccess();
+        } else {
+            onSignupFailed();
+        }
+    }
+
     public void signup() {
         Log.d(TAG, "Signup");
 
@@ -61,7 +92,7 @@ public class SignupActivity extends AppCompatActivity {
 
         signupButton.setEnabled(false);
 
-        final ProgressDialog progressDialog = new ProgressDialog(SignupActivity.this,
+        progressDialog = new ProgressDialog(SignupActivity.this,
                 R.style.AppTheme_Dark_Dialog);
         progressDialog.setIndeterminate(true);
         progressDialog.setMessage("Creating Account...");
@@ -69,11 +100,26 @@ public class SignupActivity extends AppCompatActivity {
 
         String email = emailText.getText().toString();
         String password = passwordText.getText().toString();
-        String reEnterPassword = reEnterPasswordText.getText().toString();
 
-        // TODO: Implement signup logic here.
+        mAuth.createUserWithEmailAndPassword(email, password)
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        progressDialog.dismiss();
+                        if (task.isSuccessful()) {
+                            // Sign in success, update UI
+                            Log.d(TAG, "createUserWithEmail:success");
+                            FirebaseUser user = mAuth.getCurrentUser();
+                            updateUI(user);
+                        } else {
+                            // If sign in fails, display a message to the user
+                            Log.w(TAG, "createUserWithEmail:failure", task.getException());
+                            updateUI(null);
+                        }
+                    }
+                });
 
-        new android.os.Handler().postDelayed(
+/*        new android.os.Handler().postDelayed(
                 new Runnable() {
                     public void run() {
                         // On complete call either onSignupSuccess or onSignupFailed
@@ -82,7 +128,7 @@ public class SignupActivity extends AppCompatActivity {
                         // onSignupFailed();
                         progressDialog.dismiss();
                     }
-                }, 3000);
+                }, 3000);*/
     }
 
 
@@ -112,14 +158,14 @@ public class SignupActivity extends AppCompatActivity {
             emailText.setError(null);
         }
 
-        if (password.isEmpty() || password.length() < 4 || password.length() > 10) {
+        if (password.isEmpty() || password.length() < 4) {
             passwordText.setError("between 4 and 10 alphanumeric characters");
             valid = false;
         } else {
             passwordText.setError(null);
         }
 
-        if (reEnterPassword.isEmpty() || reEnterPassword.length() < 4 || reEnterPassword.length() > 10 || !(reEnterPassword.equals(password))) {
+        if (reEnterPassword.isEmpty() || reEnterPassword.length() < 4 || !(reEnterPassword.equals(password))) {
             reEnterPasswordText.setError("Password Do not match");
             valid = false;
         } else {
