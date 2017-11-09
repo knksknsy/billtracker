@@ -109,8 +109,9 @@ public class SignupActivity extends AppCompatActivity {
                         if (task.isSuccessful()) {
                             // Sign in success, update UI
                             Log.d(TAG, "createUserWithEmail:success");
-                            FirebaseUser user = mAuth.getCurrentUser();
-                            updateUI(user);
+                            FirebaseUser fUser = mAuth.getCurrentUser();
+
+                            updateUI(fUser);
                         } else {
                             // If sign in fails, display a message to the user
                             Log.w(TAG, "createUserWithEmail:failure", task.getException());

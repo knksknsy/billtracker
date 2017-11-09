@@ -102,10 +102,12 @@ public class LoginActivity extends AppCompatActivity {
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
+                        progressDialog.dismiss();
                         if (task.isSuccessful()) {
                             // Sign in success, update UI
                             Log.d(TAG, "signInWithEmail:success");
                             FirebaseUser user = mAuth.getCurrentUser();
+
                             updateUI(user);
                         } else {
                             // If sign in fails, display a message to the user.
@@ -116,7 +118,7 @@ public class LoginActivity extends AppCompatActivity {
                     }
                 });
 
-        new android.os.Handler().postDelayed(
+        /*new android.os.Handler().postDelayed(
                 new Runnable() {
                     @Override
                     public void run() {
@@ -125,7 +127,7 @@ public class LoginActivity extends AppCompatActivity {
                         // onLoginFailed();
                         progressDialog.dismiss();
                     }
-                }, 3000);
+                }, 3000);*/
     }
 
     @Override
