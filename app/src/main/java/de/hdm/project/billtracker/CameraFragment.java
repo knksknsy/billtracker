@@ -2,7 +2,8 @@ package de.hdm.project.billtracker;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.support.annotation.Nullable;
 import android.support.annotation.NonNull;
 import android.graphics.SurfaceTexture;
@@ -18,6 +19,7 @@ import android.app.FragmentTransaction;
 import android.support.v4.content.FileProvider;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Base64;
 import android.util.SparseIntArray;
 import android.view.LayoutInflater;
 import android.view.Surface;
@@ -56,6 +58,9 @@ import android.util.Size;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
@@ -67,16 +72,23 @@ import java.util.List;
 
 public class CameraFragment extends Fragment {
 
-    private ScansDbHelper dbHelper;
+    private static final String TAG = "CameraFragment";
 
-    private static final String TAG = "AndroidCameraApi";
     private TextureView textureView;
     private Button photoButton;
     private Button saveButton;
     private EditText totalSum;
-    private boolean isSumEmpty;
 
-    private Double totalSumValue;
+    private boolean isSumEmpty;
+    private boolean pictureTaken = false;
+
+    private String currentPhotoPath;
+    private String fileName;
+    private File photoFile;
+
+    int mStackLevel = 0;
+    private static final int REQUEST_CAMERA_PERMISSION = 200;
+    public static final int DIALOG_FRAGMENT = 1;
 
     private static final SparseIntArray ORIENTATIONS = new SparseIntArray();
 
@@ -93,26 +105,15 @@ public class CameraFragment extends Fragment {
     protected CaptureRequest.Builder captureRequestBuilder;
     private Size imageDimension;
     private ImageReader imageReader;
-
-    private static final int REQUEST_CAMERA_PERMISSION = 200;
+    private List<Surface> outputSurfaces;
     private Handler mBackgroundHandler;
     private HandlerThread mBackgroundThread;
-
-    private View inflatedView;
-    private String currentPhotoPath;
-    private String fileName;
-    private boolean pictureTaken = false;
-
-    private File photoFile;
-    private List<Surface> outputSurfaces;
     private CaptureRequest.Builder captureBuilder;
 
-    int mStackLevel = 0;
-    public static final int DIALOG_FRAGMENT = 1;
-
-
-    /*private FirebaseStorage storage = FirebaseStorage.getInstance();
-    private StorageReference storageRef = storage.getReferenceFromUrl("gs://ws17-billtracker-8d080.appspot.com");*/
+    private FirebaseAuth mAuth;
+    private DatabaseReference dbCategories;
+    private DatabaseReference dbBills;
+    private DatabaseReference dbImages;
 
 
     public static ChartFragment newInstance() {
@@ -124,26 +125,25 @@ public class CameraFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
 
-        dbHelper = new ScansDbHelper(getActivity().getBaseContext());
+        mAuth = FirebaseAuth.getInstance();
+        dbCategories = FirebaseDatabase.getInstance().getReference("categories");
+        dbBills = FirebaseDatabase.getInstance().getReference("bills");
+        dbImages = FirebaseDatabase.getInstance().getReference("images");
 
         if (savedInstanceState != null) {
             mStackLevel = savedInstanceState.getInt("level");
         }
 
-        inflatedView = inflater.inflate(R.layout.fragment_camera, container, false);
+        View inflatedView = inflater.inflate(R.layout.fragment_camera, container, false);
 
         totalSum = inflatedView.findViewById(R.id.totalSum);
-        assert totalSum != null;
-
         totalSum.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
             }
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
             }
 
             @Override
@@ -152,19 +152,12 @@ public class CameraFragment extends Fragment {
                 saveButton.setEnabled(!isSumEmpty && pictureTaken);
             }
         });
-
         isSumEmpty = totalSum.getText().toString().isEmpty();
 
         textureView = inflatedView.findViewById(R.id.textureView);
-        assert textureView != null;
         textureView.setSurfaceTextureListener(textureListener);
 
-        saveButton = inflatedView.findViewById(R.id.saveButton);
-        assert saveButton != null;
-
         photoButton = inflatedView.findViewById(R.id.photoButton);
-        assert photoButton != null;
-
         photoButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -176,13 +169,13 @@ public class CameraFragment extends Fragment {
             }
         });
 
+        saveButton = inflatedView.findViewById(R.id.saveButton);
         saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                showCategoryDialog(DIALOG_FRAGMENT);
+                showDialog(DIALOG_FRAGMENT);
             }
         });
-
         saveButton.setEnabled(!isSumEmpty && pictureTaken);
 
         return inflatedView;
@@ -194,7 +187,7 @@ public class CameraFragment extends Fragment {
         outState.putInt("level", mStackLevel);
     }
 
-    private void showCategoryDialog(int type) {
+    private void showDialog(int type) {
         mStackLevel++;
 
         FragmentTransaction ft = getActivity().getFragmentManager().beginTransaction();
@@ -203,8 +196,6 @@ public class CameraFragment extends Fragment {
             ft.remove(prev);
         }
         ft.addToBackStack(null);
-
-        totalSumValue = Double.parseDouble(totalSum.getText().toString());
 
         switch (type) {
             case DIALOG_FRAGMENT:
@@ -222,22 +213,51 @@ public class CameraFragment extends Fragment {
         switch (requestCode) {
             case DIALOG_FRAGMENT:
                 if (resultCode == Activity.RESULT_OK) {
-                    categorizePicture(data.getStringExtra("category"));
+                    String categoryName = data.getStringExtra("category");
+                    String imagePath = saveImageOnDevice(categoryName);
                     pictureTaken = false;
                     saveButton.setEnabled(!isSumEmpty && pictureTaken);
                     photoButton.setText("Take Photo");
+                    Double sum = Double.parseDouble(totalSum.getText().toString());
                     totalSum.getText().clear();
                     createCameraPreview();
 
-                    Toast.makeText(getActivity().getBaseContext(), "Picture saved in " + data.getStringExtra("category") + " category.", Toast.LENGTH_SHORT).show();
-                } else if (resultCode == Activity.RESULT_CANCELED){
+                    // Upload bill's information to firebase
+                    String userUID = mAuth.getCurrentUser().getUid();
+                    if (userUID != null) {
+                        Category category = new Category(dbCategories.push().getKey(), categoryName);
+
+                        dbCategories.child(userUID).setValue(category);
+
+                        Scan scan = new Scan(
+                                dbBills.push().getKey(),
+                                category.getName(),
+                                new Date().getTime(),
+                                sum,
+                                imagePath,
+                                dbImages.push().getKey()
+                        );
+
+                        dbBills.child(userUID).child(category.getId()).child(scan.getId()).setValue(scan);
+
+                        scan.setImageData(imageToBase64(scan.getImagePath()));
+
+                        dbImages.child(userUID).child(scan.getImageId()).setValue(scan.getImageData());
+
+                        Toast.makeText(getActivity().getBaseContext(), "Picture saved in " + data.getStringExtra("category") + " category.", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(getActivity().getBaseContext(), "Picture was not uploaded to the Cloud.", Toast.LENGTH_SHORT).show();
+                    }
+
+                } else if (resultCode == Activity.RESULT_CANCELED) {
                     Log.e(TAG, "negative Clicked!");
                 }
                 break;
         }
     }
 
-    private void categorizePicture(String category) {
+    // Move the image to assigned categroy folder
+    private String saveImageOnDevice(String category) {
         String outputPath = photoFile.toString().replace(fileName, "") + "/" + category;
 
         File outDir = new File(outputPath);
@@ -248,9 +268,11 @@ public class CameraFragment extends Fragment {
         InputStream in = null;
         OutputStream out = null;
 
+        String outFile = null;
+
         try {
             in = new FileInputStream(photoFile.toString());
-            String outFile = outputPath + "/" + fileName;
+            outFile = outputPath + "/" + fileName;
             out = new FileOutputStream(outFile);
 
             byte[] buffer = new byte[1024];
@@ -269,19 +291,21 @@ public class CameraFragment extends Fragment {
             // delete the original file
             new File(photoFile.toString()).delete();
 
-            dbHelper.createScan(dbHelper, outFile, totalSumValue, category);
-
-            List<Scan> scanList = dbHelper.getScans(dbHelper);
-
-            for (Scan scan: scanList) {
-                scan.printScan();
-            }
-
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (Exception e2) {
             e2.printStackTrace();
         }
+        return outFile;
+    }
+
+    private String imageToBase64(String path) {
+        Bitmap bm = BitmapFactory.decodeFile(path);
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bm.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+        byte[] b = baos.toByteArray();
+
+        return Base64.encodeToString(b, Base64.DEFAULT);
     }
 
     private void retakePicture() {
@@ -291,6 +315,7 @@ public class CameraFragment extends Fragment {
         createCameraPreview();
     }
 
+    @Nullable
     private File createImageFile() {
         try {
             // Create an image file name
@@ -363,7 +388,6 @@ public class CameraFragment extends Fragment {
             ImageReader.OnImageAvailableListener readerListener = new ImageReader.OnImageAvailableListener() {
                 @Override
                 public void onImageAvailable(ImageReader reader) {
-                    Log.e(TAG, "onImageAvailable() called.");
                     Image image = null;
                     try {
                         image = reader.acquireLatestImage();
@@ -383,7 +407,6 @@ public class CameraFragment extends Fragment {
                 }
 
                 private void save(byte[] bytes) throws IOException {
-                    Log.e(TAG, "save() called.");
                     OutputStream output = null;
                     try {
                         output = new FileOutputStream(photoFile);
@@ -402,7 +425,6 @@ public class CameraFragment extends Fragment {
                 @Override
                 public void onCaptureCompleted(@NonNull CameraCaptureSession session, @NonNull CaptureRequest request, @NonNull TotalCaptureResult result) {
                     super.onCaptureCompleted(session, request, result);
-                    Log.e(TAG, "onCaptureCompleted() called.");
                     pictureTaken = true;
                     getActivity().runOnUiThread(new Runnable() {
                         @Override
@@ -411,15 +433,12 @@ public class CameraFragment extends Fragment {
                             saveButton.setEnabled(!isSumEmpty && pictureTaken);
                         }
                     });
-                    // Toast.makeText(getContext(), "Saved: " + photoFile, Toast.LENGTH_SHORT).show();
-                    // createCameraPreview();
                 }
             };
 
             cameraDevice.createCaptureSession(outputSurfaces, new CameraCaptureSession.StateCallback() {
                 @Override
                 public void onConfigured(@NonNull CameraCaptureSession session) {
-                    Log.e(TAG, "onConfigured() called.");
                     try {
                         session.capture(captureBuilder.build(), captureListener, mBackgroundHandler);
                     } catch (CameraAccessException e) {
@@ -445,7 +464,6 @@ public class CameraFragment extends Fragment {
 
         @Override
         public void onSurfaceTextureSizeChanged(SurfaceTexture surfaceTexture, int i, int i1) {
-            // Transform captured image size according to the surface width and height
         }
 
         @Override
@@ -455,7 +473,6 @@ public class CameraFragment extends Fragment {
 
         @Override
         public void onSurfaceTextureUpdated(SurfaceTexture surfaceTexture) {
-
         }
     };
 
@@ -463,7 +480,6 @@ public class CameraFragment extends Fragment {
         @Override
         public void onOpened(@NonNull CameraDevice camera) {
             // This is called when the camera is open
-            Log.e(TAG, "onOpened");
             cameraDevice = camera;
             createCameraPreview();
         }
@@ -484,7 +500,6 @@ public class CameraFragment extends Fragment {
         @Override
         public void onCaptureCompleted(@NonNull CameraCaptureSession session, @NonNull CaptureRequest request, @NonNull TotalCaptureResult result) {
             super.onCaptureCompleted(session, request, result);
-            Log.e(TAG, "onCaptureCompleted");
             Toast.makeText(getActivity().getBaseContext(), "Saved: " + photoFile, Toast.LENGTH_SHORT).show();
             createCameraPreview();
         }
@@ -617,7 +632,6 @@ public class CameraFragment extends Fragment {
 
     @Override
     public void onDestroy() {
-        dbHelper.close();
         super.onDestroy();
     }
 
