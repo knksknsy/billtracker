@@ -17,6 +17,8 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 public class SignupActivity extends AppCompatActivity {
 
@@ -31,6 +33,7 @@ public class SignupActivity extends AppCompatActivity {
     ProgressDialog progressDialog;
 
     private FirebaseAuth mAuth;
+    private DatabaseReference mDatabase;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -38,6 +41,7 @@ public class SignupActivity extends AppCompatActivity {
         setContentView(R.layout.activity_signup);
 
         mAuth = FirebaseAuth.getInstance();
+        mDatabase = FirebaseDatabase.getInstance().getReference("users");
 
         emailText = (EditText) findViewById(R.id.input_email);
         passwordText = (EditText) findViewById(R.id.input_password);
@@ -107,29 +111,20 @@ public class SignupActivity extends AppCompatActivity {
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         progressDialog.dismiss();
                         if (task.isSuccessful()) {
-                            // Sign in success, update UI
                             Log.d(TAG, "createUserWithEmail:success");
+
                             FirebaseUser fUser = mAuth.getCurrentUser();
+                            User user = new User(fUser.getUid(), fUser.getEmail());
+
+                            mDatabase.child(user.getId()).setValue(user);
 
                             updateUI(fUser);
                         } else {
-                            // If sign in fails, display a message to the user
                             Log.w(TAG, "createUserWithEmail:failure", task.getException());
                             updateUI(null);
                         }
                     }
                 });
-
-/*        new android.os.Handler().postDelayed(
-                new Runnable() {
-                    public void run() {
-                        // On complete call either onSignupSuccess or onSignupFailed
-                        // depending on success
-                        onSignupSuccess();
-                        // onSignupFailed();
-                        progressDialog.dismiss();
-                    }
-                }, 3000);*/
     }
 
 
