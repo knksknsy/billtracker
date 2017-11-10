@@ -1,19 +1,18 @@
 package de.hdm.project.billtracker;
 
-import java.util.UUID;
 
 public class User {
 
     private String email;
     private String id;
 
-    public User() {
-
+    public User(String id, String email) {
+        setId(id);
+        setEmail(email);
     }
 
-    public User(String id, String email) {
-        this.id = id;
-        this.email = email;
+    public User() {
+
     }
 
     public String getEmail() {

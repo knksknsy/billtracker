@@ -1,3 +1,4 @@
+/*
 package de.hdm.project.billtracker;
 
 import android.content.ContentValues;
@@ -188,3 +189,4 @@ public class ScansDbHelper extends SQLiteOpenHelper {
     }
 
 }
+*/

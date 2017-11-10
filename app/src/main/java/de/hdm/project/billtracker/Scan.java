@@ -1,34 +1,59 @@
 package de.hdm.project.billtracker;
 
-import java.util.Calendar;
-
 public class Scan {
 
-    private int date;
+    private String id;
+    private String title;
     private String category;
+    private long date;
     private Double sum;
+    private String imageId;
     private String imagePath;
+    private String imageData;
 
-    public Scan(int date, String category, Double sum, String imagePath) {
-        this.date = date;
+    public Scan(String id, String category, long date, Double sum, String imagePath, String imageId) {
+        setId(id);
+        // setTitle(title);
+        setDate(date);
+        setCategory(category);
+        setSum(sum);
+        setImageId(imageId);
+        setImagePath(imagePath);
+    }
+
+    public Scan() {
+
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
         this.category = category;
-        this.sum = sum;
-        this.imagePath = imagePath;
     }
 
-    public String getImagePath() {
-        return imagePath;
-    }
-
-    public void setImagePath(String imagePath) {
-        this.imagePath = imagePath;
-    }
-
-    public int getDate() {
+    public long getDate() {
         return date;
     }
 
-    public void setDate(int date) {
+    public void setDate(long date) {
         this.date = date;
     }
 
@@ -40,12 +65,28 @@ public class Scan {
         this.sum = sum;
     }
 
-    public String getCategory() {
-        return category;
+    public String getImageId() {
+        return imageId;
     }
 
-    public void setCategory(String category) {
-        this.category = category;
+    public void setImageId(String imageId) {
+        this.imageId = imageId;
+    }
+
+    public String getImagePath() {
+        return imagePath;
+    }
+
+    public void setImagePath(String imagePath) {
+        this.imagePath = imagePath;
+    }
+
+    public String getImageData() {
+        return imageData;
+    }
+
+    public void setImageData(String imageData) {
+        this.imageData = imageData;
     }
 
 }

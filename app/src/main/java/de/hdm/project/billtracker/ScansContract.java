@@ -1,3 +1,4 @@
+/*
 package de.hdm.project.billtracker;
 
 import android.provider.BaseColumns;
@@ -18,3 +19,4 @@ public class ScansContract {
 
 }
 
+*/
