@@ -48,12 +48,4 @@ public class Scan {
         this.category = category;
     }
 
-    public void printScan() {
-        System.out.println("Date: " + getDate());
-        System.out.println("Category: " + getCategory());
-        System.out.println("Sum: " + getSum());
-        System.out.println("Imagepath: " + getImagePath());
-        System.out.println("-----------------END-----------------");
-    }
-
 }
