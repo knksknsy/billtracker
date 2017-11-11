@@ -128,7 +128,7 @@ public class CameraFragment extends Fragment {
         dbBills = FirebaseDatabase.getInstance().getReference("bills");
         dbImages = FirebaseDatabase.getInstance().getReference("images");
 
-        // Helper class for saving and moving images on device, encoding and decoding to base64
+        // Helper class for saving and moving images on device, encoding and decoding of image
         imageHelper = new ImageHelper();
 
         if (savedInstanceState != null) {
