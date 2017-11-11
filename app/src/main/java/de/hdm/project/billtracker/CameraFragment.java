@@ -82,9 +82,7 @@ public class CameraFragment extends Fragment {
     private boolean isSumEmpty;
     private boolean pictureTaken = false;
 
-    private String currentPhotoPath;
-    private String fileName;
-    private File photoFile;
+    private ImageHelper imageHelper;
 
     int mStackLevel = 0;
     private static final int REQUEST_CAMERA_PERMISSION = 200;
@@ -129,6 +127,9 @@ public class CameraFragment extends Fragment {
         dbCategories = FirebaseDatabase.getInstance().getReference("categories");
         dbBills = FirebaseDatabase.getInstance().getReference("bills");
         dbImages = FirebaseDatabase.getInstance().getReference("images");
+
+        // Helper class for saving and moving images on device, encoding and decoding to base64
+        imageHelper = new ImageHelper();
 
         if (savedInstanceState != null) {
             mStackLevel = savedInstanceState.getInt("level");
@@ -213,16 +214,18 @@ public class CameraFragment extends Fragment {
         switch (requestCode) {
             case DIALOG_FRAGMENT:
                 if (resultCode == Activity.RESULT_OK) {
-                    String categoryName = data.getStringExtra("category");
-                    String imagePath = saveImageOnDevice(categoryName);
                     pictureTaken = false;
                     saveButton.setEnabled(!isSumEmpty && pictureTaken);
                     photoButton.setText("Take Photo");
-                    Double sum = Double.parseDouble(totalSum.getText().toString());
-                    totalSum.getText().clear();
                     createCameraPreview();
 
-                    // Upload bill's information to firebase
+                    String categoryName = data.getStringExtra("category");
+                    imageHelper.saveImageOnDevice(categoryName);
+
+                    Double sum = Double.parseDouble(totalSum.getText().toString());
+                    totalSum.getText().clear();
+
+                    // TODO: Upload bill's information to firebase
                     String userUID = mAuth.getCurrentUser().getUid();
                     if (userUID != null) {
                         Category category = new Category(dbCategories.push().getKey(), categoryName);
@@ -234,13 +237,13 @@ public class CameraFragment extends Fragment {
                                 category.getName(),
                                 new Date().getTime(),
                                 sum,
-                                imagePath,
+                                imageHelper.getImagePath(),
                                 dbImages.push().getKey()
                         );
 
                         dbBills.child(userUID).child(category.getId()).child(scan.getId()).setValue(scan);
 
-                        scan.setImageData(imageToBase64(scan.getImagePath()));
+                        scan.setImageData(imageHelper.imageToBase64());
 
                         dbImages.child(userUID).child(scan.getImageId()).setValue(scan.getImageData());
 
@@ -256,87 +259,11 @@ public class CameraFragment extends Fragment {
         }
     }
 
-    // Move the image to assigned categroy folder
-    private String saveImageOnDevice(String category) {
-        String outputPath = photoFile.toString().replace(fileName, "") + "/" + category;
-
-        File outDir = new File(outputPath);
-        if (!outDir.exists()) {
-            outDir.mkdirs();
-        }
-
-        InputStream in = null;
-        OutputStream out = null;
-
-        String outFile = null;
-
-        try {
-            in = new FileInputStream(photoFile.toString());
-            outFile = outputPath + "/" + fileName;
-            out = new FileOutputStream(outFile);
-
-            byte[] buffer = new byte[1024];
-            int read;
-            while ((read = in.read(buffer)) != -1) {
-                out.write(buffer, 0, read);
-            }
-            in.close();
-            in = null;
-
-            // write the output file
-            out.flush();
-            out.close();
-            out = null;
-
-            // delete the original file
-            new File(photoFile.toString()).delete();
-
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (Exception e2) {
-            e2.printStackTrace();
-        }
-        return outFile;
-    }
-
-    private String imageToBase64(String path) {
-        Bitmap bm = BitmapFactory.decodeFile(path);
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        bm.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-        byte[] b = baos.toByteArray();
-
-        return Base64.encodeToString(b, Base64.DEFAULT);
-    }
-
     private void retakePicture() {
         pictureTaken = false;
         photoButton.setText("Take Photo");
         saveButton.setEnabled(!isSumEmpty && pictureTaken);
         createCameraPreview();
-    }
-
-    @Nullable
-    private File createImageFile() {
-        try {
-            // Create an image file name
-            String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-            String imageFileName = "JPEG_" + timeStamp + "_";
-            File storageDir = getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-            String suffix = ".jpg";
-            File image = File.createTempFile(
-                    imageFileName,   // prefix
-                    suffix,          // suffix
-                    storageDir       // directory
-            );
-
-            // Save a file: path for use with ACTION_VIEW intents
-            currentPhotoPath = image.getAbsolutePath();
-            fileName = currentPhotoPath.replace(image.getParent() + "/", "");
-            return image;
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
-        }
     }
 
     protected void takePicture() {
@@ -377,12 +304,12 @@ public class CameraFragment extends Fragment {
             int rotation = getActivity().getWindowManager().getDefaultDisplay().getRotation();
             captureBuilder.set(CaptureRequest.JPEG_ORIENTATION, ORIENTATIONS.get(rotation));
 
-            photoFile = createImageFile();
+            imageHelper.createTempImageFile(getActivity());
 
             // Continue only if the File was successfully created
-            if (photoFile != null) {
+            if (imageHelper.getImageFile() != null) {
                 String authorities = getActivity().getApplicationContext().getPackageName() + ".fileprovider";
-                Uri photoURI = FileProvider.getUriForFile(getActivity().getBaseContext(), authorities, photoFile);
+                Uri photoURI = FileProvider.getUriForFile(getActivity().getBaseContext(), authorities, imageHelper.getImageFile());
             }
 
             ImageReader.OnImageAvailableListener readerListener = new ImageReader.OnImageAvailableListener() {
@@ -409,7 +336,7 @@ public class CameraFragment extends Fragment {
                 private void save(byte[] bytes) throws IOException {
                     OutputStream output = null;
                     try {
-                        output = new FileOutputStream(photoFile);
+                        output = new FileOutputStream(imageHelper.getImageFile());
                         output.write(bytes);
                     } finally {
                         if (output != null) {
@@ -500,7 +427,7 @@ public class CameraFragment extends Fragment {
         @Override
         public void onCaptureCompleted(@NonNull CameraCaptureSession session, @NonNull CaptureRequest request, @NonNull TotalCaptureResult result) {
             super.onCaptureCompleted(session, request, result);
-            Toast.makeText(getActivity().getBaseContext(), "Saved: " + photoFile, Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity().getBaseContext(), "Saved: " + imageHelper.getImageFile(), Toast.LENGTH_SHORT).show();
             createCameraPreview();
         }
     };
