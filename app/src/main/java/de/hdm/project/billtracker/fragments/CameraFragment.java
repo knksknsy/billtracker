@@ -1,6 +1,7 @@
 package de.hdm.project.billtracker.fragments;
 
 import android.app.Activity;
+import android.support.v4.app.DialogFragment;
 import android.content.Intent;
 import android.support.annotation.Nullable;
 import android.support.annotation.NonNull;
@@ -10,9 +11,9 @@ import android.hardware.camera2.CameraDevice;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
-import android.app.DialogFragment;
-import android.app.Fragment;
-import android.app.FragmentTransaction;
+
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.FileProvider;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -179,8 +180,8 @@ public class CameraFragment extends Fragment {
     private void showDialog(int type) {
         mStackLevel++;
 
-        FragmentTransaction ft = getActivity().getFragmentManager().beginTransaction();
-        Fragment prev = getActivity().getFragmentManager().findFragmentByTag("dialog");
+        FragmentTransaction ft = getFragmentManager().beginTransaction();
+        Fragment prev = getFragmentManager().findFragmentByTag("dialog");
         if (prev != null) {
             ft.remove(prev);
         }
@@ -213,7 +214,6 @@ public class CameraFragment extends Fragment {
                     Double sum = Double.parseDouble(totalSum.getText().toString());
                     totalSum.getText().clear();
 
-                    // TODO: Upload scan to firebase
                     Scan scan = new Scan(
                             category,
                             new Date().getTime(),
@@ -222,6 +222,7 @@ public class CameraFragment extends Fragment {
                     );
                     scan.setImageData(imageHelper.imageToBase64());
 
+                    // Upload scan to firebase
                     boolean uploadSuccessful = fDatabaseHelper.writeBill(scan);
 
                     if (uploadSuccessful) {

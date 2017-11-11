@@ -8,7 +8,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
-import android.app.DialogFragment;
+import android.support.v4.app.DialogFragment;
 import android.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;

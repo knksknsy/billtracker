@@ -1,12 +1,13 @@
 package de.hdm.project.billtracker.activities;
 
-import android.app.FragmentManager;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
-import android.app.Fragment;
-import android.app.FragmentTransaction;
+
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -70,9 +71,9 @@ public class MainActivity extends AppCompatActivity {
         if (fragment == null)
             return;
 
-        FragmentManager fragmentManager = getFragmentManager();
+        FragmentManager fragmentManager = getSupportFragmentManager();
         if (fragmentManager != null) {
-            FragmentTransaction transaction = getFragmentManager().beginTransaction();
+            FragmentTransaction transaction = fragmentManager.beginTransaction();
             if (transaction != null) {
                 transaction.replace(R.id.container, fragment);
                 transaction.commit();
@@ -92,7 +93,7 @@ public class MainActivity extends AppCompatActivity {
 
         navigationView();
 
-        // TODO If user is already logged in, skip LoginActivity
+        // If user is already logged in, skip LoginActivity
         Intent intent = new Intent(this, LoginActivity.class);
         startActivity(intent);
     }
