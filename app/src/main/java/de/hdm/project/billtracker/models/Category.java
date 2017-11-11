@@ -1,12 +1,11 @@
-package de.hdm.project.billtracker;
+package de.hdm.project.billtracker.models;
 
 public class Category {
 
     private String id;
     private String name;
 
-    public Category(String id, String name) {
-        setId(id);
+    public Category(String name) {
         setName(name);
     }
 

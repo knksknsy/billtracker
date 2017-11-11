@@ -1,4 +1,4 @@
-package de.hdm.project.billtracker;
+package de.hdm.project.billtracker.models;
 
 public class Scan {
 

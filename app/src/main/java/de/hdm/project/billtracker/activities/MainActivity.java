@@ -1,4 +1,4 @@
-package de.hdm.project.billtracker;
+package de.hdm.project.billtracker.activities;
 
 import android.app.FragmentManager;
 import android.content.Intent;
@@ -10,6 +10,11 @@ import android.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
+
+import de.hdm.project.billtracker.fragments.CameraFragment;
+import de.hdm.project.billtracker.fragments.ChartFragment;
+import de.hdm.project.billtracker.fragments.ContentFragment;
+import de.hdm.project.billtracker.R;
 
 public class MainActivity extends AppCompatActivity {
 

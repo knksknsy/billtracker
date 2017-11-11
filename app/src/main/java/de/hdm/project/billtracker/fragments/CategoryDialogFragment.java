@@ -1,4 +1,4 @@
-package de.hdm.project.billtracker;
+package de.hdm.project.billtracker.fragments;
 
 import android.app.Activity;
 import android.app.Dialog;
@@ -21,6 +21,8 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import de.hdm.project.billtracker.R;
 
 public class CategoryDialogFragment extends DialogFragment {
 

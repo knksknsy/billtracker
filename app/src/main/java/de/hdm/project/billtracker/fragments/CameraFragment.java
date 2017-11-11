@@ -1,9 +1,7 @@
-package de.hdm.project.billtracker;
+package de.hdm.project.billtracker.fragments;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.support.annotation.Nullable;
 import android.support.annotation.NonNull;
 import android.graphics.SurfaceTexture;
@@ -11,7 +9,6 @@ import android.hardware.camera2.CameraCaptureSession;
 import android.hardware.camera2.CameraDevice;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.support.v4.app.ActivityCompat;
 import android.app.DialogFragment;
 import android.app.Fragment;
@@ -19,7 +16,6 @@ import android.app.FragmentTransaction;
 import android.support.v4.content.FileProvider;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Base64;
 import android.util.SparseIntArray;
 import android.view.LayoutInflater;
 import android.view.Surface;
@@ -28,14 +24,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import android.Manifest;
@@ -61,14 +52,17 @@ import android.widget.Toast;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
 
 import java.io.FileOutputStream;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import de.hdm.project.billtracker.models.Category;
+import de.hdm.project.billtracker.helpers.ImageHelper;
+import de.hdm.project.billtracker.R;
+import de.hdm.project.billtracker.models.Scan;
 
 public class CameraFragment extends Fragment {
 
@@ -228,9 +222,9 @@ public class CameraFragment extends Fragment {
                     // TODO: Upload bill's information to firebase
                     String userUID = mAuth.getCurrentUser().getUid();
                     if (userUID != null) {
-                        Category category = new Category(dbCategories.push().getKey(), categoryName);
+                        Category category = new Category(categoryName);
 
-                        dbCategories.child(userUID).setValue(category);
+                        dbCategories.child(userUID).child(category.getName()).setValue(category);
 
                         Scan scan = new Scan(
                                 dbBills.push().getKey(),
@@ -241,7 +235,7 @@ public class CameraFragment extends Fragment {
                                 dbImages.push().getKey()
                         );
 
-                        dbBills.child(userUID).child(category.getId()).child(scan.getId()).setValue(scan);
+                        dbBills.child(userUID).child(category.getName()).child(scan.getId()).setValue(scan);
 
                         scan.setImageData(imageHelper.imageToBase64());
 

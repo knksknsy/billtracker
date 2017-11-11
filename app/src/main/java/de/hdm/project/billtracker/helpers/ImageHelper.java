@@ -1,4 +1,4 @@
-package de.hdm.project.billtracker;
+package de.hdm.project.billtracker.helpers;
 
 import android.app.Activity;
 import android.graphics.Bitmap;
