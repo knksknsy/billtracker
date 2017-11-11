@@ -59,6 +59,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import de.hdm.project.billtracker.helpers.FirebaseDatabaseHelper;
 import de.hdm.project.billtracker.models.Category;
 import de.hdm.project.billtracker.helpers.ImageHelper;
 import de.hdm.project.billtracker.R;
@@ -102,11 +103,7 @@ public class CameraFragment extends Fragment {
     private HandlerThread mBackgroundThread;
     private CaptureRequest.Builder captureBuilder;
 
-    private FirebaseAuth mAuth;
-    private DatabaseReference dbCategories;
-    private DatabaseReference dbBills;
-    private DatabaseReference dbImages;
-
+    private FirebaseDatabaseHelper fDatabaseHelper;
 
     public static ChartFragment newInstance() {
         return new ChartFragment();
@@ -117,10 +114,7 @@ public class CameraFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
 
-        mAuth = FirebaseAuth.getInstance();
-        dbCategories = FirebaseDatabase.getInstance().getReference("categories");
-        dbBills = FirebaseDatabase.getInstance().getReference("bills");
-        dbImages = FirebaseDatabase.getInstance().getReference("images");
+        fDatabaseHelper = new FirebaseDatabaseHelper();
 
         // Helper class for saving and moving images on device, encoding and decoding of image
         imageHelper = new ImageHelper();
@@ -213,35 +207,25 @@ public class CameraFragment extends Fragment {
                     photoButton.setText("Take Photo");
                     createCameraPreview();
 
-                    String categoryName = data.getStringExtra("category");
-                    imageHelper.saveImageOnDevice(categoryName);
+                    String category = data.getStringExtra("category");
+                    imageHelper.saveImageOnDevice(category);
 
                     Double sum = Double.parseDouble(totalSum.getText().toString());
                     totalSum.getText().clear();
 
-                    // TODO: Upload bill's information to firebase
-                    String userUID = mAuth.getCurrentUser().getUid();
-                    if (userUID != null) {
-                        Category category = new Category(categoryName);
+                    // TODO: Upload scan to firebase
+                    Scan scan = new Scan(
+                            category,
+                            new Date().getTime(),
+                            sum,
+                            imageHelper.getImagePath()
+                    );
+                    scan.setImageData(imageHelper.imageToBase64());
 
-                        dbCategories.child(userUID).child(category.getName()).setValue(category);
+                    boolean uploadSuccessful = fDatabaseHelper.writeBill(scan);
 
-                        Scan scan = new Scan(
-                                dbBills.push().getKey(),
-                                category.getName(),
-                                new Date().getTime(),
-                                sum,
-                                imageHelper.getImagePath(),
-                                dbImages.push().getKey()
-                        );
-
-                        dbBills.child(userUID).child(category.getName()).child(scan.getId()).setValue(scan);
-
-                        scan.setImageData(imageHelper.imageToBase64());
-
-                        dbImages.child(userUID).child(scan.getImageId()).setValue(scan.getImageData());
-
-                        Toast.makeText(getActivity().getBaseContext(), "Picture saved in " + data.getStringExtra("category") + " category.", Toast.LENGTH_SHORT).show();
+                    if (uploadSuccessful) {
+                        Toast.makeText(getActivity().getBaseContext(), "Picture saved in " + scan.getCategory() + " category.", Toast.LENGTH_SHORT).show();
                     } else {
                         Toast.makeText(getActivity().getBaseContext(), "Picture was not uploaded to the Cloud.", Toast.LENGTH_SHORT).show();
                     }

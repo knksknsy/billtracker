@@ -11,13 +11,11 @@ public class Scan {
     private String imagePath;
     private String imageData;
 
-    public Scan(String id, String category, long date, Double sum, String imagePath, String imageId) {
-        setId(id);
+    public Scan(String category, long date, Double sum, String imagePath) {
         // setTitle(title);
         setDate(date);
         setCategory(category);
         setSum(sum);
-        setImageId(imageId);
         setImagePath(imagePath);
     }
 
