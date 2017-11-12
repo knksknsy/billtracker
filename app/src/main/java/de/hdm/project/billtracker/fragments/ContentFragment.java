@@ -5,18 +5,18 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.view.ViewPager;
+import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import de.hdm.project.billtracker.R;
 
 public class ContentFragment extends Fragment {
+
+    private CategoriesFragment categories;
+    private ScansFragment scans;
+    private TabLayout tabs;
 
     public static ContentFragment newInstance() {
         return new ContentFragment();
@@ -25,7 +25,6 @@ public class ContentFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
     }
 
     @Nullable
@@ -33,49 +32,56 @@ public class ContentFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_content, container, false);
 
-        ViewPager viewPager = (ViewPager) view.findViewById(R.id.viewpager);
-        setupViewPager(viewPager);
-
-        TabLayout tabs = (TabLayout) view.findViewById(R.id.tablayout);
-        tabs.setupWithViewPager(viewPager);
+        tabs = (TabLayout) view.findViewById(R.id.tablayout);
+        bindWidgetsWithEvent();
+        setupTabLayout();
 
         return view;
     }
 
-    private void setupViewPager(ViewPager viewPager) {
-        Adapter adapter = new Adapter(getChildFragmentManager());
-        /*adapter.addFragment(new CategoriesFragment(), "Categories");
-        adapter.addFragment(new ScansFragment(), "All Scans");*/
-        viewPager.setAdapter(adapter);
+    private void setCurrentTabFragment(int tabPosition) {
+        switch (tabPosition) {
+            case 0:
+                replaceFragment(categories);
+                break;
+            case 1:
+                replaceFragment(scans);
+                break;
+        }
     }
 
-    static class Adapter extends FragmentPagerAdapter {
-        private final List<Fragment> mFragmentList = new ArrayList<>();
-        private final List<String> mFragmentTitleList = new ArrayList<>();
+    private void bindWidgetsWithEvent() {
+        tabs.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                setCurrentTabFragment(tab.getPosition());
+            }
 
-        public Adapter(FragmentManager manager) {
-            super(manager);
-        }
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
 
-        @Override
-        public Fragment getItem(int position) {
-            return mFragmentList.get(position);
-        }
+            }
 
-        @Override
-        public int getCount() {
-            return mFragmentList.size();
-        }
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
 
-        public void addFragment(Fragment fragment, String title) {
-            mFragmentList.add(fragment);
-            mFragmentTitleList.add(title);
-        }
+            }
+        });
+    }
 
-        @Override
-        public CharSequence getPageTitle(int position) {
-            return mFragmentTitleList.get(position);
-        }
+    private void setupTabLayout() {
+        categories = new CategoriesFragment();
+        scans = new ScansFragment();
+        tabs.addTab(tabs.newTab().setText("Categories"), true);
+        tabs.addTab(tabs.newTab().setText("All Scans"));
+    }
+
+    private void replaceFragment(Fragment fragment) {
+        FragmentManager fm = getFragmentManager();
+        FragmentTransaction ft = fm.beginTransaction();
+        ft.replace(R.id.frame_container, fragment);
+        ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+        ft.commit();
     }
 
 }
