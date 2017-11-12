@@ -31,7 +31,7 @@ public class ContentFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_content, null);
+        View view = inflater.inflate(R.layout.fragment_content, container, false);
 
         ViewPager viewPager = (ViewPager) view.findViewById(R.id.viewpager);
         setupViewPager(viewPager);
@@ -44,8 +44,8 @@ public class ContentFragment extends Fragment {
 
     private void setupViewPager(ViewPager viewPager) {
         Adapter adapter = new Adapter(getChildFragmentManager());
-        adapter.addFragment(new CategoriesFragment(), "Categories");
-        adapter.addFragment(new ScansFragment(), "All Scans");
+        /*adapter.addFragment(new CategoriesFragment(), "Categories");
+        adapter.addFragment(new ScansFragment(), "All Scans");*/
         viewPager.setAdapter(adapter);
     }
 
