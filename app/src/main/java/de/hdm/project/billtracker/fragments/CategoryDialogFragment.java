@@ -13,6 +13,7 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import com.google.firebase.database.DataSnapshot;
@@ -28,8 +29,8 @@ import de.hdm.project.billtracker.helpers.FirebaseDatabaseHelper;
 
 public class CategoryDialogFragment extends DialogFragment {
 
-    private View view;
     private AutoCompleteTextView autocompleteCategory;
+    private EditText titleText;
     private List<String> categories;
     private TextView errorTextView;
 
@@ -54,11 +55,35 @@ public class CategoryDialogFragment extends DialogFragment {
         // Get the layout inflater
         LayoutInflater inflater = getActivity().getLayoutInflater();
 
-        view = inflater.inflate(R.layout.fragment_category_dialog, null);
+        final View view = inflater.inflate(R.layout.fragment_category_dialog, null);
 
-        initAutoCompleteTextView();
+        // Fetch categories from firebase for auto completion
+        fDatabase.getDbCategories().child(userUID).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                categories = new ArrayList<>();
+                Iterator<DataSnapshot> iter = dataSnapshot.getChildren().iterator();
+                while (iter.hasNext()) {
+                    categories.add(iter.next().getValue().toString());
+                }
+                autocompleteCategory = view.findViewById(R.id.autocompleteCategory);
+
+                if (categories.size() > 0) {
+                    ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(), R.layout.category_autocomplete, R.id.autoTextView, categories);
+
+                    autocompleteCategory.setAdapter(adapter);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
 
         errorTextView = view.findViewById(R.id.errorTextView);
+
+        titleText = view.findViewById(R.id.titleText);
 
         // Inflate and set the layout for the dialog
         // Pass null as the parent view because its going in the dialog layout
@@ -108,30 +133,8 @@ public class CategoryDialogFragment extends DialogFragment {
     private Intent getIntent() {
         Intent intent = getActivity().getIntent();
         intent.putExtra("category", autocompleteCategory.getText().toString().toUpperCase());
+        intent.putExtra("title", titleText.getText().toString());
         return intent;
-    }
-
-    private void initAutoCompleteTextView() {
-        fDatabase.getDbCategories().child(userUID).addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                categories = new ArrayList<>();
-                Iterator<DataSnapshot> iter = dataSnapshot.getChildren().iterator();
-                while (iter.hasNext()) {
-                    categories.add(iter.next().getValue().toString());
-                }
-                autocompleteCategory = view.findViewById(R.id.autocompleteCategory);
-
-                ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity().getBaseContext(), R.layout.category_autocomplete, R.id.autoTextView, categories);
-
-                autocompleteCategory.setAdapter(adapter);
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
     }
 
 }

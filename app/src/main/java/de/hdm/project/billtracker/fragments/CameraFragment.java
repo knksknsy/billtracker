@@ -209,16 +209,19 @@ public class CameraFragment extends Fragment {
                     createCameraPreview();
 
                     String category = data.getStringExtra("category");
+                    String title = data.getStringExtra("title");
                     imageHelper.saveImageOnDevice(category);
 
                     Double sum = Double.parseDouble(totalSum.getText().toString());
                     totalSum.getText().clear();
 
                     Scan scan = new Scan(
+                            title,
                             category,
                             new Date().getTime(),
                             sum,
-                            imageHelper.getImagePath()
+                            imageHelper.getImagePath(),
+                            imageHelper.getThumbnailPath()
                     );
                     scan.setImageData(imageHelper.imageToBase64());
 
