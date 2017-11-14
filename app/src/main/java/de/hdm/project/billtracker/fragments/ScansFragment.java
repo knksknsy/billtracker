@@ -14,6 +14,10 @@ public class ScansFragment extends Fragment {
         return new ScansFragment();
     }
 
+    public ScansFragment() {
+
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

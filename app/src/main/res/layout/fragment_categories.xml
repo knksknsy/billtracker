@@ -4,10 +4,18 @@
     android:layout_height="match_parent"
     tools:context="de.hdm.project.billtracker.fragments.CategoriesFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+
+
+    <LinearLayout
+        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="Categories Fragment Tab" />
+        android:layout_height="match_parent">
+
+        <ListView
+            android:id="@+id/categoryList"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+    </LinearLayout>
 
 </FrameLayout>

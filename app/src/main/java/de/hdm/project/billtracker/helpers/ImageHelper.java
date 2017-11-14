@@ -28,30 +28,6 @@ public class ImageHelper {
 
     }
 
-    public File getImageFile() {
-        return imageFile;
-    }
-
-    public void setImageFile(File imageFile) {
-        this.imageFile = imageFile;
-    }
-
-    public String getImageName() {
-        return imageName;
-    }
-
-    public void setImageName(String imageName) {
-        this.imageName = imageName;
-    }
-
-    public String getImagePath() {
-        return imagePath;
-    }
-
-    public void setImagePath(String imagePath) {
-        this.imagePath = imagePath;
-    }
-
     public void createTempImageFile(Activity activity) {
         try {
             // Create an image file name
@@ -129,6 +105,30 @@ public class ImageHelper {
         byte[] decodedString = Base64.decode(encoding, Base64.DEFAULT);
 
         return BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+    }
+
+    public File getImageFile() {
+        return imageFile;
+    }
+
+    public void setImageFile(File imageFile) {
+        this.imageFile = imageFile;
+    }
+
+    public String getImageName() {
+        return imageName;
+    }
+
+    public void setImageName(String imageName) {
+        this.imageName = imageName;
+    }
+
+    public String getImagePath() {
+        return imagePath;
+    }
+
+    public void setImagePath(String imagePath) {
+        this.imagePath = imagePath;
     }
 
 }

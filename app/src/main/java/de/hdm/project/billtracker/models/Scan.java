@@ -1,5 +1,8 @@
 package de.hdm.project.billtracker.models;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 public class Scan {
 
     private String id;
@@ -85,6 +88,13 @@ public class Scan {
 
     public void setImageData(String imageData) {
         this.imageData = imageData;
+    }
+
+    public String printDate() {
+        Date d = new Date(this.date);
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
+        String date = dateFormat.format(d);
+        return date;
     }
 
 }
