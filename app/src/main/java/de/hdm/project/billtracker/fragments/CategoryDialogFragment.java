@@ -2,10 +2,8 @@ package de.hdm.project.billtracker.fragments;
 
 import android.app.Activity;
 import android.app.Dialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import android.support.v4.app.DialogFragment;
@@ -15,23 +13,28 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
-import android.widget.LinearLayout;
-import android.widget.RadioButton;
 import android.widget.TextView;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.ValueEventListener;
+
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import de.hdm.project.billtracker.R;
+import de.hdm.project.billtracker.helpers.FirebaseDatabaseHelper;
 
 public class CategoryDialogFragment extends DialogFragment {
 
-    AutoCompleteTextView autocompleteCategory;
-    LinearLayout radioGroupLayout;
-    List<String> categoriesList;
-    List<RadioButton> categoryRadioButtons;
-    TextView errorTextView;
-    SharedPreferences CATEGORY_PREF;
+    private View view;
+    private AutoCompleteTextView autocompleteCategory;
+    private List<String> categories;
+    private TextView errorTextView;
+
+    private FirebaseDatabaseHelper fDatabase;
+    private String userUID;
 
     public static CategoryDialogFragment newInstance(int num) {
         CategoryDialogFragment dialogFragment = new CategoryDialogFragment();
@@ -45,25 +48,15 @@ public class CategoryDialogFragment extends DialogFragment {
     public Dialog onCreateDialog(final Bundle savedInstanceState) {
         final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
+        fDatabase = new FirebaseDatabaseHelper();
+        userUID = fDatabase.getAuth().getCurrentUser().getUid();
+
         // Get the layout inflater
         LayoutInflater inflater = getActivity().getLayoutInflater();
 
-        View view = inflater.inflate(R.layout.fragment_category_dialog, null);
+        view = inflater.inflate(R.layout.fragment_category_dialog, null);
 
-        // radioGroupLayout = view.findViewById(R.id.radioGroupLayout);
-
-        // Retrieve categories from shared preference
-        Context context = getActivity().getBaseContext();
-        CATEGORY_PREF = context.getSharedPreferences(getString(R.string.category_preference), Context.MODE_PRIVATE);
-
-        categoriesList = new ArrayList(CATEGORY_PREF.getAll().values());
-        // createRadioButton();
-
-        autocompleteCategory = view.findViewById(R.id.autocompleteCategory);
-
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity().getBaseContext(), R.layout.category_autocomplete, R.id.autoTextView, categoriesList);
-
-        autocompleteCategory.setAdapter(adapter);
+        initAutoCompleteTextView();
 
         errorTextView = view.findViewById(R.id.errorTextView);
 
@@ -74,7 +67,7 @@ public class CategoryDialogFragment extends DialogFragment {
                 .setPositiveButton("Save", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int i) {
-
+                        // Overridden in onStart()
                     }
                 })
                 .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -97,20 +90,12 @@ public class CategoryDialogFragment extends DialogFragment {
             positiveButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    String categoryString = autocompleteCategory.getText().toString().toUpperCase();
+                    String category = autocompleteCategory.getText().toString().toUpperCase();
 
                     if (autocompleteCategory.getText().toString().isEmpty()) {
                         errorTextView.setText("Please enter a valid category.");
                         return;
                     } else {
-                        // Save category in shared preference
-                        boolean categoryExists = CATEGORY_PREF.contains(categoryString);
-                        if (!categoryExists) {
-                            SharedPreferences.Editor editor = CATEGORY_PREF.edit();
-                            editor.putString(categoryString, categoryString);
-                            editor.commit();
-                        }
-
                         // Send the positive button event back to the host activity
                         getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, getIntent());
                         dismiss();
@@ -122,37 +107,31 @@ public class CategoryDialogFragment extends DialogFragment {
 
     private Intent getIntent() {
         Intent intent = getActivity().getIntent();
-        /*for (RadioButton radio: categoryRadioButtons) {
-            if (radio.isChecked()) {
-                intent.putExtra("category", radio.getText().toString());
-                return intent;
-            }
-        }*/
         intent.putExtra("category", autocompleteCategory.getText().toString().toUpperCase());
         return intent;
     }
 
-    /*private void createRadioButton() {
-        categoryRadioButtons = new ArrayList<>();
-        RadioGroup rg = new RadioGroup(getActivity().getBaseContext());
-        rg.setOrientation(RadioGroup.VERTICAL);
-        int id = 0;
-        for (String category : categoriesList) {
-            id++;
-            final RadioButton RADIO = new RadioButton(getActivity().getBaseContext());
-            RADIO.setText(category.toString());
-            RADIO.setId(id);
-            RADIO.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    radioCategory = RADIO.getText().toString();
-                    System.out.println(radioCategory);
+    private void initAutoCompleteTextView() {
+        fDatabase.getDbCategories().child(userUID).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                categories = new ArrayList<>();
+                Iterator<DataSnapshot> iter = dataSnapshot.getChildren().iterator();
+                while (iter.hasNext()) {
+                    categories.add(iter.next().getValue().toString());
                 }
-            });
-            categoryRadioButtons.add(RADIO);
-            rg.addView(RADIO);
-        }
-        radioGroupLayout.addView(rg);
-    }*/
+                autocompleteCategory = view.findViewById(R.id.autocompleteCategory);
+
+                ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity().getBaseContext(), R.layout.category_autocomplete, R.id.autoTextView, categories);
+
+                autocompleteCategory.setAdapter(adapter);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
 
 }
