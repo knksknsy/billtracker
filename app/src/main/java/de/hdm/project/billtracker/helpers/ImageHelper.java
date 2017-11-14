@@ -24,16 +24,10 @@ public class ImageHelper {
     private File imageFile;
     private String imageName;
     private String imagePath;
+    private String thumbnailPath;
 
     public ImageHelper(Activity activity) {
         this.activity = activity;
-    }
-
-    public ImageHelper(Activity activity, String imagePath) {
-        this.activity = activity;
-        this.imagePath = imagePath;
-        this.imageFile = new File(imagePath);
-        this.imageName = imagePath.replace(imageFile.getParent() + "/", "");
     }
 
     public void createTempImageFile() {
@@ -59,7 +53,7 @@ public class ImageHelper {
     }
 
     public void saveImageOnDevice(String category) {
-        String outputPath = imageFile.toString().replace(imageName, "") + category;
+        String outputPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).toString() + "/Billtracker/" + category;
 
         File outDir = new File(outputPath);
         if (!outDir.exists()) {
@@ -72,8 +66,9 @@ public class ImageHelper {
         String outFile = null;
 
         try {
-            in = new FileInputStream(imageFile.toString());
+            in = new FileInputStream(imageFile);
             outFile = outputPath + "/" + imageName;
+            System.out.println("OUTPUT FILE: " + outFile);
             out = new FileOutputStream(outFile);
 
             byte[] buffer = new byte[1024];
@@ -132,6 +127,7 @@ public class ImageHelper {
             thumbnail.compress(Bitmap.CompressFormat.JPEG, 100, bytearroutstream);
 
             File tmpDir = activity.getExternalFilesDir(Environment.DIRECTORY_PICTURES + "/tmpImages");
+            thumbnailPath = tmpDir + "/" + imageName;
             out = new FileOutputStream(tmpDir + "/" + imageName);
             thumbnail.compress(Bitmap.CompressFormat.JPEG, 100, out);
         } catch (IOException ex) {
@@ -177,6 +173,14 @@ public class ImageHelper {
 
     public void setImagePath(String imagePath) {
         this.imagePath = imagePath;
+    }
+
+    public String getThumbnailPath() {
+        return thumbnailPath;
+    }
+
+    public void setThumbnailPath(String thumbnailPath) {
+        this.thumbnailPath = thumbnailPath;
     }
 
 }
