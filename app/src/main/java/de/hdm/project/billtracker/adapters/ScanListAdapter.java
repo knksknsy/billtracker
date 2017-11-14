@@ -50,7 +50,7 @@ public class ScanListAdapter extends ArrayAdapter<Scan> {
                 if (thumbnail.getDrawable() != null) {
                     ((BitmapDrawable) thumbnail.getDrawable()).getBitmap().recycle();
                 }
-                File imgFile = new File(s.getImagePath());
+                File imgFile = new File(s.getThumbnailPath());
 
                 if (imgFile.exists()) {
                     Bitmap bitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());

@@ -26,7 +26,10 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight=".33"
-            android:gravity="left" />
+            android:gravity="left"
+            android:layout_marginTop="15dp"
+            android:layout_marginStart="15dp"
+            android:textStyle="bold"/>
 
         <TextView
             android:id="@+id/dateText"
