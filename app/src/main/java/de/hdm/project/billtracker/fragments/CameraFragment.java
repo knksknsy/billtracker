@@ -118,7 +118,7 @@ public class CameraFragment extends Fragment {
         fDatabaseHelper = new FirebaseDatabaseHelper();
 
         // Helper class for saving and moving images on device, encoding and decoding of image
-        imageHelper = new ImageHelper();
+        imageHelper = new ImageHelper(getActivity());
 
         if (savedInstanceState != null) {
             mStackLevel = savedInstanceState.getInt("level");
@@ -283,7 +283,7 @@ public class CameraFragment extends Fragment {
             int rotation = getActivity().getWindowManager().getDefaultDisplay().getRotation();
             captureBuilder.set(CaptureRequest.JPEG_ORIENTATION, ORIENTATIONS.get(rotation));
 
-            imageHelper.createTempImageFile(getActivity());
+            imageHelper.createTempImageFile();
 
             // Continue only if the File was successfully created
             if (imageHelper.getImageFile() != null) {

@@ -1,6 +1,7 @@
 package de.hdm.project.billtracker.helpers;
 
 import android.app.Activity;
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Environment;
@@ -19,16 +20,23 @@ import java.util.Date;
 
 public class ImageHelper {
 
+    private Activity activity;
     private File imageFile;
     private String imageName;
     private String imagePath;
 
-
-    public ImageHelper() {
-
+    public ImageHelper(Activity activity) {
+        this.activity = activity;
     }
 
-    public void createTempImageFile(Activity activity) {
+    public ImageHelper(Activity activity, String imagePath) {
+        this.activity = activity;
+        this.imagePath = imagePath;
+        this.imageFile = new File(imagePath);
+        this.imageName = imagePath.replace(imageFile.getParent() + "/", "");
+    }
+
+    public void createTempImageFile() {
         try {
             // Create an image file name
             String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
@@ -85,6 +93,7 @@ public class ImageHelper {
             new File(imageFile.toString()).delete();
 
             imagePath = outFile;
+            this.saveThumbnail();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (Exception e2) {
@@ -105,6 +114,45 @@ public class ImageHelper {
         byte[] decodedString = Base64.decode(encoding, Base64.DEFAULT);
 
         return BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+    }
+
+    private void saveThumbnail() {
+        Bitmap thumbnail;
+        FileOutputStream out = null;
+        FileInputStream fis = null;
+        try {
+            final int THUMBNAIL_SIZE = pxFromDp(115);
+            fis = new FileInputStream(imagePath);
+            thumbnail = BitmapFactory.decodeStream(fis);
+
+            thumbnail = Bitmap.createScaledBitmap(thumbnail,
+                    THUMBNAIL_SIZE, THUMBNAIL_SIZE, false);
+
+            ByteArrayOutputStream bytearroutstream = new ByteArrayOutputStream();
+            thumbnail.compress(Bitmap.CompressFormat.JPEG, 100, bytearroutstream);
+
+            File tmpDir = activity.getExternalFilesDir(Environment.DIRECTORY_PICTURES + "/tmpImages");
+            out = new FileOutputStream(tmpDir + "/" + imageName);
+            thumbnail.compress(Bitmap.CompressFormat.JPEG, 100, out);
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        } finally {
+            try {
+                if (out != null) {
+                    out.close();
+                }
+                if (fis != null) {
+                    fis.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+    }
+
+    private int pxFromDp(float dp) {
+        return Math.round(dp * activity.getBaseContext().getResources().getDisplayMetrics().density);
     }
 
     public File getImageFile() {
