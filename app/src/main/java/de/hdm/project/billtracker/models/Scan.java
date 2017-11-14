@@ -14,12 +14,15 @@ public class Scan {
     private String imagePath;
     private String imageData;
 
-    public Scan(String category, long date, Double sum, String imagePath) {
-        // setTitle(title);
+    private String thumbnailPath;
+
+    public Scan(String title, String category, long date, Double sum, String imagePath, String thumbnailPath) {
+        setTitle(title);
         setDate(date);
         setCategory(category);
         setSum(sum);
         setImagePath(imagePath);
+        setThumbnailPath(thumbnailPath);
     }
 
     public Scan() {
@@ -88,6 +91,14 @@ public class Scan {
 
     public void setImageData(String imageData) {
         this.imageData = imageData;
+    }
+
+    public String getThumbnailPath() {
+        return thumbnailPath;
+    }
+
+    public void setThumbnailPath(String thumbnailPath) {
+        this.thumbnailPath = thumbnailPath;
     }
 
     public String printDate() {
