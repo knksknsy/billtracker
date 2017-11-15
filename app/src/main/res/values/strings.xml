@@ -7,5 +7,6 @@
     <string name="take_picture">Take Picture</string>
     <string name="title_category_dialog">Choose a category</string>
     <string name="category_preference">CategoryPreference</string>
+    <string name="title_activity_bill_details">BillDetailsActivity</string>
 
 </resources>
