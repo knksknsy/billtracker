@@ -50,10 +50,6 @@ import android.util.Size;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-
 import java.io.FileOutputStream;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
@@ -61,10 +57,9 @@ import java.util.Arrays;
 import java.util.List;
 
 import de.hdm.project.billtracker.helpers.FirebaseDatabaseHelper;
-import de.hdm.project.billtracker.models.Category;
+import de.hdm.project.billtracker.models.Bill;
 import de.hdm.project.billtracker.helpers.ImageHelper;
 import de.hdm.project.billtracker.R;
-import de.hdm.project.billtracker.models.Scan;
 
 public class CameraFragment extends Fragment {
 
@@ -215,7 +210,7 @@ public class CameraFragment extends Fragment {
                     Double sum = Double.parseDouble(totalSum.getText().toString());
                     totalSum.getText().clear();
 
-                    Scan scan = new Scan(
+                    Bill bill = new Bill(
                             title,
                             category,
                             new Date().getTime(),
@@ -223,13 +218,13 @@ public class CameraFragment extends Fragment {
                             imageHelper.getImagePath(),
                             imageHelper.getThumbnailPath()
                     );
-                    scan.setImageData(imageHelper.imageToBase64());
+                    bill.setImageData(imageHelper.imageToBase64());
 
-                    // Upload scan to firebase
-                    boolean uploadSuccessful = fDatabaseHelper.writeBill(scan);
+                    // Upload bill to firebase
+                    boolean uploadSuccessful = fDatabaseHelper.writeBill(bill);
 
                     if (uploadSuccessful) {
-                        Toast.makeText(getActivity().getBaseContext(), "Picture saved in " + scan.getCategory() + " category.", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getActivity().getBaseContext(), "Picture saved in " + bill.getCategory() + " category.", Toast.LENGTH_SHORT).show();
                     } else {
                         Toast.makeText(getActivity().getBaseContext(), "Picture was not uploaded to the Cloud.", Toast.LENGTH_SHORT).show();
                     }

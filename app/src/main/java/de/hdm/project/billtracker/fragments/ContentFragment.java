@@ -15,7 +15,7 @@ import de.hdm.project.billtracker.R;
 public class ContentFragment extends Fragment {
 
     private CategoriesFragment categories;
-    private ScansFragment scans;
+    private BillsFragment scans;
     private TabLayout tabs;
 
     public static ContentFragment newInstance() {
@@ -71,9 +71,9 @@ public class ContentFragment extends Fragment {
 
     private void setupTabLayout() {
         categories = new CategoriesFragment();
-        scans = new ScansFragment();
+        scans = new BillsFragment();
         tabs.addTab(tabs.newTab().setText("Categories"), true);
-        tabs.addTab(tabs.newTab().setText("All Scans"));
+        tabs.addTab(tabs.newTab().setText("All Bills"));
     }
 
     private void replaceFragment(Fragment fragment) {

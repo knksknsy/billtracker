@@ -4,7 +4,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
-import de.hdm.project.billtracker.models.Scan;
+import de.hdm.project.billtracker.models.Bill;
 
 public class FirebaseDatabaseHelper {
 
@@ -20,19 +20,19 @@ public class FirebaseDatabaseHelper {
         dbImages = FirebaseDatabase.getInstance().getReference("images");
     }
 
-    public boolean writeBill(Scan scan) {
+    public boolean writeBill(Bill bill) {
         String userUID = auth.getCurrentUser().getUid();
         if (userUID != null) {
-            dbCategories.child(userUID).child(scan.getCategory()).setValue(scan.getCategory());
+            dbCategories.child(userUID).child(bill.getCategory()).setValue(bill.getCategory());
 
-            scan.setId(dbBills.push().getKey());
-            scan.setImageId(dbImages.push().getKey());
+            bill.setId(dbBills.push().getKey());
+            bill.setImageId(dbImages.push().getKey());
 
-            dbImages.child(userUID).child(scan.getImageId()).setValue(scan.getImageData());
+            dbImages.child(userUID).child(bill.getImageId()).setValue(bill.getImageData());
 
-            scan.setImageData(null);
+            bill.setImageData(null);
 
-            dbBills.child(userUID).child(scan.getCategory()).child(scan.getId()).setValue(scan);
+            dbBills.child(userUID).child(bill.getCategory()).child(bill.getId()).setValue(bill);
 
 
             return true;
