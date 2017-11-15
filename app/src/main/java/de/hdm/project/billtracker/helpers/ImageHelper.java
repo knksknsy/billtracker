@@ -4,6 +4,10 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
+import android.media.ExifInterface;
+import android.media.Image;
+import android.media.ImageReader;
 import android.os.Environment;
 import android.util.Base64;
 
@@ -15,8 +19,11 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.ByteBuffer;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+
+import de.hdm.project.billtracker.models.Bill;
 
 public class ImageHelper {
 
@@ -30,25 +37,48 @@ public class ImageHelper {
         this.activity = activity;
     }
 
-    public void createTempImageFile() {
-        try {
-            // Create an image file name
-            String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-            String imageFileName = "JPEG_" + timeStamp + "_";
-            File storageDir = activity.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-            String suffix = ".jpg";
-            File image = File.createTempFile(
-                    imageFileName,   // prefix
-                    suffix,          // suffix
-                    storageDir       // directory
-            );
+    public ImageHelper(Activity activity, Bill bill) {
+        this.activity = activity;
+        this.imageFile = new File(bill.getImagePath());
+        this.imagePath = bill.getImagePath();
+        this.thumbnailPath = bill.getThumbnailPath();
+    }
 
-            // Save a file: path for use with ACTION_VIEW intents
-            imageName = image.getAbsolutePath().replace(image.getParent() + "/", "");
-            imageFile = image;
+    public void createImage(ImageReader reader) {
+        createTempImageFile();
+        Image image = null;
+        Bitmap bitmap = null;
+        OutputStream output = null;
+        try {
+            image = reader.acquireLatestImage();
+
+            bitmap = imageToBitmap(image);
+            bitmap = rotateBitmap(bitmap, 90);
+
+            if (bitmap != null) {
+                ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+
+                byte[] bytes = stream.toByteArray();
+
+                output = new FileOutputStream(imageFile);
+                output.write(bytes);
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
-            imageFile = null;
+        } finally {
+            if (image != null) {
+                image.close();
+            }
+            if (output != null) {
+                try {
+                    output.close();
+                } catch (IOException e2) {
+                    e2.printStackTrace();
+                }
+            }
         }
     }
 
@@ -109,6 +139,42 @@ public class ImageHelper {
         byte[] decodedString = Base64.decode(encoding, Base64.DEFAULT);
 
         return BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+    }
+
+    private void createTempImageFile() {
+        try {
+            // Create an image file name
+            String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+            String imageFileName = "JPEG_" + timeStamp + "_";
+            File storageDir = activity.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+            String suffix = ".jpg";
+            File image = File.createTempFile(
+                    imageFileName,   // prefix
+                    suffix,          // suffix
+                    storageDir       // directory
+            );
+
+            // Save a file: path for use with ACTION_VIEW intents
+            imageName = image.getAbsolutePath().replace(image.getParent() + "/", "");
+            imageFile = image;
+        } catch (IOException e) {
+            e.printStackTrace();
+            imageFile = null;
+        }
+    }
+
+    private Bitmap imageToBitmap(Image image) {
+        ByteBuffer buffer = image.getPlanes()[0].getBuffer();
+        byte[] bytes = new byte[buffer.capacity()];
+        buffer.get(bytes);
+
+        return BitmapFactory.decodeByteArray(bytes, 0, bytes.length, null);
+    }
+
+    private Bitmap rotateBitmap(Bitmap source, float angle) {
+        Matrix matrix = new Matrix();
+        matrix.postRotate(angle);
+        return Bitmap.createBitmap(source, 0, 0, source.getWidth(), source.getHeight(), matrix, true);
     }
 
     private void saveThumbnail() {

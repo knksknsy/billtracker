@@ -281,45 +281,11 @@ public class CameraFragment extends Fragment {
             int rotation = getActivity().getWindowManager().getDefaultDisplay().getRotation();
             captureBuilder.set(CaptureRequest.JPEG_ORIENTATION, ORIENTATIONS.get(rotation));
 
-            imageHelper.createTempImageFile();
-
-            // Continue only if the File was successfully created
-            if (imageHelper.getImageFile() != null) {
-                String authorities = getActivity().getApplicationContext().getPackageName() + ".fileprovider";
-                Uri photoURI = FileProvider.getUriForFile(getActivity().getBaseContext(), authorities, imageHelper.getImageFile());
-            }
-
             ImageReader.OnImageAvailableListener readerListener = new ImageReader.OnImageAvailableListener() {
                 @Override
                 public void onImageAvailable(ImageReader reader) {
-                    Image image = null;
-                    try {
-                        image = reader.acquireLatestImage();
-                        ByteBuffer buffer = image.getPlanes()[0].getBuffer();
-                        byte[] bytes = new byte[buffer.capacity()];
-                        buffer.get(bytes);
-                        save(bytes);
-                    } catch (FileNotFoundException e) {
-                        e.printStackTrace();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    } finally {
-                        if (image != null) {
-                            image.close();
-                        }
-                    }
-                }
-
-                private void save(byte[] bytes) throws IOException {
-                    OutputStream output = null;
-                    try {
-                        output = new FileOutputStream(imageHelper.getImageFile());
-                        output.write(bytes);
-                    } finally {
-                        if (output != null) {
-                            output.close();
-                        }
-                    }
+                    // Save image on device
+                    imageHelper.createImage(reader);
                 }
             };
 
@@ -457,7 +423,6 @@ public class CameraFragment extends Fragment {
 
     private void openCamera() {
         CameraManager manager = (CameraManager) getActivity().getSystemService(Context.CAMERA_SERVICE);
-        Log.e(TAG, "is camera open");
         try {
             cameraId = manager.getCameraIdList()[0];
             CameraCharacteristics characteristics = manager.getCameraCharacteristics(cameraId);
