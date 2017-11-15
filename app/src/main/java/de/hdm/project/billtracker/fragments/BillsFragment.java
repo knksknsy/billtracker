@@ -1,6 +1,8 @@
 package de.hdm.project.billtracker.fragments;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,6 +17,7 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 
 import de.hdm.project.billtracker.R;
+import de.hdm.project.billtracker.activities.BillDetailsActivity;
 import de.hdm.project.billtracker.adapters.BillListAdapter;
 import de.hdm.project.billtracker.helpers.FirebaseDatabaseHelper;
 import de.hdm.project.billtracker.models.Bill;
@@ -82,7 +85,7 @@ public class BillsFragment extends Fragment {
                 listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                     @Override
                     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                        // TODO: open ScanDetailViewActivity
+                        openBillDetailsActivity(bills.get(i));
                     }
                 });
             }
@@ -92,6 +95,12 @@ public class BillsFragment extends Fragment {
 
             }
         });
+    }
+
+    private void openBillDetailsActivity(Bill bill) {
+        Intent intent = new Intent(getActivity(), BillDetailsActivity.class);
+        intent.putExtra("bill", (Parcelable) bill);
+        startActivity(intent);
     }
 
 }

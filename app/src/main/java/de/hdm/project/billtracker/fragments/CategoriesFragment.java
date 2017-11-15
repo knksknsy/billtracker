@@ -1,6 +1,8 @@
 package de.hdm.project.billtracker.fragments;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,6 +18,7 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 
 import de.hdm.project.billtracker.R;
+import de.hdm.project.billtracker.activities.BillDetailsActivity;
 import de.hdm.project.billtracker.adapters.BillListAdapter;
 import de.hdm.project.billtracker.helpers.FirebaseDatabaseHelper;
 import de.hdm.project.billtracker.models.Bill;
@@ -25,6 +28,7 @@ public class CategoriesFragment extends Fragment {
     private FirebaseDatabaseHelper fDatabase;
     private ListView listView;
     private String userUID;
+    private ArrayList<Bill> bills;
 
     public static CategoriesFragment newInstance() {
         return new CategoriesFragment();
@@ -82,7 +86,7 @@ public class CategoriesFragment extends Fragment {
         fDatabase.getDbBills().child(userUID).child(category).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                ArrayList<Bill> bills = new ArrayList<>();
+                bills = new ArrayList<>();
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     Bill bill = snapshot.getValue(Bill.class);
                     bills.add(bill);
@@ -93,7 +97,7 @@ public class CategoriesFragment extends Fragment {
                 listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                     @Override
                     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                        // TODO open ScanDetailsActivity
+                        openBillDetailsActivity(bills.get(i));
                     }
                 });
             }
@@ -103,6 +107,12 @@ public class CategoriesFragment extends Fragment {
 
             }
         });
+    }
+
+    private void openBillDetailsActivity(Bill bill) {
+        Intent intent = new Intent(getActivity(), BillDetailsActivity.class);
+        intent.putExtra("bill", (Parcelable) bill);
+        startActivity(intent);
     }
 
 }
