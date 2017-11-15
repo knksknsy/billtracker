@@ -5,20 +5,27 @@
     <item
         android:id="@+id/navigation_chart"
         android:icon="@drawable/ic_pie_chart_black_24dp"
-        android:state_checked="true" android:color="@android:color/holo_blue_bright"
-        android:title=" "
+        android:state_checked="true"
+        android:color="@android:color/holo_blue_bright"
+        android:title="Charts"
+        android:layout_gravity="center_vertical"
+        android:gravity="center"
         />
 
     <item
         android:id="@+id/navigation_camera"
         android:icon="@drawable/ic_photo_camera_black_24dp"
-        android:title=" "
+        android:title="Scan Bill"
+        android:layout_gravity="center_vertical"
+        android:gravity="center"
         />
 
     <item
         android:id="@+id/navigation_content"
         android:icon="@drawable/ic_folder_black_24dp"
-        android:title=" "
+        android:title="Bills"
+        android:layout_gravity="center_vertical"
+        android:gravity="center"
         />
         <!-- android:title="@string/title_chart" -->
 
