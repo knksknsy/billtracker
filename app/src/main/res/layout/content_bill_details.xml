@@ -17,27 +17,52 @@
             android:id="@+id/billImageView"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight=".6"
+            android:layout_weight=".5"
             android:adjustViewBounds="true"
-            android:scaleType="centerCrop"/>
+            android:scaleType="centerCrop" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight=".1"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight=".5"
+                android:gravity="center"
+                android:text="Image Taken" />
+
+            <TextView
+                android:id="@+id/date"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight=".5"
+                android:gravity="center" />
+
+        </LinearLayout>
 
         <EditText
             android:id="@+id/title"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight=".1" />
+            android:layout_weight=".1"
+            android:hint="Title" />
 
         <EditText
-            android:id="@+id/date"
+            android:id="@+id/category"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight=".1" />
+            android:layout_weight=".1"
+            android:hint="Category" />
 
         <EditText
             android:id="@+id/sum"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight=".1" />
+            android:layout_weight=".1"
+            android:hint="Sum Total" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -49,13 +74,15 @@
                 android:id="@+id/saveButton"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_weight=".5" />
+                android:layout_weight=".5"
+                android:text="Save" />
 
             <Button
                 android:id="@+id/deleteButton"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_weight=".5" />
+                android:layout_weight=".5"
+                android:text="Delete" />
 
         </LinearLayout>
 
