@@ -14,19 +14,16 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 
 import de.hdm.project.billtracker.R;
-import de.hdm.project.billtracker.adapters.ScanListAdapter;
+import de.hdm.project.billtracker.adapters.BillListAdapter;
 import de.hdm.project.billtracker.helpers.FirebaseDatabaseHelper;
-import de.hdm.project.billtracker.models.Scan;
+import de.hdm.project.billtracker.models.Bill;
 
 public class CategoriesFragment extends Fragment {
 
     private FirebaseDatabaseHelper fDatabase;
     private ListView listView;
-    private String[] categories;
-    private ArrayList<Scan> scans;
     private String userUID;
 
     public static CategoriesFragment newInstance() {
@@ -57,18 +54,19 @@ public class CategoriesFragment extends Fragment {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 ArrayList<String> c = new ArrayList<>();
-                Iterator<DataSnapshot> iter = dataSnapshot.getChildren().iterator();
-                while (iter.hasNext()) {
-                    c.add(iter.next().getValue().toString());
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    String category = snapshot.getValue(String.class);
+                    c.add(category);
                 }
-                categories = c.toArray(new String[0]);
+                final String[] categories = c.toArray(new String[0]);
+
                 ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity().getBaseContext(), android.R.layout.simple_list_item_1, android.R.id.text1, categories);
                 listView.setAdapter(adapter);
 
                 listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                     @Override
                     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                        initScansListView(categories[i]);
+                        initBillsListView(categories[i]);
                     }
                 });
             }
@@ -80,16 +78,16 @@ public class CategoriesFragment extends Fragment {
         });
     }
 
-    private void initScansListView(String category) {
+    private void initBillsListView(String category) {
         fDatabase.getDbBills().child(userUID).child(category).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                scans = new ArrayList<>();
-                Iterator<DataSnapshot> iter = dataSnapshot.getChildren().iterator();
-                while (iter.hasNext()) {
-                    scans.add(iter.next().getValue(Scan.class));
+                ArrayList<Bill> bills = new ArrayList<>();
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    Bill bill = snapshot.getValue(Bill.class);
+                    bills.add(bill);
                 }
-                ScanListAdapter adapter = new ScanListAdapter(getActivity().getBaseContext(), R.layout.scan_list_row, scans);
+                BillListAdapter adapter = new BillListAdapter(getActivity().getBaseContext(), R.layout.bill_list_row, bills);
                 listView.setAdapter(adapter);
 
                 listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
