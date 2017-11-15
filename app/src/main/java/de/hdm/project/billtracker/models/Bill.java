@@ -1,9 +1,12 @@
 package de.hdm.project.billtracker.models;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class Bill {
+public class Bill implements Parcelable {
 
     private String id;
     private String title;
@@ -13,13 +16,12 @@ public class Bill {
     private String imageId;
     private String imagePath;
     private String imageData;
-
     private String thumbnailPath;
 
     public Bill(String title, String category, long date, Double sum, String imagePath, String thumbnailPath) {
         setTitle(title);
-        setDate(date);
         setCategory(category);
+        setDate(date);
         setSum(sum);
         setImagePath(imagePath);
         setThumbnailPath(thumbnailPath);
@@ -28,6 +30,46 @@ public class Bill {
     public Bill() {
 
     }
+
+    public Bill(Parcel in) {
+        id = in.readString();
+        title = in.readString();
+        category = in.readString();
+        date = in.readLong();
+        sum = in.readDouble();
+        imageId = in.readString();
+        imagePath = in.readString();
+        imageData = in.readString();
+        thumbnailPath = in.readString();
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(id);
+        dest.writeString(title);
+        dest.writeString(category);
+        dest.writeLong(date);
+        dest.writeDouble(sum);
+        dest.writeString(imageId);
+        dest.writeString(imagePath);
+        dest.writeString(imageData);
+        dest.writeString(thumbnailPath);
+    }
+
+    public static final Parcelable.Creator<Bill> CREATOR = new Parcelable.Creator<Bill>() {
+        public Bill createFromParcel(Parcel in) {
+            return new Bill(in);
+        }
+
+        public Bill[] newArray(int size) {
+            return new Bill[size];
+        }
+    };
 
     public String getId() {
         return id;
