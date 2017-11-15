@@ -2,6 +2,7 @@ package de.hdm.project.billtracker.fragments;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -68,9 +69,8 @@ public class CategoryDialogFragment extends DialogFragment {
                 }
                 autocompleteCategory = view.findViewById(R.id.autocompleteCategory);
 
-                if (categories.size() > 0) {
+                if (getActivity() != null && categories.size() > 0) {
                     ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(), R.layout.category_autocomplete, R.id.autoTextView, categories);
-
                     autocompleteCategory.setAdapter(adapter);
                 }
             }
@@ -115,8 +115,6 @@ public class CategoryDialogFragment extends DialogFragment {
             positiveButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    String category = autocompleteCategory.getText().toString().toUpperCase();
-
                     if (autocompleteCategory.getText().toString().isEmpty()) {
                         errorTextView.setText("Please enter a valid category.");
                         return;
