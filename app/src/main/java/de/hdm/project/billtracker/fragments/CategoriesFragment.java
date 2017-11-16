@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -80,7 +81,7 @@ public class CategoriesFragment extends Fragment {
         });
     }
 
-    private void initBillsListView(String category) {
+    private void initBillsListView(final String category) {
         fDatabase.getDbBills().child(fDatabase.getUserUID()).child(category).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -88,6 +89,13 @@ public class CategoriesFragment extends Fragment {
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     Bill bill = snapshot.getValue(Bill.class);
                     bills.add(bill);
+                }
+
+                if (bills.size() <= 0) {
+                    initCategoriesListView();
+                    if (getActivity() != null) {
+                        Toast.makeText(getActivity(), "Category " + category + " is empty.", Toast.LENGTH_SHORT).show();
+                    }
                 }
 
                 BillListAdapter adapter = new BillListAdapter(getActivity(), R.layout.bill_list_row, bills);
