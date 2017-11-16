@@ -8,13 +8,11 @@ import android.support.annotation.NonNull;
 import android.graphics.SurfaceTexture;
 import android.hardware.camera2.CameraCaptureSession;
 import android.hardware.camera2.CameraDevice;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.content.FileProvider;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.SparseIntArray;
@@ -25,9 +23,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.OutputStream;
 import java.util.Date;
 
 import android.Manifest;
@@ -41,7 +36,6 @@ import android.hardware.camera2.CameraMetadata;
 import android.hardware.camera2.CaptureRequest;
 import android.hardware.camera2.TotalCaptureResult;
 import android.hardware.camera2.params.StreamConfigurationMap;
-import android.media.Image;
 import android.media.ImageReader;
 import android.os.Handler;
 import android.os.HandlerThread;
@@ -50,8 +44,6 @@ import android.util.Size;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import java.io.FileOutputStream;
-import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -205,7 +197,7 @@ public class CameraFragment extends Fragment {
 
                     String category = data.getStringExtra("category");
                     String title = data.getStringExtra("title");
-                    imageHelper.saveImageOnDevice(category);
+                    imageHelper.moveImageOnDevice(category);
 
                     Double sum = Double.parseDouble(totalSum.getText().toString());
                     totalSum.getText().clear();

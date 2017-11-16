@@ -42,6 +42,7 @@ public class ImageHelper {
         this.imageFile = new File(bill.getImagePath());
         this.imagePath = bill.getImagePath();
         this.thumbnailPath = bill.getThumbnailPath();
+        imageName = imagePath.replace(imageFile.getParent() + "/", "");
     }
 
     public void createImage(ImageReader reader) {
@@ -82,7 +83,7 @@ public class ImageHelper {
         }
     }
 
-    public void saveImageOnDevice(String category) {
+    public void moveImageOnDevice(String category) {
         String outputPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).toString() + "/Billtracker/" + category;
 
         File outDir = new File(outputPath);
@@ -123,6 +124,13 @@ public class ImageHelper {
             e.printStackTrace();
         } catch (Exception e2) {
             e2.printStackTrace();
+        }
+    }
+
+    public void deleteImageOnDevice(String path) {
+        File dir = new File(path);
+        if (!dir.exists()) {
+            dir.delete();
         }
     }
 
