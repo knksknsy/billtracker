@@ -129,7 +129,7 @@ public class ImageHelper {
 
     public void deleteImageOnDevice(String path) {
         File dir = new File(path);
-        if (!dir.exists()) {
+        if (dir.exists()) {
             dir.delete();
         }
     }
