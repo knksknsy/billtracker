@@ -19,60 +19,68 @@ import de.hdm.project.billtracker.models.Bill;
 
 public class BillListAdapter extends ArrayAdapter<Bill> {
 
+    private List<Bill> bills;
+
     public BillListAdapter(Context context, int textViewResourceId) {
         super(context, textViewResourceId);
     }
 
     public BillListAdapter(Context context, int resource, List<Bill> bills) {
         super(context, resource, bills);
+        this.bills = bills;
     }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
+        if (getCount() > 0) {
+            View v = convertView;
 
-        View v = convertView;
+            if (v == null) {
+                LayoutInflater vi;
+                vi = LayoutInflater.from(getContext());
+                v = vi.inflate(R.layout.bill_list_row, null);
+            }
 
-        if (v == null) {
-            LayoutInflater vi;
-            vi = LayoutInflater.from(getContext());
-            v = vi.inflate(R.layout.bill_list_row, null);
-        }
+            Bill s = getItem(position);
 
-        Bill s = getItem(position);
+            if (s != null) {
+                ImageView thumbnail = (ImageView) v.findViewById(R.id.thumbnail);
+                TextView titleText = (TextView) v.findViewById(R.id.titleText);
+                TextView dateText = (TextView) v.findViewById(R.id.dateText);
+                TextView sumText = (TextView) v.findViewById(R.id.sumText);
 
-        if (s != null) {
-            ImageView thumbnail = (ImageView) v.findViewById(R.id.thumbnail);
-            TextView titleText = (TextView) v.findViewById(R.id.titleText);
-            TextView dateText = (TextView) v.findViewById(R.id.dateText);
-            TextView sumText = (TextView) v.findViewById(R.id.sumText);
+                if (thumbnail != null) {
+                    if (thumbnail.getDrawable() != null) {
+                        ((BitmapDrawable) thumbnail.getDrawable()).getBitmap().recycle();
+                    }
+                    File imgFile = new File(s.getThumbnailPath());
 
-            if (thumbnail != null) {
-                if (thumbnail.getDrawable() != null) {
-                    ((BitmapDrawable) thumbnail.getDrawable()).getBitmap().recycle();
+                    if (imgFile.exists()) {
+                        Bitmap bitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
+                        thumbnail.setImageBitmap(bitmap);
+                    }
                 }
-                File imgFile = new File(s.getThumbnailPath());
 
-                if (imgFile.exists()) {
-                    Bitmap bitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
-                    thumbnail.setImageBitmap(bitmap);
+                if (titleText != null) {
+                    titleText.setText(s.getTitle());
+                }
+
+                if (dateText != null) {
+                    dateText.setText(s.printDate());
+                }
+
+                if (sumText != null) {
+                    // TODO save user currency
+                    sumText.setText("Sum: " + String.valueOf(s.getSum()) + " €");
                 }
             }
-
-            if (titleText != null) {
-                titleText.setText(s.getTitle());
-            }
-
-            if (dateText != null) {
-                dateText.setText(s.printDate());
-            }
-
-            if (sumText != null) {
-                // TODO save user currency
-                sumText.setText("Sum: " + String.valueOf(s.getSum()) + " €");
-            }
+            return v;
         }
+        return null;
+    }
 
-        return v;
+    public int getCount() {
+        return bills.size();
     }
 
 }
