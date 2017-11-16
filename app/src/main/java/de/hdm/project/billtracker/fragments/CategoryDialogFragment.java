@@ -36,7 +36,6 @@ public class CategoryDialogFragment extends DialogFragment {
     private TextView errorTextView;
 
     private FirebaseDatabaseHelper fDatabase;
-    private String userUID;
 
     public static CategoryDialogFragment newInstance(int num) {
         CategoryDialogFragment dialogFragment = new CategoryDialogFragment();
@@ -51,7 +50,6 @@ public class CategoryDialogFragment extends DialogFragment {
         final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
         fDatabase = new FirebaseDatabaseHelper();
-        userUID = fDatabase.getAuth().getCurrentUser().getUid();
 
         // Get the layout inflater
         LayoutInflater inflater = getActivity().getLayoutInflater();
@@ -59,7 +57,7 @@ public class CategoryDialogFragment extends DialogFragment {
         final View view = inflater.inflate(R.layout.fragment_category_dialog, null);
 
         // Fetch categories from firebase for auto completion
-        fDatabase.getDbCategories().child(userUID).addValueEventListener(new ValueEventListener() {
+        fDatabase.getDbCategories().child(fDatabase.getUserUID()).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 categories = new ArrayList<>();

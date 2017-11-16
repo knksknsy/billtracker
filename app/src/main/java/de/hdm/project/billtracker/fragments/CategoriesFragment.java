@@ -27,7 +27,6 @@ public class CategoriesFragment extends Fragment {
 
     private FirebaseDatabaseHelper fDatabase;
     private ListView listView;
-    private String userUID;
     private ArrayList<Bill> bills;
 
     public static CategoriesFragment newInstance() {
@@ -44,7 +43,6 @@ public class CategoriesFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_categories, container, false);
 
         fDatabase = new FirebaseDatabaseHelper();
-        userUID = fDatabase.getAuth().getCurrentUser().getUid();
 
         listView = view.findViewById(R.id.categoryList);
 
@@ -54,7 +52,7 @@ public class CategoriesFragment extends Fragment {
     }
 
     private void initCategoriesListView() {
-        fDatabase.getDbCategories().child(userUID).addValueEventListener(new ValueEventListener() {
+        fDatabase.getDbCategories().child(fDatabase.getUserUID()).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 ArrayList<String> c = new ArrayList<>();
@@ -64,7 +62,7 @@ public class CategoriesFragment extends Fragment {
                 }
                 final String[] categories = c.toArray(new String[0]);
 
-                ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity().getBaseContext(), android.R.layout.simple_list_item_1, android.R.id.text1, categories);
+                ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, android.R.id.text1, categories);
                 listView.setAdapter(adapter);
 
                 listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -83,7 +81,7 @@ public class CategoriesFragment extends Fragment {
     }
 
     private void initBillsListView(String category) {
-        fDatabase.getDbBills().child(userUID).child(category).addValueEventListener(new ValueEventListener() {
+        fDatabase.getDbBills().child(fDatabase.getUserUID()).child(category).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 bills = new ArrayList<>();
@@ -91,7 +89,8 @@ public class CategoriesFragment extends Fragment {
                     Bill bill = snapshot.getValue(Bill.class);
                     bills.add(bill);
                 }
-                BillListAdapter adapter = new BillListAdapter(getActivity().getBaseContext(), R.layout.bill_list_row, bills);
+
+                BillListAdapter adapter = new BillListAdapter(getActivity(), R.layout.bill_list_row, bills);
                 listView.setAdapter(adapter);
 
                 listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {

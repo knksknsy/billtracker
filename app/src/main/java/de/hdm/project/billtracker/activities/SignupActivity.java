@@ -21,6 +21,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import de.hdm.project.billtracker.R;
+import de.hdm.project.billtracker.helpers.FirebaseDatabaseHelper;
 import de.hdm.project.billtracker.models.User;
 
 public class SignupActivity extends AppCompatActivity {
@@ -35,16 +36,14 @@ public class SignupActivity extends AppCompatActivity {
 
     ProgressDialog progressDialog;
 
-    private FirebaseAuth mAuth;
-    private DatabaseReference mDatabase;
+    private FirebaseDatabaseHelper fDatabase;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signup);
 
-        mAuth = FirebaseAuth.getInstance();
-        mDatabase = FirebaseDatabase.getInstance().getReference("users");
+        fDatabase = new FirebaseDatabaseHelper();
 
         emailText = (EditText) findViewById(R.id.input_email);
         passwordText = (EditText) findViewById(R.id.input_password);
@@ -75,7 +74,7 @@ public class SignupActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         // Check if user is signed in (non-null) and update UI accordingly
-        FirebaseUser currentUser = mAuth.getCurrentUser();
+        FirebaseUser currentUser = fDatabase.getAuth().getCurrentUser();
         if (currentUser != null) {
             onSignupSuccess();
         }
@@ -108,7 +107,7 @@ public class SignupActivity extends AppCompatActivity {
         String email = emailText.getText().toString();
         String password = passwordText.getText().toString();
 
-        mAuth.createUserWithEmailAndPassword(email, password)
+        fDatabase.getAuth().createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
@@ -116,10 +115,10 @@ public class SignupActivity extends AppCompatActivity {
                         if (task.isSuccessful()) {
                             Log.d(TAG, "createUserWithEmail:success");
 
-                            FirebaseUser fUser = mAuth.getCurrentUser();
+                            FirebaseUser fUser = fDatabase.getAuth().getCurrentUser();
                             User user = new User(fUser.getUid(), fUser.getEmail());
 
-                            mDatabase.child(user.getId()).setValue(user);
+                            fDatabase.getDbUsers().child(user.getId()).setValue(user);
 
                             updateUI(fUser);
                         } else {

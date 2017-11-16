@@ -9,19 +9,23 @@ import de.hdm.project.billtracker.models.Bill;
 public class FirebaseDatabaseHelper {
 
     private FirebaseAuth auth;
+    private String userUID;
+
+    private DatabaseReference dbUsers;
     private DatabaseReference dbCategories;
     private DatabaseReference dbBills;
     private DatabaseReference dbImages;
 
     public FirebaseDatabaseHelper() {
         auth = FirebaseAuth.getInstance();
+        userUID = auth.getCurrentUser().getUid();
+        dbUsers = FirebaseDatabase.getInstance().getReference("users");
         dbCategories = FirebaseDatabase.getInstance().getReference("categories");
         dbBills = FirebaseDatabase.getInstance().getReference("bills");
         dbImages = FirebaseDatabase.getInstance().getReference("images");
     }
 
     public boolean writeBill(Bill bill) {
-        String userUID = auth.getCurrentUser().getUid();
         if (userUID != null) {
             dbCategories.child(userUID).child(bill.getCategory()).setValue(bill.getCategory());
 
@@ -46,6 +50,22 @@ public class FirebaseDatabaseHelper {
 
     public void setAuth(FirebaseAuth auth) {
         this.auth = auth;
+    }
+
+    public String getUserUID() {
+        return userUID;
+    }
+
+    public void setUserUID(String userUID) {
+        this.userUID = userUID;
+    }
+
+    public DatabaseReference getDbUsers() {
+        return dbUsers;
+    }
+
+    public void setDbUsers(DatabaseReference dbUsers) {
+        this.dbUsers = dbUsers;
     }
 
     public DatabaseReference getDbCategories() {

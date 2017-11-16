@@ -26,7 +26,6 @@ public class BillsFragment extends Fragment {
 
     private FirebaseDatabaseHelper fDatabase;
     private ListView listView;
-    private String userUID;
     private ArrayList<Bill> bills;
 
     public static BillsFragment newInstance() {
@@ -43,7 +42,6 @@ public class BillsFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_bills, container, false);
 
         fDatabase = new FirebaseDatabaseHelper();
-        userUID = fDatabase.getAuth().getCurrentUser().getUid();
 
         listView = view.findViewById(R.id.scansList);
 
@@ -55,7 +53,7 @@ public class BillsFragment extends Fragment {
     }
 
     private void getFirebaseData() {
-        fDatabase.getDbCategories().child(userUID).addValueEventListener(new ValueEventListener() {
+        fDatabase.getDbCategories().child(fDatabase.getUserUID()).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot categoryDataSnapshot) {
                 for (DataSnapshot categorySnapshot : categoryDataSnapshot.getChildren()) {
@@ -72,7 +70,7 @@ public class BillsFragment extends Fragment {
     }
 
     private void initBillsByCategory(String category) {
-        fDatabase.getDbBills().child(userUID).child(category).addValueEventListener(new ValueEventListener() {
+        fDatabase.getDbBills().child(fDatabase.getUserUID()).child(category).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot scanDataSnapshot) {
                 for (DataSnapshot scanSnapshot : scanDataSnapshot.getChildren()) {
