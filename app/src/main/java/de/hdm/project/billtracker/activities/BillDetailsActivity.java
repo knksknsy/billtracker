@@ -1,5 +1,6 @@
 package de.hdm.project.billtracker.activities;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -80,6 +81,7 @@ public class BillDetailsActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 updateBill();
+                finish();
             }
         });
 
@@ -88,6 +90,7 @@ public class BillDetailsActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 deleteBill();
+                finish();
             }
         });
     }
@@ -117,6 +120,7 @@ public class BillDetailsActivity extends AppCompatActivity {
     }
 
     private void updateCategory(final String oldCategory) {
+        // TODO: close activity on saveButton pressed
         // move image on device into new category
         imageHelper.moveImageOnDevice(bill.getCategory());
         imageHelper.deleteImageOnDevice(bill.getThumbnailPath());
@@ -158,10 +162,12 @@ public class BillDetailsActivity extends AppCompatActivity {
     }
 
     private void deleteBill() {
+        // TODO: implement DeleteDialog
+        // TODO: close activity on DeleteDialog confirmed
         fDatabase.getDbBills().child(fDatabase.getUserUID()).child(bill.getCategory()).child(bill.getId()).removeValue();
+        fDatabase.getDbImages().child(fDatabase.getUserUID()).child(bill.getImageId()).removeValue();
         imageHelper.deleteImageOnDevice(bill.getImagePath());
         imageHelper.deleteImageOnDevice(bill.getThumbnailPath());
-        // TODO: delete image from images database
     }
 
 }
