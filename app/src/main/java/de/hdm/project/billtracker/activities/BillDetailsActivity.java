@@ -12,9 +12,15 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.ValueEventListener;
+
 import java.io.File;
+import java.util.ArrayList;
 
 import de.hdm.project.billtracker.R;
+import de.hdm.project.billtracker.helpers.FirebaseDatabaseHelper;
 import de.hdm.project.billtracker.helpers.ImageHelper;
 import de.hdm.project.billtracker.models.Bill;
 
@@ -22,6 +28,7 @@ public class BillDetailsActivity extends AppCompatActivity {
 
     private Bill bill;
     private ImageHelper imageHelper;
+    private FirebaseDatabaseHelper fDatabase;
 
     private ImageView imageView;
     private TextView dateText;
@@ -43,7 +50,11 @@ public class BillDetailsActivity extends AppCompatActivity {
         Intent i = getIntent();
         bill = (Bill) i.getParcelableExtra("bill");
 
+        fDatabase = new FirebaseDatabaseHelper();
+
         imageHelper = new ImageHelper(this, bill);
+        imageHelper.setImagePath(bill.getImagePath());
+        imageHelper.setThumbnailPath(bill.getThumbnailPath());
 
         imageView = (ImageView) findViewById(R.id.billImageView);
         File imgFile = new File(bill.getImagePath());
@@ -82,23 +93,75 @@ public class BillDetailsActivity extends AppCompatActivity {
     }
 
     private void updateBill() {
-        bill.setTitle(titleText.getText().toString());
+        String newTitle = titleText.getText().toString();
+        String oldCategory = bill.getCategory();
+        String newCategory = categoryText.getText().toString().toUpperCase();
+        String newSum = sumText.getText().toString();
 
-        if (!categoryText.getText().toString().isEmpty()) {
-            bill.setCategory(categoryText.getText().toString());
+        bill.setTitle(newTitle);
+
+        if (!newCategory.isEmpty() && !newCategory.equals(bill.getCategory())) {
+            bill.setCategory(newCategory);
         }
 
-        if (!sumText.getText().toString().isEmpty()) {
-            bill.setSum(Double.parseDouble(sumText.getText().toString()));
+        if (!newSum.isEmpty() && Double.parseDouble(newSum) != bill.getSum()) {
+            bill.setSum(Double.parseDouble(newSum));
         }
 
-        // TODO: save -> update bill on firebase
-        // TODO: delete -> delete bill on firebase and local image
-        // TODO: change category -> delete old bill on firebase + move image file locally + upload new bill on firebase
+        // category has changed
+        if (!newCategory.equals(oldCategory)) {
+            updateCategory(oldCategory);
+        } else {
+            fDatabase.getDbBills().child(fDatabase.getUserUID()).child(bill.getCategory()).child(bill.getId()).setValue(bill);
+        }
+    }
+
+    private void updateCategory(final String oldCategory) {
+        // move image on device into new category
+        imageHelper.moveImageOnDevice(bill.getCategory());
+        imageHelper.deleteImageOnDevice(bill.getThumbnailPath());
+
+        bill.setImagePath(imageHelper.getImagePath());
+        bill.setThumbnailPath(imageHelper.getThumbnailPath());
+
+        // check if new category already exists
+        fDatabase.getDbCategories().child(fDatabase.getUserUID()).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                ArrayList<String> categories = new ArrayList<>();
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    String category = snapshot.getValue(String.class);
+                    categories.add(category);
+                }
+                boolean exists = categories.contains(bill.getCategory());
+
+                if (!exists) {
+                    // create new category in firebase
+                    fDatabase.getDbCategories().child(fDatabase.getUserUID()).child(bill.getCategory()).setValue(bill.getCategory());
+                    // remove bill from old category
+                    fDatabase.getDbBills().child(fDatabase.getUserUID()).child(oldCategory).child(bill.getId()).removeValue();
+                    // create new bill
+                    fDatabase.getDbBills().child(fDatabase.getUserUID()).child(bill.getCategory()).child(bill.getId()).setValue(bill);
+                } else {
+                    // remove bill from old category
+                    fDatabase.getDbBills().child(fDatabase.getUserUID()).child(oldCategory).child(bill.getId()).removeValue();
+                    // create new bill
+                    fDatabase.getDbBills().child(fDatabase.getUserUID()).child(bill.getCategory()).child(bill.getId()).setValue(bill);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
     }
 
     private void deleteBill() {
-
+        fDatabase.getDbBills().child(fDatabase.getUserUID()).child(bill.getCategory()).child(bill.getId()).removeValue();
+        imageHelper.deleteImageOnDevice(bill.getImagePath());
+        imageHelper.deleteImageOnDevice(bill.getThumbnailPath());
+        // TODO: delete image from images database
     }
 
 }
