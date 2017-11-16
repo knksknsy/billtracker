@@ -104,7 +104,9 @@ public class CategoriesFragment extends Fragment {
                 listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                     @Override
                     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                        openBillDetailsActivity(bills.get(i));
+                        if (view != null) {
+                            openBillDetailsActivity(bills.get(i));
+                        }
                     }
                 });
             }
