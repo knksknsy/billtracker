@@ -1,6 +1,8 @@
 package de.hdm.project.billtracker.fragments;
 
 import android.app.Activity;
+import android.app.Instrumentation;
+import android.app.ProgressDialog;
 import android.support.v4.app.DialogFragment;
 import android.content.Intent;
 import android.support.annotation.Nullable;
@@ -44,10 +46,16 @@ import android.util.Size;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.ValueEventListener;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import de.hdm.project.billtracker.activities.LoginActivity;
 import de.hdm.project.billtracker.helpers.FirebaseDatabaseHelper;
 import de.hdm.project.billtracker.models.Bill;
 import de.hdm.project.billtracker.helpers.ImageHelper;
@@ -190,6 +198,9 @@ public class CameraFragment extends Fragment {
         switch (requestCode) {
             case DIALOG_FRAGMENT:
                 if (resultCode == Activity.RESULT_OK) {
+                    // show upload progress dialog
+                    final ProgressDialog progressDialog = ProgressDialog.show(getActivity(), "Upload", "Uploading image...", true, false);
+
                     pictureTaken = false;
                     saveButton.setEnabled(!isSumEmpty && pictureTaken);
                     photoButton.setText("Take Photo");
@@ -202,7 +213,7 @@ public class CameraFragment extends Fragment {
                     Double sum = Double.parseDouble(totalSum.getText().toString());
                     totalSum.getText().clear();
 
-                    Bill bill = new Bill(
+                    final Bill bill = new Bill(
                             title,
                             category,
                             new Date().getTime(),
@@ -213,13 +224,26 @@ public class CameraFragment extends Fragment {
                     bill.setImageData(imageHelper.imageToBase64());
 
                     // Upload bill to firebase
-                    boolean uploadSuccessful = fDatabaseHelper.writeBill(bill);
+                    fDatabaseHelper.writeBill(bill);
 
-                    if (uploadSuccessful) {
-                        Toast.makeText(getActivity().getBaseContext(), "Picture saved in " + bill.getCategory() + " category.", Toast.LENGTH_SHORT).show();
-                    } else {
-                        Toast.makeText(getActivity().getBaseContext(), "Picture was not uploaded to the Cloud.", Toast.LENGTH_SHORT).show();
-                    }
+                    // Listen for upload completed
+                    fDatabaseHelper.getDbImages().child(fDatabaseHelper.getUserUID()).child(bill.getImageId()).addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            progressDialog.dismiss();
+                            if (getActivity() != null) {
+                                Toast.makeText(getActivity(), "Picture saved in " + bill.getCategory() + " category.", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+                            progressDialog.dismiss();
+                            if (getActivity() != null) {
+                                Toast.makeText(getActivity(), "Picture was not uploaded to the Cloud.", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
 
                 } else if (resultCode == Activity.RESULT_CANCELED) {
                     Log.e(TAG, "negative Clicked!");
@@ -362,7 +386,7 @@ public class CameraFragment extends Fragment {
         @Override
         public void onCaptureCompleted(@NonNull CameraCaptureSession session, @NonNull CaptureRequest request, @NonNull TotalCaptureResult result) {
             super.onCaptureCompleted(session, request, result);
-            Toast.makeText(getActivity().getBaseContext(), "Saved: " + imageHelper.getImageFile(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), "Saved: " + imageHelper.getImageFile(), Toast.LENGTH_SHORT).show();
             createCameraPreview();
         }
     };
@@ -405,7 +429,7 @@ public class CameraFragment extends Fragment {
 
                 @Override
                 public void onConfigureFailed(@NonNull CameraCaptureSession session) {
-                    Toast.makeText(getActivity().getBaseContext(), "Configuration change", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), "Configuration change", Toast.LENGTH_SHORT).show();
                 }
             }, null);
         } catch (CameraAccessException e) {
@@ -462,7 +486,7 @@ public class CameraFragment extends Fragment {
         if (requestCode == REQUEST_CAMERA_PERMISSION) {
             if (grantResults[0] == PackageManager.PERMISSION_DENIED) {
                 // close the app
-                Toast.makeText(getActivity().getBaseContext(), "You can't use this app without granting permission", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), "You can't use this app without granting permission", Toast.LENGTH_SHORT).show();
                 System.exit(0);
             }
         }

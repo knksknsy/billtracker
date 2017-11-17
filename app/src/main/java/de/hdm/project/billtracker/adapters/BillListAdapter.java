@@ -50,9 +50,9 @@ public class BillListAdapter extends ArrayAdapter<Bill> {
                 TextView sumText = (TextView) v.findViewById(R.id.sumText);
 
                 if (thumbnail != null) {
-                    if (thumbnail.getDrawable() != null) {
+                    /*if (thumbnail.getDrawable() != null) {
                         ((BitmapDrawable) thumbnail.getDrawable()).getBitmap().recycle();
-                    }
+                    }*/
                     File imgFile = new File(s.getThumbnailPath());
 
                     if (imgFile.exists()) {

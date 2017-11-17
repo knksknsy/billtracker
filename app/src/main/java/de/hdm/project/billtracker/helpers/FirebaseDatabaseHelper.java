@@ -1,5 +1,9 @@
 package de.hdm.project.billtracker.helpers;
 
+import android.support.annotation.NonNull;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -25,23 +29,22 @@ public class FirebaseDatabaseHelper {
         dbImages = FirebaseDatabase.getInstance().getReference("images");
     }
 
-    public boolean writeBill(Bill bill) {
+    public void writeBill(final Bill bill) {
         if (userUID != null) {
             dbCategories.child(userUID).child(bill.getCategory()).setValue(bill.getCategory());
 
             bill.setId(dbBills.push().getKey());
             bill.setImageId(dbImages.push().getKey());
 
-            dbImages.child(userUID).child(bill.getImageId()).setValue(bill.getImageData());
+            dbImages.child(userUID).child(bill.getImageId()).setValue(bill.getImageData()).addOnCompleteListener(new OnCompleteListener<Void>() {
+                @Override
+                public void onComplete(@NonNull Task<Void> task) {
+                    bill.setImageData(null);
 
-            bill.setImageData(null);
-
-            dbBills.child(userUID).child(bill.getCategory()).child(bill.getId()).setValue(bill);
-
-
-            return true;
+                    dbBills.child(userUID).child(bill.getCategory()).child(bill.getId()).setValue(bill);
+                }
+            });
         }
-        return false;
     }
 
     public FirebaseAuth getAuth() {

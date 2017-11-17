@@ -63,8 +63,10 @@ public class CategoriesFragment extends Fragment {
                 }
                 final String[] categories = c.toArray(new String[0]);
 
-                ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, android.R.id.text1, categories);
-                listView.setAdapter(adapter);
+                if (getActivity() != null) {
+                    ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, android.R.id.text1, categories);
+                    listView.setAdapter(adapter);
+                }
 
                 listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                     @Override
@@ -98,8 +100,10 @@ public class CategoriesFragment extends Fragment {
                     }
                 }
 
-                BillListAdapter adapter = new BillListAdapter(getActivity(), R.layout.bill_list_row, bills);
-                listView.setAdapter(adapter);
+                if (getActivity() != null) {
+                    BillListAdapter adapter = new BillListAdapter(getActivity(), R.layout.bill_list_row, bills);
+                    listView.setAdapter(adapter);
+                }
 
                 listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                     @Override

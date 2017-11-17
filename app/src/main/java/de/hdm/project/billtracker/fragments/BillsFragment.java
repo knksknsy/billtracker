@@ -77,8 +77,10 @@ public class BillsFragment extends Fragment {
                     Bill bill = scanSnapshot.getValue(Bill.class);
                     bills.add(bill);
                 }
-                BillListAdapter adapter = new BillListAdapter(getActivity(), R.layout.bill_list_row, bills);
-                listView.setAdapter(adapter);
+                if (getActivity() != null) {
+                    BillListAdapter adapter = new BillListAdapter(getActivity(), R.layout.bill_list_row, bills);
+                    listView.setAdapter(adapter);
+                }
 
                 listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                     @Override

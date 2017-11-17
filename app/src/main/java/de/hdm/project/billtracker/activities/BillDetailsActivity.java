@@ -1,6 +1,5 @@
 package de.hdm.project.billtracker.activities;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -82,6 +81,7 @@ public class BillDetailsActivity extends AppCompatActivity {
             public void onClick(View v) {
                 updateBill();
                 finish();
+                // TODO: close activity on result -> reinitialize billsfragment view for updated values
             }
         });
 
@@ -91,6 +91,7 @@ public class BillDetailsActivity extends AppCompatActivity {
             public void onClick(View v) {
                 deleteBill();
                 finish();
+                // TODO: close activity on result -> reinitialize billsfragment view for updated values
             }
         });
     }
