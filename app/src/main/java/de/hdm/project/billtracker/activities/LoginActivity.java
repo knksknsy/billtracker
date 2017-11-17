@@ -92,10 +92,7 @@ public class LoginActivity extends AppCompatActivity {
 
         loginButton.setEnabled(false);
 
-        final ProgressDialog progressDialog = new ProgressDialog(LoginActivity.this, R.style.AppTheme_Dark_Dialog);
-        progressDialog.setIndeterminate(true);
-        progressDialog.setMessage("Authenticating...");
-        progressDialog.show();
+        final ProgressDialog progressDialog = ProgressDialog.show(LoginActivity.this, "Login", "Authenticating...", true, false);
 
         String email = emailText.getText().toString();
         String password = passwordText.getText().toString();
