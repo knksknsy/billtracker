@@ -187,7 +187,6 @@ public class CameraFragment extends Fragment {
                 DialogFragment dialogFrag = CategoryDialogFragment.newInstance(123);
                 dialogFrag.setTargetFragment(this, DIALOG_FRAGMENT);
                 dialogFrag.show(getFragmentManager().beginTransaction(), "dialog");
-
                 break;
         }
     }

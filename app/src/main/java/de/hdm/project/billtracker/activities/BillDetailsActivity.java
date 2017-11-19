@@ -13,12 +13,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.ValueEventListener;
-
 import java.io.File;
-import java.util.ArrayList;
 
 import de.hdm.project.billtracker.R;
 import de.hdm.project.billtracker.helpers.FirebaseDatabaseHelper;
@@ -54,10 +49,6 @@ public class BillDetailsActivity extends AppCompatActivity {
         bill = (Bill) i.getParcelableExtra("bill");
 
         fDatabase = new FirebaseDatabaseHelper(BillDetailsActivity.this);
-
-        imageHelper = new ImageHelper(this, bill);
-        imageHelper.setImagePath(bill.getImagePath());
-        imageHelper.setThumbnailPath(bill.getThumbnailPath());
 
         imageView = (ImageView) findViewById(R.id.billImageView);
         File imgFile = new File(bill.getImagePath());
@@ -107,11 +98,6 @@ public class BillDetailsActivity extends AppCompatActivity {
         });
     }
 
-    private void openImageInBrowser() {
-        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(bill.getDownloadUrl()));
-        startActivity(browserIntent);
-    }
-
     private void updateBill() {
         String newTitle = titleText.getText().toString();
         String oldCategory = bill.getCategory();
@@ -130,61 +116,19 @@ public class BillDetailsActivity extends AppCompatActivity {
 
         // category has changed
         if (!newCategory.equals(oldCategory)) {
-            updateCategory(oldCategory);
+            fDatabase.updateCategory(bill, oldCategory);
         } else {
-            fDatabase.getDbBills().child(fDatabase.getUserUID()).child(bill.getCategory()).child(bill.getId()).setValue(bill);
+            fDatabase.updateBill(bill);
         }
     }
 
-    private void updateCategory(final String oldCategory) {
-        // TODO: close activity on saveButton pressed
-        // move image on device into new category
-        imageHelper.moveImageOnDevice(bill.getCategory());
-        imageHelper.deleteImageOnDevice(bill.getThumbnailPath());
-
-        bill.setImagePath(imageHelper.getImagePath());
-        bill.setThumbnailPath(imageHelper.getThumbnailPath());
-
-        // check if new category already exists
-        fDatabase.getDbCategories().child(fDatabase.getUserUID()).addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                ArrayList<String> categories = new ArrayList<>();
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    String category = snapshot.getValue(String.class);
-                    categories.add(category);
-                }
-                boolean exists = categories.contains(bill.getCategory());
-
-                if (!exists) {
-                    // create new category in firebase
-                    fDatabase.getDbCategories().child(fDatabase.getUserUID()).child(bill.getCategory()).setValue(bill.getCategory());
-                    // remove bill from old category
-                    fDatabase.getDbBills().child(fDatabase.getUserUID()).child(oldCategory).child(bill.getId()).removeValue();
-                    // create new bill
-                    fDatabase.getDbBills().child(fDatabase.getUserUID()).child(bill.getCategory()).child(bill.getId()).setValue(bill);
-                } else {
-                    // remove bill from old category
-                    fDatabase.getDbBills().child(fDatabase.getUserUID()).child(oldCategory).child(bill.getId()).removeValue();
-                    // create new bill
-                    fDatabase.getDbBills().child(fDatabase.getUserUID()).child(bill.getCategory()).child(bill.getId()).setValue(bill);
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
+    private void deleteBill() {
+        fDatabase.deleteBill(bill);
     }
 
-    private void deleteBill() {
-        // TODO: implement DeleteDialog
-        // TODO: close activity on DeleteDialog confirmed
-        fDatabase.getDbBills().child(fDatabase.getUserUID()).child(bill.getCategory()).child(bill.getId()).removeValue();
-        // TODO: fDatabase.getDbImages().child(fDatabase.getUserUID()).child(bill.getImageId()).removeValue();
-        imageHelper.deleteImageOnDevice(bill.getImagePath());
-        imageHelper.deleteImageOnDevice(bill.getThumbnailPath());
+    private void openImageInBrowser() {
+        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(bill.getDownloadUrl()));
+        startActivity(browserIntent);
     }
 
 }

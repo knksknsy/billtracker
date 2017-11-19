@@ -8,8 +8,11 @@ import android.support.annotation.NonNull;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnPausedListener;
 import com.google.firebase.storage.OnProgressListener;
@@ -18,6 +21,7 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.UUID;
 
 import de.hdm.project.billtracker.models.Bill;
@@ -28,6 +32,8 @@ public class FirebaseDatabaseHelper {
 
     private FirebaseAuth auth;
     private String userUID;
+
+    private ImageHelper imageHelper;
 
     private DatabaseReference dbUsers;
     private DatabaseReference dbCategories;
@@ -59,6 +65,61 @@ public class FirebaseDatabaseHelper {
             // Upload bill image
             uploadImage(bill);
         }
+    }
+
+    public void updateBill(final Bill bill) {
+        dbBills.child(userUID).child(bill.getCategory()).child(bill.getId()).setValue(bill);
+    }
+
+    public void deleteBill(final Bill bill) {
+        // delete bill
+        dbBills.child(userUID).child(bill.getCategory()).child(bill.getId()).removeValue();
+        // delete bill image
+        imageStorage.child("user").child(userUID).child(bill.getImageId()).delete();
+
+        imageHelper = new ImageHelper(getActivity(), bill);
+
+        // delete image and thumbnail on device
+        imageHelper.deleteImageOnDevice(bill.getImagePath());
+        imageHelper.deleteImageOnDevice(bill.getThumbnailPath());
+    }
+
+    public void updateCategory(final Bill bill, final String oldCategory) {
+        imageHelper = new ImageHelper(getActivity(), bill);
+
+        // move image on device into new category
+        imageHelper.moveImageOnDevice(bill.getCategory());
+
+        bill.setImagePath(imageHelper.getImagePath());
+        bill.setThumbnailPath(imageHelper.getThumbnailPath());
+
+        // check if new category already exists
+        dbCategories.child(userUID).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                ArrayList<String> categories = new ArrayList<>();
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    String category = snapshot.getValue(String.class);
+                    categories.add(category);
+                }
+                boolean categoryExists = categories.contains(bill.getCategory());
+
+                if (!categoryExists) {
+                    // create new category in firebase
+                    dbCategories.child(userUID).child(bill.getCategory()).setValue(bill.getCategory());
+                }
+                // remove bill from old category
+                dbBills.child(userUID).child(oldCategory).child(bill.getId()).removeValue();
+                // create new bill
+                dbBills.child(userUID).child(bill.getCategory()).child(bill.getId()).setValue(bill);
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
     }
 
     private void uploadImage(final Bill bill) {
