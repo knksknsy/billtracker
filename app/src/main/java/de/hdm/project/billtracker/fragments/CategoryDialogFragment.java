@@ -49,7 +49,7 @@ public class CategoryDialogFragment extends DialogFragment {
     public Dialog onCreateDialog(final Bundle savedInstanceState) {
         final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
-        fDatabase = new FirebaseDatabaseHelper();
+        fDatabase = new FirebaseDatabaseHelper(getActivity());
 
         // Get the layout inflater
         LayoutInflater inflater = getActivity().getLayoutInflater();

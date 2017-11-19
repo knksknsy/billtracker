@@ -110,7 +110,7 @@ public class CameraFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
 
-        fDatabaseHelper = new FirebaseDatabaseHelper();
+        fDatabaseHelper = new FirebaseDatabaseHelper(getActivity());
 
         // Helper class for saving and moving images on device, encoding and decoding of image
         imageHelper = new ImageHelper(getActivity());
@@ -198,14 +198,12 @@ public class CameraFragment extends Fragment {
         switch (requestCode) {
             case DIALOG_FRAGMENT:
                 if (resultCode == Activity.RESULT_OK) {
-                    // show upload progress dialog
-                    final ProgressDialog progressDialog = ProgressDialog.show(getActivity(), "Upload", "Uploading image...", true, false);
-
                     pictureTaken = false;
                     saveButton.setEnabled(!isSumEmpty && pictureTaken);
                     photoButton.setText("Take Photo");
                     createCameraPreview();
 
+                    // Prepare bill
                     String category = data.getStringExtra("category");
                     String title = data.getStringExtra("title");
                     imageHelper.moveImageOnDevice(category);
@@ -221,29 +219,9 @@ public class CameraFragment extends Fragment {
                             imageHelper.getImagePath(),
                             imageHelper.getThumbnailPath()
                     );
-                    bill.setImageData(imageHelper.imageToBase64());
 
                     // Upload bill to firebase
                     fDatabaseHelper.writeBill(bill);
-
-                    // Listen for upload completed
-                    fDatabaseHelper.getDbImages().child(fDatabaseHelper.getUserUID()).child(bill.getImageId()).addValueEventListener(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(DataSnapshot dataSnapshot) {
-                            progressDialog.dismiss();
-                            if (getActivity() != null) {
-                                Toast.makeText(getActivity(), "Picture saved in " + bill.getCategory() + " category.", Toast.LENGTH_SHORT).show();
-                            }
-                        }
-
-                        @Override
-                        public void onCancelled(DatabaseError databaseError) {
-                            progressDialog.dismiss();
-                            if (getActivity() != null) {
-                                Toast.makeText(getActivity(), "Picture was not uploaded to the Cloud.", Toast.LENGTH_SHORT).show();
-                            }
-                        }
-                    });
 
                 } else if (resultCode == Activity.RESULT_CANCELED) {
                     Log.e(TAG, "negative Clicked!");
