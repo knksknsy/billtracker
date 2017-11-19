@@ -15,8 +15,8 @@ public class Bill implements Parcelable {
     private Double sum;
     private String imageId;
     private String imagePath;
-    private String imageData;
     private String thumbnailPath;
+    private String downloadUrl;
 
     public Bill(String title, String category, long date, Double sum, String imagePath, String thumbnailPath) {
         setTitle(title);
@@ -39,8 +39,8 @@ public class Bill implements Parcelable {
         sum = in.readDouble();
         imageId = in.readString();
         imagePath = in.readString();
-        imageData = in.readString();
         thumbnailPath = in.readString();
+        downloadUrl = in.readString();
     }
 
     @Override
@@ -57,8 +57,8 @@ public class Bill implements Parcelable {
         dest.writeDouble(sum);
         dest.writeString(imageId);
         dest.writeString(imagePath);
-        dest.writeString(imageData);
         dest.writeString(thumbnailPath);
+        dest.writeString(downloadUrl);
     }
 
     public static final Parcelable.Creator<Bill> CREATOR = new Parcelable.Creator<Bill>() {
@@ -127,20 +127,20 @@ public class Bill implements Parcelable {
         this.imagePath = imagePath;
     }
 
-    public String getImageData() {
-        return imageData;
-    }
-
-    public void setImageData(String imageData) {
-        this.imageData = imageData;
-    }
-
     public String getThumbnailPath() {
         return thumbnailPath;
     }
 
     public void setThumbnailPath(String thumbnailPath) {
         this.thumbnailPath = thumbnailPath;
+    }
+
+    public String getDownloadUrl() {
+        return downloadUrl;
+    }
+
+    public void setDownloadUrl(String downloadUrl) {
+        this.downloadUrl = downloadUrl;
     }
 
     public String printDate() {
