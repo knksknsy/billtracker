@@ -10,6 +10,7 @@ import android.media.Image;
 import android.media.ImageReader;
 import android.os.Environment;
 import android.util.Base64;
+import android.util.Log;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -19,6 +20,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.reflect.Array;
 import java.nio.ByteBuffer;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -42,7 +44,7 @@ public class ImageHelper {
         this.imageFile = new File(bill.getImagePath());
         this.imagePath = bill.getImagePath();
         this.thumbnailPath = bill.getThumbnailPath();
-        imageName = imagePath.replace(imageFile.getParent() + "/", "");
+        this.imageName = imagePath.replace(imageFile.getParent() + "/", "");
     }
 
     public void createImage(ImageReader reader) {
@@ -99,7 +101,7 @@ public class ImageHelper {
         try {
             in = new FileInputStream(imageFile);
             outFile = outputPath + "/" + imageName;
-            System.out.println("OUTPUT FILE: " + outFile);
+
             out = new FileOutputStream(outFile);
 
             byte[] buffer = new byte[1024];
@@ -132,21 +134,6 @@ public class ImageHelper {
         if (dir.exists()) {
             dir.delete();
         }
-    }
-
-    public String imageToBase64() {
-        Bitmap bm = BitmapFactory.decodeFile(imagePath);
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        bm.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-        byte[] b = baos.toByteArray();
-
-        return Base64.encodeToString(b, Base64.DEFAULT);
-    }
-
-    public Bitmap Base64ToImage(String encoding) {
-        byte[] decodedString = Base64.decode(encoding, Base64.DEFAULT);
-
-        return BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
     }
 
     private void createTempImageFile() {
@@ -190,12 +177,16 @@ public class ImageHelper {
         FileOutputStream out = null;
         FileInputStream fis = null;
         try {
-            final int THUMBNAIL_SIZE = pxFromDp(115);
             fis = new FileInputStream(imagePath);
             thumbnail = BitmapFactory.decodeStream(fis);
 
+            final int[] thumbnailDimensions = getThumbnailDimensions(thumbnail.getWidth(), thumbnail.getHeight());
+
+            Log.e("###", "width " + String.valueOf(thumbnailDimensions[0]));
+            Log.e("###", "height " + String.valueOf(thumbnailDimensions[1]));
+
             thumbnail = Bitmap.createScaledBitmap(thumbnail,
-                    THUMBNAIL_SIZE, THUMBNAIL_SIZE, false);
+                    thumbnailDimensions[0], thumbnailDimensions[1], false);
 
             ByteArrayOutputStream bytearroutstream = new ByteArrayOutputStream();
             thumbnail.compress(Bitmap.CompressFormat.JPEG, 100, bytearroutstream);
@@ -218,11 +209,36 @@ public class ImageHelper {
                 e.printStackTrace();
             }
         }
-
     }
 
     private int pxFromDp(float dp) {
         return Math.round(dp * activity.getBaseContext().getResources().getDisplayMetrics().density);
+    }
+
+    private int[] getThumbnailDimensions(int width, int height) {
+        int[] dimension = new int[2];
+        if (width > height) {
+            // landscape
+            float ratio = (float) width / pxFromDp(115);
+            width = pxFromDp(115);
+            height = (int)(height / ratio);
+            dimension[0] = width;
+            dimension[1] = height;
+        } else if (height > width) {
+            // portrait
+            float ratio = (float) height / pxFromDp(115);
+            height = pxFromDp(115);
+            width = (int)(width / ratio);
+            dimension[0] = width;
+            dimension[1] = height;
+        } else {
+            // square
+            height = pxFromDp(115);
+            width = pxFromDp(115);
+            dimension[0] = width;
+            dimension[1] = height;
+        }
+        return dimension;
     }
 
     public File getImageFile() {
