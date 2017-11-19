@@ -3,6 +3,7 @@ package de.hdm.project.billtracker.activities;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -32,11 +33,13 @@ public class BillDetailsActivity extends AppCompatActivity {
 
     private ImageView imageView;
     private TextView dateText;
+    private TextView downloadURL;
     private EditText titleText;
     private EditText categoryText;
     private EditText sumText;
     private Button saveButton;
     private Button deleteButton;
+    private Button downloadButton;
 
     // TODO: expandable ImageView -> new Activity for image with zooming functionality
 
@@ -50,7 +53,7 @@ public class BillDetailsActivity extends AppCompatActivity {
         Intent i = getIntent();
         bill = (Bill) i.getParcelableExtra("bill");
 
-        fDatabase = new FirebaseDatabaseHelper();
+        fDatabase = new FirebaseDatabaseHelper(BillDetailsActivity.this);
 
         imageHelper = new ImageHelper(this, bill);
         imageHelper.setImagePath(bill.getImagePath());
@@ -94,6 +97,19 @@ public class BillDetailsActivity extends AppCompatActivity {
                 // TODO: close activity on result -> reinitialize billsfragment view for updated values
             }
         });
+
+        downloadButton = (Button) findViewById(R.id.downloadButton);
+        downloadButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openImageInBrowser();
+            }
+        });
+    }
+
+    private void openImageInBrowser() {
+        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(bill.getDownloadUrl()));
+        startActivity(browserIntent);
     }
 
     private void updateBill() {
@@ -166,7 +182,7 @@ public class BillDetailsActivity extends AppCompatActivity {
         // TODO: implement DeleteDialog
         // TODO: close activity on DeleteDialog confirmed
         fDatabase.getDbBills().child(fDatabase.getUserUID()).child(bill.getCategory()).child(bill.getId()).removeValue();
-        fDatabase.getDbImages().child(fDatabase.getUserUID()).child(bill.getImageId()).removeValue();
+        // TODO: fDatabase.getDbImages().child(fDatabase.getUserUID()).child(bill.getImageId()).removeValue();
         imageHelper.deleteImageOnDevice(bill.getImagePath());
         imageHelper.deleteImageOnDevice(bill.getThumbnailPath());
     }
