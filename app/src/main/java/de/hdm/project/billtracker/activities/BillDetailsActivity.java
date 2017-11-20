@@ -1,10 +1,14 @@
 package de.hdm.project.billtracker.activities;
 
+import android.app.AlertDialog;
+import android.app.FragmentTransaction;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.PersistableBundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
@@ -35,6 +39,7 @@ public class BillDetailsActivity extends AppCompatActivity {
     private Button saveButton;
     private Button deleteButton;
     private Button downloadButton;
+
 
     // TODO: expandable ImageView -> new Activity for image with zooming functionality
 
@@ -83,9 +88,7 @@ public class BillDetailsActivity extends AppCompatActivity {
         deleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                deleteBill();
-                finish();
-                // TODO: close activity on result -> reinitialize billsfragment view for updated values
+                openDialog();
             }
         });
 
@@ -120,6 +123,28 @@ public class BillDetailsActivity extends AppCompatActivity {
         } else {
             fDatabase.updateBill(bill);
         }
+    }
+
+    private void openDialog() {
+        AlertDialog.Builder builder;
+        builder = new AlertDialog.Builder(this);
+        builder.setTitle("Delete bill")
+                .setMessage("Are you sure you want to delete this bill?")
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        deleteBill();
+                        finish();
+                    }
+                })
+                .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                })
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .show();
     }
 
     private void deleteBill() {
