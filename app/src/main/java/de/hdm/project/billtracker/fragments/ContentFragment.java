@@ -11,12 +11,14 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import de.hdm.project.billtracker.R;
+import de.hdm.project.billtracker.helpers.FirebaseDatabaseHelper;
 
 public class ContentFragment extends Fragment {
 
     private CategoriesFragment categories;
-    private BillsFragment scans;
+    private BillsFragment bills;
     private TabLayout tabs;
+    private FirebaseDatabaseHelper fDatabase;
 
     public static ContentFragment newInstance() {
         return new ContentFragment();
@@ -36,6 +38,9 @@ public class ContentFragment extends Fragment {
         bindWidgetsWithEvent();
         setupTabLayout();
 
+        fDatabase = new FirebaseDatabaseHelper(getActivity());
+        fDatabase.synchronizeImages();
+
         return view;
     }
 
@@ -45,7 +50,7 @@ public class ContentFragment extends Fragment {
                 replaceFragment(categories);
                 break;
             case 1:
-                replaceFragment(scans);
+                replaceFragment(bills);
                 break;
         }
     }
@@ -71,7 +76,7 @@ public class ContentFragment extends Fragment {
 
     private void setupTabLayout() {
         categories = new CategoriesFragment();
-        scans = new BillsFragment();
+        bills = new BillsFragment();
         tabs.addTab(tabs.newTab().setText("Categories"), true);
         tabs.addTab(tabs.newTab().setText("All Bills"));
     }

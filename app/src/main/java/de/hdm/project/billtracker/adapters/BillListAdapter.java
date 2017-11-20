@@ -1,9 +1,9 @@
 package de.hdm.project.billtracker.adapters;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,11 +15,13 @@ import java.io.File;
 import java.util.List;
 
 import de.hdm.project.billtracker.R;
+import de.hdm.project.billtracker.helpers.ImageHelper;
 import de.hdm.project.billtracker.models.Bill;
 
 public class BillListAdapter extends ArrayAdapter<Bill> {
 
     private List<Bill> bills;
+    private Activity activity;
 
     public BillListAdapter(Context context, int textViewResourceId) {
         super(context, textViewResourceId);
@@ -28,6 +30,7 @@ public class BillListAdapter extends ArrayAdapter<Bill> {
     public BillListAdapter(Context context, int resource, List<Bill> bills) {
         super(context, resource, bills);
         this.bills = bills;
+        this.activity = (Activity) context;
     }
 
     @Override
@@ -41,37 +44,40 @@ public class BillListAdapter extends ArrayAdapter<Bill> {
                 v = vi.inflate(R.layout.bill_list_row, null);
             }
 
-            Bill s = getItem(position);
+            Bill bill = getItem(position);
 
-            if (s != null) {
+            if (bill != null) {
                 ImageView thumbnail = (ImageView) v.findViewById(R.id.thumbnail);
                 TextView titleText = (TextView) v.findViewById(R.id.titleText);
                 TextView dateText = (TextView) v.findViewById(R.id.dateText);
                 TextView sumText = (TextView) v.findViewById(R.id.sumText);
 
                 if (thumbnail != null) {
-                    /*if (thumbnail.getDrawable() != null) {
-                        ((BitmapDrawable) thumbnail.getDrawable()).getBitmap().recycle();
-                    }*/
-                    File imgFile = new File(s.getThumbnailPath());
+                    File thumbnaildFile = new File(bill.getThumbnailPath());
 
-                    if (imgFile.exists()) {
-                        Bitmap bitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
+                    if (thumbnaildFile.exists()) {
+                        Bitmap bitmap = BitmapFactory.decodeFile(thumbnaildFile.getAbsolutePath());
                         thumbnail.setImageBitmap(bitmap);
+                    } else {
+                        // create thumbnail
+                        ImageHelper imageHelper = new ImageHelper(this.activity, bill);
+                        if (!new File(bill.getThumbnailPath()).exists()) {
+                            imageHelper.saveThumbnail();
+                        }
                     }
                 }
 
                 if (titleText != null) {
-                    titleText.setText(s.getTitle());
+                    titleText.setText(bill.getTitle());
                 }
 
                 if (dateText != null) {
-                    dateText.setText(s.printDate());
+                    dateText.setText(bill.printDate());
                 }
 
                 if (sumText != null) {
                     // TODO save user currency
-                    sumText.setText("Sum: " + String.valueOf(s.getSum()) + " €");
+                    sumText.setText("Sum: " + String.valueOf(bill.getSum()) + " €");
                 }
             }
             return v;

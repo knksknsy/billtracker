@@ -1,16 +1,12 @@
 package de.hdm.project.billtracker.helpers;
 
 import android.app.Activity;
-import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
-import android.media.ExifInterface;
 import android.media.Image;
 import android.media.ImageReader;
 import android.os.Environment;
-import android.util.Base64;
-import android.util.Log;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -20,7 +16,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.lang.reflect.Array;
 import java.nio.ByteBuffer;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -158,6 +153,14 @@ public class ImageHelper {
         }
     }
 
+    public void createCategoryDir() {
+        File categoryDir = new File(imageFile.getParent());
+
+        if (!categoryDir.exists()) {
+            categoryDir.mkdirs();
+        }
+    }
+
     private Bitmap imageToBitmap(Image image) {
         ByteBuffer buffer = image.getPlanes()[0].getBuffer();
         byte[] bytes = new byte[buffer.capacity()];
@@ -172,7 +175,7 @@ public class ImageHelper {
         return Bitmap.createBitmap(source, 0, 0, source.getWidth(), source.getHeight(), matrix, true);
     }
 
-    private void saveThumbnail() {
+    public void saveThumbnail() {
         Bitmap thumbnail;
         FileOutputStream out = null;
         FileInputStream fis = null;
@@ -180,21 +183,20 @@ public class ImageHelper {
             fis = new FileInputStream(imagePath);
             thumbnail = BitmapFactory.decodeStream(fis);
 
-            final int[] thumbnailDimensions = getThumbnailDimensions(thumbnail.getWidth(), thumbnail.getHeight());
+            if (thumbnail != null) {
+                final int[] thumbnailDimensions = getThumbnailDimensions(thumbnail.getWidth(), thumbnail.getHeight());
 
-            Log.e("###", "width " + String.valueOf(thumbnailDimensions[0]));
-            Log.e("###", "height " + String.valueOf(thumbnailDimensions[1]));
+                thumbnail = Bitmap.createScaledBitmap(thumbnail,
+                        thumbnailDimensions[0], thumbnailDimensions[1], false);
 
-            thumbnail = Bitmap.createScaledBitmap(thumbnail,
-                    thumbnailDimensions[0], thumbnailDimensions[1], false);
+                ByteArrayOutputStream bytearroutstream = new ByteArrayOutputStream();
+                thumbnail.compress(Bitmap.CompressFormat.JPEG, 100, bytearroutstream);
 
-            ByteArrayOutputStream bytearroutstream = new ByteArrayOutputStream();
-            thumbnail.compress(Bitmap.CompressFormat.JPEG, 100, bytearroutstream);
-
-            File tmpDir = activity.getExternalFilesDir(Environment.DIRECTORY_PICTURES + "/tmpImages");
-            thumbnailPath = tmpDir + "/" + imageName;
-            out = new FileOutputStream(tmpDir + "/" + imageName);
-            thumbnail.compress(Bitmap.CompressFormat.JPEG, 100, out);
+                File tmpDir = activity.getExternalFilesDir(Environment.DIRECTORY_PICTURES + "/tmpImages");
+                thumbnailPath = tmpDir + "/" + imageName;
+                out = new FileOutputStream(tmpDir + "/" + imageName);
+                thumbnail.compress(Bitmap.CompressFormat.JPEG, 100, out);
+            }
         } catch (IOException ex) {
             ex.printStackTrace();
         } finally {
@@ -217,24 +219,25 @@ public class ImageHelper {
 
     private int[] getThumbnailDimensions(int width, int height) {
         int[] dimension = new int[2];
+        int maxDimension = pxFromDp(115);
         if (width > height) {
             // landscape
-            float ratio = (float) width / pxFromDp(115);
-            width = pxFromDp(115);
+            float ratio = (float) width / maxDimension;
+            width = maxDimension;
             height = (int)(height / ratio);
             dimension[0] = width;
             dimension[1] = height;
         } else if (height > width) {
             // portrait
-            float ratio = (float) height / pxFromDp(115);
-            height = pxFromDp(115);
+            float ratio = (float) height / maxDimension;
+            height = maxDimension;
             width = (int)(width / ratio);
             dimension[0] = width;
             dimension[1] = height;
         } else {
             // square
-            height = pxFromDp(115);
-            width = pxFromDp(115);
+            height = maxDimension;
+            width = maxDimension;
             dimension[0] = width;
             dimension[1] = height;
         }

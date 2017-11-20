@@ -13,6 +13,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FileDownloadTask;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnPausedListener;
 import com.google.firebase.storage.OnProgressListener;
@@ -22,7 +23,6 @@ import com.google.firebase.storage.UploadTask;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
 import de.hdm.project.billtracker.models.Bill;
@@ -157,6 +157,73 @@ public class FirebaseDatabaseHelper {
                 Uri downloadUrl = taskSnapshot.getMetadata().getDownloadUrl();
                 bill.setDownloadUrl(downloadUrl.toString());
                 updateBill(bill);
+                progressDialog.dismiss();
+            }
+        });
+    }
+
+    public void synchronizeImages() {
+        dbCategories.child(userUID).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot categoryDataSnapshot) {
+                for (DataSnapshot categorySnapshot : categoryDataSnapshot.getChildren()) {
+                    String category = categorySnapshot.getValue(String.class);
+                    dbBills.child(userUID).child(category).addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot scanDataSnapshot) {
+                            for (DataSnapshot scanSnapshot : scanDataSnapshot.getChildren()) {
+                                Bill bill = scanSnapshot.getValue(Bill.class);
+                                // Check if image exists on device
+                                File image = new File(bill.getImagePath());
+                                if (!image.exists()) {
+                                    downloadImage(bill);
+                                }
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+
+                        }
+                    });
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    public void downloadImage(final Bill bill) {
+        StorageReference imageStorage = FirebaseStorage.getInstance().getReferenceFromUrl(bill.getDownloadUrl());
+        imageHelper = new ImageHelper(getActivity(), bill);
+        final ProgressDialog progressDialog = ProgressDialog.show(getActivity(), "Synchronizing Image", "Downloading image...", true, false);
+
+        imageHelper.createCategoryDir();
+
+        imageStorage.getFile(imageHelper.getImageFile()).addOnProgressListener(new OnProgressListener<FileDownloadTask.TaskSnapshot>() {
+            @Override
+            public void onProgress(FileDownloadTask.TaskSnapshot taskSnapshot) {
+                double progress = (100.0 * taskSnapshot.getBytesTransferred()) / taskSnapshot.getTotalByteCount();
+                progressDialog.setMessage("Download is " + round(progress, 2) + "% done.");
+            }
+        }).addOnPausedListener(new OnPausedListener<FileDownloadTask.TaskSnapshot>() {
+            @Override
+            public void onPaused(FileDownloadTask.TaskSnapshot taskSnapshot) {
+                progressDialog.setMessage("Download is paused.");
+                progressDialog.dismiss();
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                progressDialog.setMessage("Download has failed.");
+                progressDialog.dismiss();
+            }
+        }).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
                 progressDialog.dismiss();
             }
         });
