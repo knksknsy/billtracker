@@ -43,9 +43,9 @@ public class BillsFragment extends Fragment {
 
         fDatabase = new FirebaseDatabaseHelper(getActivity());
 
-        listView = view.findViewById(R.id.scansList);
-
         bills = new ArrayList<>();
+
+        listView = view.findViewById(R.id.scansList);
 
         getFirebaseData();
 
@@ -67,6 +67,16 @@ public class BillsFragment extends Fragment {
 
             }
         });
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        // Update listView
+        if (bills.size() > 0) {
+            bills = new ArrayList<>();
+            getFirebaseData();
+        }
     }
 
     private void initBillsByCategory(String category) {

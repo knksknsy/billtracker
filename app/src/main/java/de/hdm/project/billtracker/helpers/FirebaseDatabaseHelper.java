@@ -22,6 +22,7 @@ import com.google.firebase.storage.UploadTask;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 import de.hdm.project.billtracker.models.Bill;
@@ -155,7 +156,7 @@ public class FirebaseDatabaseHelper {
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                 Uri downloadUrl = taskSnapshot.getMetadata().getDownloadUrl();
                 bill.setDownloadUrl(downloadUrl.toString());
-                dbBills.child(userUID).child(bill.getCategory()).child(bill.getId()).setValue(bill);
+                updateBill(bill);
                 progressDialog.dismiss();
             }
         });
