@@ -8,5 +8,6 @@
     <string name="title_category_dialog">Choose a category</string>
     <string name="category_preference">CategoryPreference</string>
     <string name="title_activity_bill_details">BillDetailsActivity</string>
+    <string name="title_activity_image_view">ImageViewActivity</string>
 
 </resources>

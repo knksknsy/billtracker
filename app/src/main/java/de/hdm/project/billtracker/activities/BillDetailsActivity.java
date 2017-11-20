@@ -7,6 +7,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
@@ -65,6 +66,13 @@ public class BillDetailsActivity extends AppCompatActivity {
             Bitmap bitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
             imageView.setImageBitmap(bitmap);
         }
+
+        imageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openImageActivity();
+            }
+        });
 
         titleText = (EditText) findViewById(R.id.title);
         titleText.setText(bill.getTitle());
@@ -147,6 +155,12 @@ public class BillDetailsActivity extends AppCompatActivity {
         } else {
             fDatabase.updateBill(bill);
         }
+    }
+
+    private void openImageActivity() {
+        Intent imageIntent = new Intent(this, ImageViewActivity.class);
+        imageIntent.putExtra("bill", (Parcelable) bill);
+        startActivity(imageIntent);
     }
 
     private void openDialog() {
