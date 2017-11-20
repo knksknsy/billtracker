@@ -164,7 +164,11 @@ public class ImageHelper {
     public void deleteCategoryDir(String category) {
         File path = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).toString() + "/Billtracker/" + category);
 
-        if (path.exists()) {
+        if (path.isDirectory()) {
+            String[] children = path.list();
+            for (int i = 0; i < children.length; i++) {
+                new File(path, children[i]).delete();
+            }
             path.delete();
         }
     }
