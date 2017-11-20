@@ -9,7 +9,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -22,6 +21,7 @@ import java.util.ArrayList;
 import de.hdm.project.billtracker.R;
 import de.hdm.project.billtracker.activities.BillDetailsActivity;
 import de.hdm.project.billtracker.adapters.BillListAdapter;
+import de.hdm.project.billtracker.adapters.CategoryListAdapter;
 import de.hdm.project.billtracker.helpers.FirebaseDatabaseHelper;
 import de.hdm.project.billtracker.models.Bill;
 
@@ -79,22 +79,21 @@ public class CategoriesFragment extends Fragment {
         fDatabase.getDbCategories().child(fDatabase.getUserUID()).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                ArrayList<String> c = new ArrayList<>();
+                final ArrayList<String> categories = new ArrayList<>();
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     String category = snapshot.getValue(String.class);
-                    c.add(category);
+                    categories.add(category);
                 }
-                final String[] categories = c.toArray(new String[0]);
 
                 if (getActivity() != null) {
-                    ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, android.R.id.text1, categories);
+                    CategoryListAdapter adapter = new CategoryListAdapter(getActivity(), R.layout.category_list_row, categories);
                     listView.setAdapter(adapter);
                 }
 
                 listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                     @Override
                     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                        initBillsListView(categories[i]);
+                        initBillsListView(categories.get(i));
                     }
                 });
             }

@@ -161,6 +161,14 @@ public class ImageHelper {
         }
     }
 
+    public void deleteCategoryDir(String category) {
+        File path = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).toString() + "/Billtracker/" + category);
+
+        if (path.exists()) {
+            path.delete();
+        }
+    }
+
     private Bitmap imageToBitmap(Image image) {
         ByteBuffer buffer = image.getPlanes()[0].getBuffer();
         byte[] bytes = new byte[buffer.capacity()];

@@ -123,6 +123,16 @@ public class FirebaseDatabaseHelper {
         });
     }
 
+    public void deleteCategory(String category) {
+        dbBills.child(userUID).child(category).removeValue();
+
+        dbCategories.child(userUID).child(category).removeValue();
+
+        imageHelper = new ImageHelper(getActivity());
+
+        imageHelper.deleteCategoryDir(category);
+    }
+
     private void uploadImage(final Bill bill) {
         Uri imageFile = Uri.fromFile(new File(bill.getImagePath()));
 
