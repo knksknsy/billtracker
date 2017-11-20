@@ -61,9 +61,9 @@ public class CategoryDialogFragment extends DialogFragment {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 categories = new ArrayList<>();
-                Iterator<DataSnapshot> iter = dataSnapshot.getChildren().iterator();
-                while (iter.hasNext()) {
-                    categories.add(iter.next().getValue().toString());
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    String category = snapshot.getValue(String.class);
+                    categories.add(category);
                 }
                 autocompleteCategory = view.findViewById(R.id.autocompleteCategory);
 
