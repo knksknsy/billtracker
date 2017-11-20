@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v4.app.Fragment;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -50,6 +51,28 @@ public class CategoriesFragment extends Fragment {
         initCategoriesListView();
 
         return view;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        getView().setFocusableInTouchMode(true);
+        getView().requestFocus();
+        getView().setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if (event.getAction() == KeyEvent.ACTION_UP && keyCode == KeyEvent.KEYCODE_BACK) {
+                    // Handle back button press when listView is initialized with bills
+                    if (bills != null) {
+                        initCategoriesListView();
+                        bills = null;
+                        return true;
+                    }
+                }
+                return false;
+            }
+        });
     }
 
     private void initCategoriesListView() {
