@@ -2,8 +2,10 @@ package de.hdm.project.billtracker.helpers;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.net.Uri;
 import android.support.annotation.NonNull;
+import android.support.v4.content.LocalBroadcastManager;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -113,6 +115,10 @@ public class FirebaseDatabaseHelper {
                 dbBills.child(userUID).child(oldCategory).child(bill.getId()).removeValue();
                 // create new bill
                 dbBills.child(userUID).child(bill.getCategory()).child(bill.getId()).setValue(bill);
+
+                // send message that the bill has been updated
+                Intent intent = new Intent("bill-updated-event");
+                LocalBroadcastManager.getInstance(getActivity()).sendBroadcast(intent);
 
             }
 

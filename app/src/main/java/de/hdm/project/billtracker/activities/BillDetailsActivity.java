@@ -2,13 +2,17 @@ package de.hdm.project.billtracker.activities;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
@@ -46,6 +50,15 @@ public class BillDetailsActivity extends AppCompatActivity {
     private Button deleteButton;
     private Button downloadButton;
 
+    // Receiving message when bill was updated successfully
+    private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            // close activity when firebase has been successfully updated
+            finish();
+        }
+    };
+
 
     // TODO: expandable ImageView -> new Activity for image with zooming functionality
 
@@ -55,6 +68,9 @@ public class BillDetailsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_bill_details);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver,
+                new IntentFilter("bill-updated-event"));
 
         Intent i = getIntent();
         bill = (Bill) i.getParcelableExtra("bill");
@@ -89,7 +105,7 @@ public class BillDetailsActivity extends AppCompatActivity {
                     categories.add(category);
                 }
                 if (categories.size() > 0) {
-                    ArrayAdapter<String> adapter = new ArrayAdapter<String>(BillDetailsActivity.this, R.layout.category_autocomplete, R.id.autoTextView, categories);
+                    ArrayAdapter<String> adapter = new ArrayAdapter<>(BillDetailsActivity.this, R.layout.category_autocomplete, R.id.autoTextView, categories);
                     autocompleteCategory.setAdapter(adapter);
                 }
             }
@@ -114,7 +130,6 @@ public class BillDetailsActivity extends AppCompatActivity {
             public void onClick(View v) {
                 updateBill();
                 setResult(Activity.RESULT_OK);
-                finish();
             }
         });
 
@@ -196,6 +211,12 @@ public class BillDetailsActivity extends AppCompatActivity {
     private void openImageInBrowser() {
         Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(bill.getDownloadUrl()));
         startActivity(browserIntent);
+    }
+
+    @Override
+    protected void onDestroy() {
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(mMessageReceiver);
+        super.onDestroy();
     }
 
 }

@@ -111,7 +111,7 @@ public class BillsFragment extends Fragment {
         if (requestCode == REQUEST_CODE) {
             if (resultCode == Activity.RESULT_OK) {
                 // update listView
-                bills = new ArrayList<>();
+                bills.clear();
                 getFirebaseData();
             }
         }
