@@ -1,5 +1,6 @@
 package de.hdm.project.billtracker.fragments;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
@@ -28,6 +29,8 @@ public class BillsFragment extends Fragment {
     private ListView listView;
     private ArrayList<Bill> bills;
 
+    public static final int REQUEST_CODE = 1;
+
     public static BillsFragment newInstance() {
         return new BillsFragment();
     }
@@ -45,9 +48,16 @@ public class BillsFragment extends Fragment {
 
         bills = new ArrayList<>();
 
+        getFirebaseData();
+
         listView = view.findViewById(R.id.scansList);
 
-        getFirebaseData();
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                openBillDetailsActivity(bills.get(i));
+            }
+        });
 
         return view;
     }
@@ -69,16 +79,6 @@ public class BillsFragment extends Fragment {
         });
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        // Update listView
-        if (bills.size() > 0) {
-            bills = new ArrayList<>();
-            getFirebaseData();
-        }
-    }
-
     private void initBillsByCategory(String category) {
         fDatabase.getDbBills().child(fDatabase.getUserUID()).child(category).addValueEventListener(new ValueEventListener() {
             @Override
@@ -91,13 +91,6 @@ public class BillsFragment extends Fragment {
                     BillListAdapter adapter = new BillListAdapter(getActivity(), R.layout.bill_list_row, bills);
                     listView.setAdapter(adapter);
                 }
-
-                listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                        openBillDetailsActivity(bills.get(i));
-                    }
-                });
             }
 
             @Override
@@ -110,7 +103,19 @@ public class BillsFragment extends Fragment {
     private void openBillDetailsActivity(Bill bill) {
         Intent intent = new Intent(getActivity(), BillDetailsActivity.class);
         intent.putExtra("bill", (Parcelable) bill);
-        startActivity(intent);
+        startActivityForResult(intent, REQUEST_CODE);
     }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == REQUEST_CODE) {
+            if (resultCode == Activity.RESULT_OK) {
+                // update listView
+                bills = new ArrayList<>();
+                getFirebaseData();
+            }
+        }
+    }
+
 
 }

@@ -1,5 +1,6 @@
 package de.hdm.project.billtracker.activities;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -112,6 +113,7 @@ public class BillDetailsActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 updateBill();
+                setResult(Activity.RESULT_OK);
                 finish();
             }
         });
@@ -121,6 +123,8 @@ public class BillDetailsActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 openDialog();
+                setResult(Activity.RESULT_OK);
+                finish();
             }
         });
 
