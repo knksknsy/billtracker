@@ -12,8 +12,12 @@ import de.hdm.project.billtracker.R;
 public class ChartFragment extends Fragment {
 
     public static ChartFragment newInstance() {
-
         return new ChartFragment();
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
     }
 
     @Nullable
