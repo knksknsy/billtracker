@@ -15,10 +15,11 @@ import de.hdm.project.billtracker.helpers.FirebaseDatabaseHelper;
 
 public class ContentFragment extends Fragment {
 
+    private FirebaseDatabaseHelper fDatabase;
+
+    private TabLayout tabs;
     private CategoriesFragment categories;
     private BillsFragment bills;
-    private TabLayout tabs;
-    private FirebaseDatabaseHelper fDatabase;
 
     public static ContentFragment newInstance() {
         return new ContentFragment();
@@ -34,7 +35,7 @@ public class ContentFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_content, container, false);
 
-        tabs = (TabLayout) view.findViewById(R.id.tablayout);
+        tabs = view.findViewById(R.id.tablayout);
         bindWidgetsWithEvent();
         setupTabLayout();
 
@@ -77,6 +78,7 @@ public class ContentFragment extends Fragment {
     private void setupTabLayout() {
         categories = new CategoriesFragment();
         bills = new BillsFragment();
+
         tabs.addTab(tabs.newTab().setText("Categories"), true);
         tabs.addTab(tabs.newTab().setText("All Bills"));
     }

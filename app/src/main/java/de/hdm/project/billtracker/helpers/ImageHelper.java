@@ -26,6 +26,7 @@ import de.hdm.project.billtracker.models.Bill;
 public class ImageHelper {
 
     private Activity activity;
+
     private File imageFile;
     private String imageName;
     private String imagePath;
@@ -43,6 +44,11 @@ public class ImageHelper {
         this.imageName = imagePath.replace(imageFile.getParent() + "/", "");
     }
 
+    /**
+     * Temporarily save captured image by ImageReader on device
+     *
+     * @param reader
+     */
     public void createImage(ImageReader reader) {
         createTempImageFile();
         Image image = null;
@@ -81,6 +87,9 @@ public class ImageHelper {
         }
     }
 
+    /**
+     * Create a temporary file without content
+     */
     private void createTempImageFile() {
         try {
             String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
@@ -101,6 +110,12 @@ public class ImageHelper {
         }
     }
 
+    /**
+     * Convert an Image object to a Bitmap object
+     *
+     * @param image
+     * @return
+     */
     private Bitmap imageToBitmap(Image image) {
         ByteBuffer buffer = image.getPlanes()[0].getBuffer();
         byte[] bytes = new byte[buffer.capacity()];
@@ -109,12 +124,24 @@ public class ImageHelper {
         return BitmapFactory.decodeByteArray(bytes, 0, bytes.length, null);
     }
 
+    /**
+     * Rotate a Bitmap by an angle
+     *
+     * @param source
+     * @param angle
+     * @return
+     */
     private Bitmap rotateBitmap(Bitmap source, float angle) {
         Matrix matrix = new Matrix();
         matrix.postRotate(angle);
         return Bitmap.createBitmap(source, 0, 0, source.getWidth(), source.getHeight(), matrix, true);
     }
 
+    /**
+     * Move an image into its specified category directory
+     *
+     * @param category
+     */
     public void moveImageOnDevice(String category) {
         String outputPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).toString() + "/Billtracker/" + category;
 
@@ -159,34 +186,9 @@ public class ImageHelper {
         }
     }
 
-    public static void deleteImageOnDevice(String path) {
-        File dir = new File(path);
-        if (dir.exists()) {
-            dir.delete();
-        }
-    }
-
-    public static void createCategoryDir(String path) {
-        File file = new File(path);
-        File categoryDir = new File(file.getParent());
-
-        if (!categoryDir.exists()) {
-            categoryDir.mkdirs();
-        }
-    }
-
-    public static void deleteCategoryDir(String category) {
-        File path = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).toString() + "/Billtracker/" + category);
-
-        if (path.isDirectory()) {
-            String[] children = path.list();
-            for (int i = 0; i < children.length; i++) {
-                new File(path, children[i]).delete();
-            }
-            path.delete();
-        }
-    }
-
+    /**
+     * Create a thumbnail image
+     */
     public void saveThumbnail() {
         Bitmap thumbnail;
         FileOutputStream out = null;
@@ -225,10 +227,74 @@ public class ImageHelper {
         }
     }
 
+    public static boolean fileExists(String path) {
+        File file = new File(path);
+        if (file.exists()) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Delete an image
+     *
+     * @param path
+     */
+    public static void deleteImageOnDevice(String path) {
+        File dir = new File(path);
+        if (dir.exists()) {
+            dir.delete();
+        }
+    }
+
+    /**
+     * Create a category directory for an image's missing parent directory
+     *
+     * @param path
+     */
+    public static void createCategoryDir(String path) {
+        File file = new File(path);
+        File categoryDir = new File(file.getParent());
+
+        if (!categoryDir.exists()) {
+            categoryDir.mkdirs();
+        }
+    }
+
+    /**
+     * Delete a category directory with all its files
+     *
+     * @param category
+     */
+    public static void deleteCategoryDir(String category) {
+        File path = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).toString() + "/Billtracker/" + category);
+
+        if (path.isDirectory()) {
+            String[] children = path.list();
+            for (int i = 0; i < children.length; i++) {
+                new File(path, children[i]).delete();
+            }
+            path.delete();
+        }
+    }
+
+    /**
+     * Converts dp into pixel value
+     *
+     * @param dp
+     * @return
+     */
     private int pxFromDp(float dp) {
         return Math.round(dp * activity.getBaseContext().getResources().getDisplayMetrics().density);
     }
 
+    /**
+     * Calculate proper dimension for a thumbnail
+     *
+     * @param width
+     * @param height
+     * @return
+     */
     private int[] getThumbnailDimensions(int width, int height) {
         int[] dimension = new int[2];
         int maxDimension = pxFromDp(115);
@@ -256,6 +322,14 @@ public class ImageHelper {
         return dimension;
     }
 
+    public static Uri getImagePathAsUri(String path) {
+        return Uri.fromFile(new File(path));
+    }
+
+    public static File getImageFile(String path) {
+        return new File(path);
+    }
+
     public File getImageFile() {
         return imageFile;
     }
@@ -278,22 +352,6 @@ public class ImageHelper {
 
     public void setImagePath(String imagePath) {
         this.imagePath = imagePath;
-    }
-
-    public static Uri getImagePathAsUri(String path) {
-        return Uri.fromFile(new File(path));
-    }
-
-    public static File getImageFile(String path) {
-        return new File(path);
-    }
-
-    public static boolean fileExists(String path) {
-        File file = new File(path);
-        if (file.exists()) {
-            return true;
-        }
-        return false;
     }
 
     public String getThumbnailPath() {

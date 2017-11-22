@@ -26,6 +26,7 @@ import de.hdm.project.billtracker.models.Bill;
 public class BillsFragment extends Fragment {
 
     private FirebaseDatabaseHelper fDatabase;
+
     private ListView listView;
     private ArrayList<Bill> bills;
 
@@ -48,7 +49,7 @@ public class BillsFragment extends Fragment {
 
         bills = new ArrayList<>();
 
-        getFirebaseData();
+        fetchBills();
 
         listView = view.findViewById(R.id.scansList);
 
@@ -62,7 +63,7 @@ public class BillsFragment extends Fragment {
         return view;
     }
 
-    private void getFirebaseData() {
+    private void fetchBills() {
         fDatabase.getDbCategories().child(fDatabase.getUserUid()).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot categoryDataSnapshot) {
@@ -112,7 +113,7 @@ public class BillsFragment extends Fragment {
             if (resultCode == Activity.RESULT_OK) {
                 // update listView
                 bills.clear();
-                getFirebaseData();
+                fetchBills();
             }
         }
     }

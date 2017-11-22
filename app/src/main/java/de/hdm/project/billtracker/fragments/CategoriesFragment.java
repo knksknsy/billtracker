@@ -28,6 +28,7 @@ import de.hdm.project.billtracker.models.Bill;
 public class CategoriesFragment extends Fragment {
 
     private FirebaseDatabaseHelper fDatabase;
+
     private ListView listView;
     private ArrayList<Bill> bills;
 
