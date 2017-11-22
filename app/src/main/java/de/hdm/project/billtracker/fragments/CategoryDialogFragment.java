@@ -57,7 +57,7 @@ public class CategoryDialogFragment extends DialogFragment {
         final View view = inflater.inflate(R.layout.fragment_category_dialog, null);
 
         // Fetch categories from firebase for auto completion
-        fDatabase.getDbCategories().child(fDatabase.getUserUID()).addValueEventListener(new ValueEventListener() {
+        fDatabase.getDbCategories().child(fDatabase.getUserUid()).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 categories = new ArrayList<>();

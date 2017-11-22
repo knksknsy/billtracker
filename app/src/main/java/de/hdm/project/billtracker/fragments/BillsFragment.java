@@ -63,7 +63,7 @@ public class BillsFragment extends Fragment {
     }
 
     private void getFirebaseData() {
-        fDatabase.getDbCategories().child(fDatabase.getUserUID()).addValueEventListener(new ValueEventListener() {
+        fDatabase.getDbCategories().child(fDatabase.getUserUid()).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot categoryDataSnapshot) {
                 for (DataSnapshot categorySnapshot : categoryDataSnapshot.getChildren()) {
@@ -80,7 +80,7 @@ public class BillsFragment extends Fragment {
     }
 
     private void initBillsByCategory(String category) {
-        fDatabase.getDbBills().child(fDatabase.getUserUID()).child(category).addValueEventListener(new ValueEventListener() {
+        fDatabase.getDbBills().child(fDatabase.getUserUid()).child(category).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot scanDataSnapshot) {
                 for (DataSnapshot scanSnapshot : scanDataSnapshot.getChildren()) {

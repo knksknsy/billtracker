@@ -74,7 +74,7 @@ public class SignupActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         // Check if user is signed in (non-null) and update UI accordingly
-        FirebaseUser currentUser = fDatabase.getAuth().getCurrentUser();
+        FirebaseUser currentUser = fDatabase.getCurrentUser();
         if (currentUser != null) {
             onSignupSuccess();
         }
@@ -111,7 +111,7 @@ public class SignupActivity extends AppCompatActivity {
                         if (task.isSuccessful()) {
                             Log.d(TAG, "createUserWithEmail:success");
 
-                            FirebaseUser fUser = fDatabase.getAuth().getCurrentUser();
+                            FirebaseUser fUser = fDatabase.getCurrentUser();
                             User user = new User(fUser.getUid(), fUser.getEmail());
 
                             fDatabase.getDbUsers().child(user.getId()).setValue(user);

@@ -96,7 +96,7 @@ public class BillDetailsActivity extends AppCompatActivity {
 
         autocompleteCategory = (AutoCompleteTextView) findViewById(R.id.category);
 
-        fDatabase.getDbCategories().child(fDatabase.getUserUID()).addValueEventListener(new ValueEventListener() {
+        fDatabase.getDbCategories().child(fDatabase.getUserUid()).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 categories = new ArrayList<>();

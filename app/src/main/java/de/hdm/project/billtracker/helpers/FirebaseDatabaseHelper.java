@@ -10,6 +10,7 @@ import android.support.v4.content.LocalBroadcastManager;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -34,7 +35,6 @@ public class FirebaseDatabaseHelper {
     private Activity activity;
 
     private FirebaseAuth auth;
-    private String userUID;
 
     private ImageHelper imageHelper;
 
@@ -47,7 +47,6 @@ public class FirebaseDatabaseHelper {
     public FirebaseDatabaseHelper(Activity activity) {
         this.activity = activity;
         auth = FirebaseAuth.getInstance();
-        userUID = auth.getCurrentUser().getUid();
         dbUsers = FirebaseDatabase.getInstance().getReference("users");
         dbCategories = FirebaseDatabase.getInstance().getReference("categories");
         dbBills = FirebaseDatabase.getInstance().getReference("bills");
@@ -55,15 +54,16 @@ public class FirebaseDatabaseHelper {
     }
 
     public void writeBill(final Bill bill) {
-        if (userUID != null) {
+        final String userUid = getUserUid();
+        if (userUid != null) {
             // Save category
-            dbCategories.child(userUID).child(bill.getCategory()).setValue(bill.getCategory());
+            dbCategories.child(userUid).child(bill.getCategory()).setValue(bill.getCategory());
 
             bill.setId(dbBills.push().getKey());
             bill.setImageId(UUID.randomUUID().toString());
 
             // Save bill information
-            dbBills.child(userUID).child(bill.getCategory()).child(bill.getId()).setValue(bill);
+            dbBills.child(userUid).child(bill.getCategory()).child(bill.getId()).setValue(bill);
 
             // Upload bill image
             uploadImage(bill);
@@ -71,187 +71,213 @@ public class FirebaseDatabaseHelper {
     }
 
     public void updateBill(final Bill bill) {
-        dbBills.child(userUID).child(bill.getCategory()).child(bill.getId()).setValue(bill);
+        final String userUid = getUserUid();
+        if (userUid != null) {
+            dbBills.child(userUid).child(bill.getCategory()).child(bill.getId()).setValue(bill);
+        }
+        sendCloseBroadcast();
     }
 
     public void deleteBill(final Bill bill) {
-        // delete bill
-        dbBills.child(userUID).child(bill.getCategory()).child(bill.getId()).removeValue();
-        // delete bill image
-        imageStorage.child("user").child(userUID).child(bill.getImageId()).delete();
+        final String userUid = getUserUid();
+        if (userUid != null) {
+            // delete bill
+            dbBills.child(userUid).child(bill.getCategory()).child(bill.getId()).removeValue();
+            // delete bill image
+            imageStorage.child("user").child(userUid).child(bill.getImageId()).delete();
 
-        imageHelper = new ImageHelper(getActivity(), bill);
+            imageHelper = new ImageHelper(getActivity(), bill);
 
-        // delete image and thumbnail on device
-        imageHelper.deleteImageOnDevice(bill.getImagePath());
-        imageHelper.deleteImageOnDevice(bill.getThumbnailPath());
+            // delete image and thumbnail on device
+            imageHelper.deleteImageOnDevice(bill.getImagePath());
+            imageHelper.deleteImageOnDevice(bill.getThumbnailPath());
+        }
     }
 
     public void updateCategory(final Bill bill, final String oldCategory) {
-        imageHelper = new ImageHelper(getActivity(), bill);
+        final String userUid = getUserUid();
+        if (userUid != null) {
+            imageHelper = new ImageHelper(getActivity(), bill);
 
-        // move image on device into new category
-        imageHelper.moveImageOnDevice(bill.getCategory());
+            // move image on device into new category
+            imageHelper.moveImageOnDevice(bill.getCategory());
 
-        bill.setImagePath(imageHelper.getImagePath());
-        bill.setThumbnailPath(imageHelper.getThumbnailPath());
+            bill.setImagePath(imageHelper.getImagePath());
+            bill.setThumbnailPath(imageHelper.getThumbnailPath());
 
-        // check if new category already exists
-        dbCategories.child(userUID).addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                ArrayList<String> categories = new ArrayList<>();
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    String category = snapshot.getValue(String.class);
-                    categories.add(category);
+            // check if new category already exists
+            dbCategories.child(userUid).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    ArrayList<String> categories = new ArrayList<>();
+                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                        String category = snapshot.getValue(String.class);
+                        categories.add(category);
+                    }
+                    boolean categoryExists = categories.contains(bill.getCategory());
+
+                    if (!categoryExists) {
+                        // create new category in firebase
+                        dbCategories.child(userUid).child(bill.getCategory()).setValue(bill.getCategory());
+                    }
+                    // remove bill from old category
+                    dbBills.child(userUid).child(oldCategory).child(bill.getId()).removeValue();
+                    // create new bill
+                    dbBills.child(userUid).child(bill.getCategory()).child(bill.getId()).setValue(bill);
+
+                    sendCloseBroadcast();
                 }
-                boolean categoryExists = categories.contains(bill.getCategory());
 
-                if (!categoryExists) {
-                    // create new category in firebase
-                    dbCategories.child(userUID).child(bill.getCategory()).setValue(bill.getCategory());
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
                 }
-                // remove bill from old category
-                dbBills.child(userUID).child(oldCategory).child(bill.getId()).removeValue();
-                // create new bill
-                dbBills.child(userUID).child(bill.getCategory()).child(bill.getId()).setValue(bill);
-
-                // send message that the bill has been updated
-                Intent intent = new Intent("bill-updated-event");
-                LocalBroadcastManager.getInstance(getActivity()).sendBroadcast(intent);
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
+            });
+        }
+        sendCloseBroadcast();
     }
 
     public void deleteCategory(String category) {
-        dbBills.child(userUID).child(category).removeValue();
+        final String userUid = getUserUid();
+        if (userUid != null) {
+            dbBills.child(userUid).child(category).removeValue();
 
-        dbCategories.child(userUID).child(category).removeValue();
+            dbCategories.child(userUid).child(category).removeValue();
 
-        imageHelper = new ImageHelper(getActivity());
+            imageHelper = new ImageHelper(getActivity());
 
-        imageHelper.deleteCategoryDir(category);
+            imageHelper.deleteCategoryDir(category);
+        }
     }
 
     private void uploadImage(final Bill bill) {
-        Uri imageFile = Uri.fromFile(new File(bill.getImagePath()));
+        final String userUid = getUserUid();
+        if (userUid != null) {
+            Uri imageFile = Uri.fromFile(new File(bill.getImagePath()));
 
-        StorageMetadata metadata = new StorageMetadata.Builder().setContentType("image/jpeg").build();
+            StorageMetadata metadata = new StorageMetadata.Builder().setContentType("image/jpeg").build();
 
-        UploadTask uploadTask = imageStorage.child("user").child(userUID).child(bill.getImageId()).putFile(imageFile, metadata);
+            UploadTask uploadTask = imageStorage.child("user").child(userUid).child(bill.getImageId()).putFile(imageFile, metadata);
 
-        // show upload progress dialog
-        final ProgressDialog progressDialog = ProgressDialog.show(getActivity(), "Uploading Image", "Uploading image...", true, false);
+            // show upload progress dialog
+            final ProgressDialog progressDialog = ProgressDialog.show(getActivity(), "Uploading Image", "Uploading image...", true, false);
 
-        uploadTask.addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
-            @Override
-            public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
-                double progress = (100.0 * taskSnapshot.getBytesTransferred()) / taskSnapshot.getTotalByteCount();
-                progressDialog.setMessage("Upload is " + round(progress, 2) + "% done.");
-            }
-        }).addOnPausedListener(new OnPausedListener<UploadTask.TaskSnapshot>() {
-            @Override
-            public void onPaused(UploadTask.TaskSnapshot taskSnapshot) {
-                progressDialog.setMessage("Upload is paused.");
-                progressDialog.dismiss();
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                progressDialog.setMessage("Upload has failed.");
-                progressDialog.dismiss();
-            }
-        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-            @Override
-            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                Uri downloadUrl = taskSnapshot.getMetadata().getDownloadUrl();
-                bill.setDownloadUrl(downloadUrl.toString());
-                updateBill(bill);
-                progressDialog.dismiss();
-            }
-        });
+            uploadTask.addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
+                    double progress = (100.0 * taskSnapshot.getBytesTransferred()) / taskSnapshot.getTotalByteCount();
+                    progressDialog.setMessage("Upload is " + round(progress, 2) + "% done.");
+                }
+            }).addOnPausedListener(new OnPausedListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onPaused(UploadTask.TaskSnapshot taskSnapshot) {
+                    progressDialog.setMessage("Upload is paused.");
+                    progressDialog.dismiss();
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    progressDialog.setMessage("Upload has failed.");
+                    progressDialog.dismiss();
+                }
+            }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                    Uri downloadUrl = taskSnapshot.getMetadata().getDownloadUrl();
+                    bill.setDownloadUrl(downloadUrl.toString());
+                    updateBill(bill);
+                    progressDialog.dismiss();
+                }
+            });
+        }
     }
 
     public void synchronizeImages() {
-        dbCategories.child(userUID).addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot categoryDataSnapshot) {
-                for (DataSnapshot categorySnapshot : categoryDataSnapshot.getChildren()) {
-                    String category = categorySnapshot.getValue(String.class);
-                    dbBills.child(userUID).child(category).addValueEventListener(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(DataSnapshot scanDataSnapshot) {
-                            for (DataSnapshot scanSnapshot : scanDataSnapshot.getChildren()) {
-                                Bill bill = scanSnapshot.getValue(Bill.class);
-                                // Check if image exists on device
-                                File image = new File(bill.getImagePath());
-                                if (!image.exists()) {
-                                    downloadImage(bill);
+        final String userUid = getUserUid();
+        if (userUid != null) {
+            dbCategories.child(getUserUid()).addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot categoryDataSnapshot) {
+                    for (DataSnapshot categorySnapshot : categoryDataSnapshot.getChildren()) {
+                        String category = categorySnapshot.getValue(String.class);
+                        dbBills.child(userUid).child(category).addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot scanDataSnapshot) {
+                                for (DataSnapshot scanSnapshot : scanDataSnapshot.getChildren()) {
+                                    Bill bill = scanSnapshot.getValue(Bill.class);
+                                    // Check if image exists on device
+                                    File image = new File(bill.getImagePath());
+                                    if (!image.exists()) {
+                                        downloadImage(bill);
+                                    }
                                 }
                             }
-                        }
 
-                        @Override
-                        public void onCancelled(DatabaseError databaseError) {
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
 
-                        }
-                    });
+                            }
+                        });
+                    }
                 }
-            }
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
 
-            }
-        });
+                }
+            });
+        }
     }
 
     public void downloadImage(final Bill bill) {
-        StorageReference imageStorage = FirebaseStorage.getInstance().getReferenceFromUrl(bill.getDownloadUrl());
-        imageHelper = new ImageHelper(getActivity(), bill);
-        final ProgressDialog progressDialog = ProgressDialog.show(getActivity(), "Synchronizing Image", "Downloading image...", true, false);
+        final String userUid = getUserUid();
+        if (userUid != null) {
+            StorageReference imageStorage = FirebaseStorage.getInstance().getReferenceFromUrl(bill.getDownloadUrl());
+            imageHelper = new ImageHelper(getActivity(), bill);
+            final ProgressDialog progressDialog = ProgressDialog.show(getActivity(), "Synchronizing Image", "Downloading image...", true, false);
 
-        imageHelper.createCategoryDir();
+            imageHelper.createCategoryDir();
 
-        imageStorage.getFile(imageHelper.getImageFile()).addOnProgressListener(new OnProgressListener<FileDownloadTask.TaskSnapshot>() {
-            @Override
-            public void onProgress(FileDownloadTask.TaskSnapshot taskSnapshot) {
-                double progress = (100.0 * taskSnapshot.getBytesTransferred()) / taskSnapshot.getTotalByteCount();
-                progressDialog.setMessage("Download is " + round(progress, 2) + "% done.");
-            }
-        }).addOnPausedListener(new OnPausedListener<FileDownloadTask.TaskSnapshot>() {
-            @Override
-            public void onPaused(FileDownloadTask.TaskSnapshot taskSnapshot) {
-                progressDialog.setMessage("Download is paused.");
-                progressDialog.dismiss();
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                progressDialog.setMessage("Download has failed.");
-                progressDialog.dismiss();
-            }
-        }).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
-            @Override
-            public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
-                progressDialog.dismiss();
-            }
-        });
+            imageStorage.getFile(imageHelper.getImageFile()).addOnProgressListener(new OnProgressListener<FileDownloadTask.TaskSnapshot>() {
+                @Override
+                public void onProgress(FileDownloadTask.TaskSnapshot taskSnapshot) {
+                    double progress = (100.0 * taskSnapshot.getBytesTransferred()) / taskSnapshot.getTotalByteCount();
+                    progressDialog.setMessage("Download is " + round(progress, 2) + "% done.");
+                }
+            }).addOnPausedListener(new OnPausedListener<FileDownloadTask.TaskSnapshot>() {
+                @Override
+                public void onPaused(FileDownloadTask.TaskSnapshot taskSnapshot) {
+                    progressDialog.setMessage("Download is paused.");
+                    progressDialog.dismiss();
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    progressDialog.setMessage("Download has failed.");
+                    progressDialog.dismiss();
+                }
+            }).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
+                    progressDialog.dismiss();
+                }
+            });
+        }
     }
 
-    private static double round(double value, int places) {
+    private double round(double value, int places) {
         if (places < 0) throw new IllegalArgumentException();
 
         long factor = (long) Math.pow(10, places);
         value = value * factor;
         long tmp = Math.round(value);
         return (double) tmp / factor;
+    }
+
+    private void sendCloseBroadcast() {
+        // send message that the bill has been updated
+        Intent intent = new Intent("bill-updated-event");
+        LocalBroadcastManager.getInstance(getActivity()).sendBroadcast(intent);
     }
 
     public FirebaseAuth getAuth() {
@@ -262,12 +288,12 @@ public class FirebaseDatabaseHelper {
         this.auth = auth;
     }
 
-    public String getUserUID() {
-        return userUID;
+    public FirebaseUser getCurrentUser(){
+        return auth.getCurrentUser();
     }
 
-    public void setUserUID(String userUID) {
-        this.userUID = userUID;
+    public String getUserUid() {
+        return auth.getCurrentUser().getUid();
     }
 
     public DatabaseReference getDbUsers() {

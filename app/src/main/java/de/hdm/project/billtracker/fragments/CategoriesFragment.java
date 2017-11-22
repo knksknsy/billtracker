@@ -76,7 +76,7 @@ public class CategoriesFragment extends Fragment {
     }
 
     private void initCategoriesListView() {
-        fDatabase.getDbCategories().child(fDatabase.getUserUID()).addValueEventListener(new ValueEventListener() {
+        fDatabase.getDbCategories().child(fDatabase.getUserUid()).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 final ArrayList<String> categories = new ArrayList<>();
@@ -106,7 +106,7 @@ public class CategoriesFragment extends Fragment {
     }
 
     private void initBillsListView(final String category) {
-        fDatabase.getDbBills().child(fDatabase.getUserUID()).child(category).addValueEventListener(new ValueEventListener() {
+        fDatabase.getDbBills().child(fDatabase.getUserUid()).child(category).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 bills = new ArrayList<>();

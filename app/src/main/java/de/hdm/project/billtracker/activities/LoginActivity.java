@@ -20,6 +20,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 import de.hdm.project.billtracker.R;
+import de.hdm.project.billtracker.helpers.FirebaseDatabaseHelper;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -31,14 +32,14 @@ public class LoginActivity extends AppCompatActivity {
     Button loginButton;
     TextView signupLink;
 
-    private FirebaseAuth mAuth;
+    private FirebaseDatabaseHelper fDatabase;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        mAuth = FirebaseAuth.getInstance();
+        fDatabase = new FirebaseDatabaseHelper(this);
 
         emailText = (EditText) findViewById(R.id.input_email);
         passwordText = (EditText) findViewById(R.id.input_password);
@@ -68,7 +69,7 @@ public class LoginActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         // Check if user is signed in (non-null) and update UI accordingly
-        FirebaseUser currentUser = mAuth.getCurrentUser();
+        FirebaseUser currentUser = fDatabase.getCurrentUser();
         if (currentUser != null) {
             onLoginSuccess();
         }
@@ -97,7 +98,7 @@ public class LoginActivity extends AppCompatActivity {
         String email = emailText.getText().toString();
         String password = passwordText.getText().toString();
 
-        mAuth.signInWithEmailAndPassword(email, password)
+        fDatabase.getAuth().signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
@@ -105,7 +106,7 @@ public class LoginActivity extends AppCompatActivity {
                         if (task.isSuccessful()) {
                             // Sign in success, update UI
                             Log.d(TAG, "signInWithEmail:success");
-                            FirebaseUser user = mAuth.getCurrentUser();
+                            FirebaseUser user = fDatabase.getCurrentUser();
 
                             updateUI(user);
                         } else {
