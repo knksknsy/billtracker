@@ -6,6 +6,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.media.Image;
 import android.media.ImageReader;
+import android.net.Uri;
 import android.os.Environment;
 
 import java.io.ByteArrayOutputStream;
@@ -80,6 +81,40 @@ public class ImageHelper {
         }
     }
 
+    private void createTempImageFile() {
+        try {
+            String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+            String imageFileName = "JPEG_" + timeStamp + "_";
+            File storageDir = activity.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+            String suffix = ".jpg";
+            File image = File.createTempFile(
+                    imageFileName,   // prefix
+                    suffix,          // suffix
+                    storageDir       // directory
+            );
+
+            imageName = image.getAbsolutePath().replace(image.getParent() + "/", "");
+            imageFile = image;
+        } catch (IOException e) {
+            e.printStackTrace();
+            imageFile = null;
+        }
+    }
+
+    private Bitmap imageToBitmap(Image image) {
+        ByteBuffer buffer = image.getPlanes()[0].getBuffer();
+        byte[] bytes = new byte[buffer.capacity()];
+        buffer.get(bytes);
+
+        return BitmapFactory.decodeByteArray(bytes, 0, bytes.length, null);
+    }
+
+    private Bitmap rotateBitmap(Bitmap source, float angle) {
+        Matrix matrix = new Matrix();
+        matrix.postRotate(angle);
+        return Bitmap.createBitmap(source, 0, 0, source.getWidth(), source.getHeight(), matrix, true);
+    }
+
     public void moveImageOnDevice(String category) {
         String outputPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).toString() + "/Billtracker/" + category;
 
@@ -124,44 +159,23 @@ public class ImageHelper {
         }
     }
 
-    public void deleteImageOnDevice(String path) {
+    public static void deleteImageOnDevice(String path) {
         File dir = new File(path);
         if (dir.exists()) {
             dir.delete();
         }
     }
 
-    private void createTempImageFile() {
-        try {
-            // Create an image file name
-            String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-            String imageFileName = "JPEG_" + timeStamp + "_";
-            File storageDir = activity.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-            String suffix = ".jpg";
-            File image = File.createTempFile(
-                    imageFileName,   // prefix
-                    suffix,          // suffix
-                    storageDir       // directory
-            );
-
-            // Save a file: path for use with ACTION_VIEW intents
-            imageName = image.getAbsolutePath().replace(image.getParent() + "/", "");
-            imageFile = image;
-        } catch (IOException e) {
-            e.printStackTrace();
-            imageFile = null;
-        }
-    }
-
-    public void createCategoryDir() {
-        File categoryDir = new File(imageFile.getParent());
+    public static void createCategoryDir(String path) {
+        File file = new File(path);
+        File categoryDir = new File(file.getParent());
 
         if (!categoryDir.exists()) {
             categoryDir.mkdirs();
         }
     }
 
-    public void deleteCategoryDir(String category) {
+    public static void deleteCategoryDir(String category) {
         File path = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).toString() + "/Billtracker/" + category);
 
         if (path.isDirectory()) {
@@ -171,20 +185,6 @@ public class ImageHelper {
             }
             path.delete();
         }
-    }
-
-    private Bitmap imageToBitmap(Image image) {
-        ByteBuffer buffer = image.getPlanes()[0].getBuffer();
-        byte[] bytes = new byte[buffer.capacity()];
-        buffer.get(bytes);
-
-        return BitmapFactory.decodeByteArray(bytes, 0, bytes.length, null);
-    }
-
-    private Bitmap rotateBitmap(Bitmap source, float angle) {
-        Matrix matrix = new Matrix();
-        matrix.postRotate(angle);
-        return Bitmap.createBitmap(source, 0, 0, source.getWidth(), source.getHeight(), matrix, true);
     }
 
     public void saveThumbnail() {
@@ -278,6 +278,22 @@ public class ImageHelper {
 
     public void setImagePath(String imagePath) {
         this.imagePath = imagePath;
+    }
+
+    public static Uri getImagePathAsUri(String path) {
+        return Uri.fromFile(new File(path));
+    }
+
+    public static File getImageFile(String path) {
+        return new File(path);
+    }
+
+    public static boolean fileExists(String path) {
+        File file = new File(path);
+        if (file.exists()) {
+            return true;
+        }
+        return false;
     }
 
     public String getThumbnailPath() {

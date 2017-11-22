@@ -24,7 +24,6 @@ import com.google.firebase.storage.StorageMetadata;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.UUID;
 
@@ -86,11 +85,9 @@ public class FirebaseDatabaseHelper {
             // delete bill image
             imageStorage.child("user").child(userUid).child(bill.getImageId()).delete();
 
-            imageHelper = new ImageHelper(getActivity(), bill);
-
             // delete image and thumbnail on device
-            imageHelper.deleteImageOnDevice(bill.getImagePath());
-            imageHelper.deleteImageOnDevice(bill.getThumbnailPath());
+            ImageHelper.deleteImageOnDevice(bill.getImagePath());
+            ImageHelper.deleteImageOnDevice(bill.getThumbnailPath());
         }
     }
 
@@ -144,16 +141,14 @@ public class FirebaseDatabaseHelper {
 
             dbCategories.child(userUid).child(category).removeValue();
 
-            imageHelper = new ImageHelper(getActivity());
-
-            imageHelper.deleteCategoryDir(category);
+            ImageHelper.deleteCategoryDir(category);
         }
     }
 
     private void uploadImage(final Bill bill) {
         final String userUid = getUserUid();
         if (userUid != null) {
-            Uri imageFile = Uri.fromFile(new File(bill.getImagePath()));
+            Uri imageFile = ImageHelper.getImagePathAsUri(bill.getImagePath());
 
             StorageMetadata metadata = new StorageMetadata.Builder().setContentType("image/jpeg").build();
 
@@ -206,8 +201,7 @@ public class FirebaseDatabaseHelper {
                                 for (DataSnapshot scanSnapshot : scanDataSnapshot.getChildren()) {
                                     Bill bill = scanSnapshot.getValue(Bill.class);
                                     // Check if image exists on device
-                                    File image = new File(bill.getImagePath());
-                                    if (!image.exists()) {
+                                    if (!ImageHelper.fileExists(bill.getImagePath())) {
                                         downloadImage(bill);
                                     }
                                 }
@@ -233,12 +227,11 @@ public class FirebaseDatabaseHelper {
         final String userUid = getUserUid();
         if (userUid != null) {
             StorageReference imageStorage = FirebaseStorage.getInstance().getReferenceFromUrl(bill.getDownloadUrl());
-            imageHelper = new ImageHelper(getActivity(), bill);
             final ProgressDialog progressDialog = ProgressDialog.show(getActivity(), "Synchronizing Image", "Downloading image...", true, false);
 
-            imageHelper.createCategoryDir();
+            ImageHelper.createCategoryDir(bill.getImagePath());
 
-            imageStorage.getFile(imageHelper.getImageFile()).addOnProgressListener(new OnProgressListener<FileDownloadTask.TaskSnapshot>() {
+            imageStorage.getFile(ImageHelper.getImageFile(bill.getImagePath())).addOnProgressListener(new OnProgressListener<FileDownloadTask.TaskSnapshot>() {
                 @Override
                 public void onProgress(FileDownloadTask.TaskSnapshot taskSnapshot) {
                     double progress = (100.0 * taskSnapshot.getBytesTransferred()) / taskSnapshot.getTotalByteCount();
