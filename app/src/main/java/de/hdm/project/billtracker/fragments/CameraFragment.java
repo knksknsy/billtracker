@@ -250,16 +250,14 @@ public class CameraFragment extends Fragment {
 
     @Override
     public void onPause() {
-        super.onPause();
         cameraPreview.closeCamera();
         cameraPreview.stopBackgroundThread();
+        super.onPause();
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        cameraPreview.closeCamera();
-        cameraPreview.stopBackgroundThread();
     }
 
 
