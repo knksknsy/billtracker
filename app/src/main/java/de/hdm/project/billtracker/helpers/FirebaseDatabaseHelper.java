@@ -74,7 +74,7 @@ public class FirebaseDatabaseHelper {
         if (userUid != null) {
             dbBills.child(userUid).child(bill.getCategory()).child(bill.getId()).setValue(bill);
         }
-        sendCloseBroadcast();
+        sendFirebaseDoneBroadcast();
     }
 
     public void deleteBill(final Bill bill) {
@@ -89,6 +89,7 @@ public class FirebaseDatabaseHelper {
             ImageHelper.deleteImageOnDevice(bill.getImagePath());
             ImageHelper.deleteImageOnDevice(bill.getThumbnailPath());
         }
+        sendFirebaseDoneBroadcast();
     }
 
     public void updateCategory(final Bill bill, final String oldCategory) {
@@ -122,7 +123,7 @@ public class FirebaseDatabaseHelper {
                     // create new bill
                     dbBills.child(userUid).child(bill.getCategory()).child(bill.getId()).setValue(bill);
 
-                    sendCloseBroadcast();
+                    sendFirebaseDoneBroadcast();
                 }
 
                 @Override
@@ -131,7 +132,7 @@ public class FirebaseDatabaseHelper {
                 }
             });
         }
-        sendCloseBroadcast();
+        sendFirebaseDoneBroadcast();
     }
 
     public void deleteCategory(String category) {
@@ -267,9 +268,9 @@ public class FirebaseDatabaseHelper {
         return (double) tmp / factor;
     }
 
-    private void sendCloseBroadcast() {
+    private void sendFirebaseDoneBroadcast() {
         // send message that the bill has been updated
-        Intent intent = new Intent("bill-updated-event");
+        Intent intent = new Intent("firebase-done-event");
         LocalBroadcastManager.getInstance(getActivity()).sendBroadcast(intent);
     }
 

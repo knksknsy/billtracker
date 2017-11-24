@@ -50,7 +50,9 @@ public class BillDetailsActivity extends AppCompatActivity {
     private Button deleteButton;
     private Button downloadButton;
 
-    // Receiving message when bill was updated successfully
+    /**
+     * Receiving message when firebase was updated successfully
+     */
     private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -58,9 +60,6 @@ public class BillDetailsActivity extends AppCompatActivity {
             finish();
         }
     };
-
-
-    // TODO: expandable ImageView -> new Activity for image with zooming functionality
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,7 +69,7 @@ public class BillDetailsActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver,
-                new IntentFilter("bill-updated-event"));
+                new IntentFilter("firebase-done-event"));
 
         Intent i = getIntent();
         bill = (Bill) i.getParcelableExtra("bill");
@@ -139,7 +138,6 @@ public class BillDetailsActivity extends AppCompatActivity {
             public void onClick(View v) {
                 openDialog();
                 setResult(Activity.RESULT_OK);
-                finish();
             }
         });
 
