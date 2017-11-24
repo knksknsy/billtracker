@@ -5,15 +5,15 @@
     android:layout_height="match_parent"
     android:layout_marginBottom="@dimen/bottomNavigationViewHeight"
     android:orientation="vertical"
-    android:weightSum="4"
+    android:weightSum="8"
     tools:context=".activities.MainActivity"
     android:id="@+id/fragmentCamera">
 
     <RelativeLayout
         android:id="@+id/ImageContainer"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="1" >
+        android:layout_height="0dp"
+        android:layout_weight="7" >
 
         <TextureView
             android:id="@+id/textureView"
@@ -25,8 +25,8 @@
     <LinearLayout
         android:id="@+id/PhotoButtonContainer"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="3"
+        android:layout_height="0dp"
+        android:layout_weight="1"
         android:orientation="horizontal" >
 
         <EditText
@@ -40,19 +40,19 @@
             android:hint="Sum total"
             android:gravity="center"/>
 
-        <Button
+        <ImageButton
             android:id="@+id/photoButton"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:text="Take Photo" />
+            android:layout_weight="1" />
 
-        <Button
+        <ImageButton
             android:id="@+id/saveButton"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:text="Save Picture" />
+            android:state_enabled="false"
+            android:color="#9D9FA2"/>
 
     </LinearLayout>
 

@@ -94,7 +94,7 @@ public class ImageHelper {
         try {
             String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
             String imageFileName = "JPEG_" + timeStamp + "_";
-            File storageDir = activity.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+            File storageDir = activity.getExternalFilesDir(Environment.DIRECTORY_PICTURES + "/tmpImages");
             String suffix = ".jpg";
             File image = File.createTempFile(
                     imageFileName,   // prefix
@@ -206,7 +206,7 @@ public class ImageHelper {
                 ByteArrayOutputStream bytearroutstream = new ByteArrayOutputStream();
                 thumbnail.compress(Bitmap.CompressFormat.JPEG, 100, bytearroutstream);
 
-                File tmpDir = activity.getExternalFilesDir(Environment.DIRECTORY_PICTURES + "/tmpImages");
+                File tmpDir = activity.getExternalFilesDir(Environment.DIRECTORY_PICTURES + "/thumbnails");
                 thumbnailPath = tmpDir + "/" + imageName;
                 out = new FileOutputStream(tmpDir + "/" + imageName);
                 thumbnail.compress(Bitmap.CompressFormat.JPEG, 100, out);
@@ -268,6 +268,18 @@ public class ImageHelper {
      */
     public static void deleteCategoryDir(String category) {
         File path = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).toString() + "/Billtracker/" + category);
+
+        if (path.isDirectory()) {
+            String[] children = path.list();
+            for (int i = 0; i < children.length; i++) {
+                new File(path, children[i]).delete();
+            }
+            path.delete();
+        }
+    }
+
+    public void deleteTempImages() {
+        File path = activity.getExternalFilesDir(Environment.DIRECTORY_PICTURES + "/tmpImages");
 
         if (path.isDirectory()) {
             String[] children = path.list();

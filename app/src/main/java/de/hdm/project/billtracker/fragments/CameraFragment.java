@@ -18,13 +18,13 @@ import android.view.LayoutInflater;
 import android.view.TextureView;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 
 import java.util.Date;
 
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import de.hdm.project.billtracker.helpers.CameraPreview;
@@ -41,8 +41,8 @@ public class CameraFragment extends Fragment {
     int dialogStack = 0;
 
     private TextureView textureView;
-    private Button photoButton;
-    private Button saveButton;
+    private ImageButton photoButton;
+    private ImageButton saveButton;
     private EditText totalSum;
 
     private boolean isSumEmpty;
@@ -56,7 +56,9 @@ public class CameraFragment extends Fragment {
         return new ChartFragment();
     }
 
-    // Update UI when image has saved picture successfully on device
+    /**
+     * Update UI when image has saved picture successfully on device
+     */
     private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -119,12 +121,15 @@ public class CameraFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 if (!pictureTaken) {
+                    togglePhotoButtonIcon(true);
                     cameraPreview.capturePicture();
                 } else {
-                    recaptureImage();
+                    recaptureImage(false);
+                    imageHelper.deleteTempImages();
                 }
             }
         });
+        togglePhotoButtonIcon(false);
 
         saveButton = inflatedView.findViewById(R.id.saveButton);
         saveButton.setOnClickListener(new View.OnClickListener() {
@@ -133,6 +138,7 @@ public class CameraFragment extends Fragment {
                 showSaveDialog(SAVE_DIALOG_FRAGMENT);
             }
         });
+        saveButton.setImageResource(R.drawable.ic_save_black_48dp);
         enableSaveButton();
 
         // Broadcast signaling if image capture in CameraPreview is complete
@@ -142,17 +148,8 @@ public class CameraFragment extends Fragment {
         return inflatedView;
     }
 
-    private void enableSaveButton(boolean pictureTaken) {
-        this.pictureTaken = pictureTaken;
-        photoButton.setText(this.pictureTaken ? "Retake Photo" : "Take Picture");
-        saveButton.setEnabled(!isSumEmpty && this.pictureTaken);
-    }
-
-    private void enableSaveButton() {
-        saveButton.setEnabled(!isSumEmpty && pictureTaken);
-    }
-
-    private void recaptureImage() {
+    private void recaptureImage(boolean state) {
+        togglePhotoButtonIcon(state);
         enableSaveButton(false);
         cameraPreview.createCameraPreview(textureView);
     }
@@ -195,6 +192,7 @@ public class CameraFragment extends Fragment {
             case SAVE_DIALOG_FRAGMENT:
                 if (resultCode == Activity.RESULT_OK) {
                     enableSaveButton(false);
+                    togglePhotoButtonIcon(false);
 
                     String category = data.getStringExtra("category");
                     String title = data.getStringExtra("title");
@@ -246,6 +244,8 @@ public class CameraFragment extends Fragment {
         super.onResume();
         cameraPreview.startBackgroundThread();
         enableSaveButton(false);
+        togglePhotoButtonIcon(false);
+
         if (textureView.isAvailable()) {
             cameraPreview.openCamera();
         } else {
@@ -263,6 +263,25 @@ public class CameraFragment extends Fragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
+    }
+
+    private void togglePhotoButtonIcon(boolean state) {
+        photoButton.setImageResource(!state ? R.drawable.ic_photo_camera_black_48dp: R.drawable.ic_refresh_black_48dp);
+    }
+
+    private void enableSaveButton(boolean pictureTaken) {
+        this.pictureTaken = pictureTaken;
+
+        boolean enabled = !isSumEmpty && this.pictureTaken;
+        saveButton.setImageResource(enabled ? R.drawable.ic_save_black_48dp : R.drawable.ic_save_white_48dp);
+        saveButton.setEnabled(enabled);
+    }
+
+    private void enableSaveButton() {
+        boolean enabled = !isSumEmpty && this.pictureTaken;
+        saveButton.setImageResource(enabled ? R.drawable.ic_save_black_48dp : R.drawable.ic_save_white_48dp);
+        saveButton.setEnabled(enabled);
+
     }
 
 
