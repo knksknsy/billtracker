@@ -73,6 +73,7 @@ public class FirebaseDatabaseHelper {
         final String userUid = getUserUid();
         if (userUid != null) {
             dbBills.child(userUid).child(bill.getCategory()).child(bill.getId()).setValue(bill);
+            sendFirebaseDoneBroadcast();
         }
         sendFirebaseDoneBroadcast();
     }
@@ -88,6 +89,7 @@ public class FirebaseDatabaseHelper {
             // delete image and thumbnail on device
             ImageHelper.deleteImageOnDevice(bill.getImagePath());
             ImageHelper.deleteImageOnDevice(bill.getThumbnailPath());
+            sendFirebaseDoneBroadcast();
         }
         sendFirebaseDoneBroadcast();
     }
@@ -114,15 +116,15 @@ public class FirebaseDatabaseHelper {
                     }
                     boolean categoryExists = categories.contains(bill.getCategory());
 
-                    if (!categoryExists) {
-                        // create new category in firebase
-                        dbCategories.child(userUid).child(bill.getCategory()).setValue(bill.getCategory());
-                    }
                     // remove bill from old category
                     dbBills.child(userUid).child(oldCategory).child(bill.getId()).removeValue();
                     // create new bill
                     dbBills.child(userUid).child(bill.getCategory()).child(bill.getId()).setValue(bill);
 
+                    if (!categoryExists) {
+                        // create new category in firebase
+                        dbCategories.child(userUid).child(bill.getCategory()).setValue(bill.getCategory());
+                    }
                     sendFirebaseDoneBroadcast();
                 }
 
@@ -282,7 +284,7 @@ public class FirebaseDatabaseHelper {
         this.auth = auth;
     }
 
-    public FirebaseUser getCurrentUser(){
+    public FirebaseUser getCurrentUser() {
         return auth.getCurrentUser();
     }
 
