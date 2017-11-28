@@ -84,6 +84,7 @@ public class BillTrackerInstrumentedTest {
         onView(withId(R.id.totalSum)).perform(clearText(),typeText(TEST_SUM), closeSoftKeyboard());
         // Take photo
         onView(withId(R.id.photoButton)).perform(click());
+        Thread.sleep(2000);
         // Save bill
         onView(withId(R.id.saveButton)).perform(click());
         // Type Category
@@ -118,6 +119,7 @@ public class BillTrackerInstrumentedTest {
         // Change Itemname
         onView(withText(TEST_ITEM)).perform(replaceText(TEST_ITEM_CHANGE));
         onView(withId(R.id.saveButton)).perform(click());
+        Thread.sleep(2000);
         // Undo change
         onView(withText(TEST_ITEM_CHANGE)).perform(click());
         onView(withText(TEST_ITEM_CHANGE)).perform(replaceText(TEST_ITEM));
