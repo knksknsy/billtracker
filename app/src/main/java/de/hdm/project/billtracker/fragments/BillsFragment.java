@@ -84,8 +84,8 @@ public class BillsFragment extends Fragment {
         fDatabase.getDbBills().child(fDatabase.getUserUid()).child(category).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot scanDataSnapshot) {
-                for (DataSnapshot scanSnapshot : scanDataSnapshot.getChildren()) {
-                    Bill bill = scanSnapshot.getValue(Bill.class);
+                for (DataSnapshot billSnapshot : scanDataSnapshot.getChildren()) {
+                    Bill bill = billSnapshot.getValue(Bill.class);
                     bills.add(bill);
                 }
                 if (getActivity() != null) {
