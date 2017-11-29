@@ -137,14 +137,29 @@ public class FirebaseDatabaseHelper {
         sendFirebaseDoneBroadcast();
     }
 
-    public void deleteCategory(String category) {
+    public void deleteCategory(final String category) {
         final String userUid = getUserUid();
         if (userUid != null) {
-            dbBills.child(userUid).child(category).removeValue();
+            // delete bill image references
+            dbBills.child(userUid).child(category).addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                        Bill bill = snapshot.getValue(Bill.class);
+                        imageStorage.child("user").child(userUid).child(bill.getImageId()).delete();
+                    }
+                    dbBills.child(userUid).child(category).removeValue();
 
-            dbCategories.child(userUid).child(category).removeValue();
+                    dbCategories.child(userUid).child(category).removeValue();
 
-            ImageHelper.deleteCategoryDir(category);
+                    ImageHelper.deleteCategoryDir(category);
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
         }
     }
 
