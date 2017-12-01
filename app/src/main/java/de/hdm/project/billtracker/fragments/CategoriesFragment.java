@@ -53,7 +53,6 @@ public class CategoriesFragment extends Fragment {
 
         return view;
     }
-
     @Override
     public void onResume() {
         super.onResume();
@@ -76,6 +75,9 @@ public class CategoriesFragment extends Fragment {
         });
     }
 
+    /**
+     * Retrieve categories and initialize CategoryListAdapter
+     */
     private void initCategoriesListView() {
         fDatabase.getDbCategories().child(fDatabase.getUserUid()).addValueEventListener(new ValueEventListener() {
             @Override
@@ -106,6 +108,11 @@ public class CategoriesFragment extends Fragment {
         });
     }
 
+    /**
+     * Retrieve categories and its' bills
+     *
+     * @param category
+     */
     private void initBillsListView(final String category) {
         fDatabase.getDbBills().child(fDatabase.getUserUid()).child(category).addValueEventListener(new ValueEventListener() {
             @Override

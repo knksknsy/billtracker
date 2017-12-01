@@ -56,10 +56,13 @@ public class CameraFragment extends Fragment {
         return new ChartFragment();
     }
 
-    /**
-     * Update UI when image has saved picture successfully on device
-     */
     private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
+        /**
+         * Update UI when image has saved picture successfully on device
+         *
+         * @param context
+         * @param intent
+         */
         @Override
         public void onReceive(Context context, Intent intent) {
             if (getActivity() != null) {
@@ -124,8 +127,8 @@ public class CameraFragment extends Fragment {
                     togglePhotoButtonIcon(true);
                     cameraPreview.capturePicture();
                 } else {
-                    recaptureImage(false);
-                    imageHelper.deleteTempImages();
+                    recaptureImage();
+                    imageHelper.deleteTmpImage();
                 }
             }
         });
@@ -148,8 +151,11 @@ public class CameraFragment extends Fragment {
         return inflatedView;
     }
 
-    private void recaptureImage(boolean state) {
-        togglePhotoButtonIcon(state);
+    /**
+     * Reset states of control elements and reinitialize camera preview
+     */
+    private void recaptureImage() {
+        togglePhotoButtonIcon(false);
         enableSaveButton(false);
         cameraPreview.createCameraPreview(textureView);
     }
@@ -190,6 +196,9 @@ public class CameraFragment extends Fragment {
         super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode) {
             case SAVE_DIALOG_FRAGMENT:
+                /**
+                 * Create a bill object and upload it to firebase
+                 */
                 if (resultCode == Activity.RESULT_OK) {
                     enableSaveButton(false);
                     togglePhotoButtonIcon(false);
@@ -212,7 +221,7 @@ public class CameraFragment extends Fragment {
      * @param title
      */
     private void prepareAndUploadBill(String category, String title) {
-        imageHelper.moveImageOnDevice(category);
+        imageHelper.moveToPicturesDir(category);
 
         Double sum = Double.parseDouble(totalSum.getText().toString());
         totalSum.getText().clear();
@@ -220,7 +229,7 @@ public class CameraFragment extends Fragment {
         Bill bill = new Bill(title, category, new Date().getTime(), sum, imageHelper.getImagePath(), imageHelper.getThumbnailPath());
 
         // Upload bill to firebase
-        fDatabaseHelper.writeBill(bill);
+        fDatabaseHelper.createBill(bill);
     }
 
     @Override
@@ -239,6 +248,9 @@ public class CameraFragment extends Fragment {
         outState.putInt("dialog-level", dialogStack);
     }
 
+    /**
+     * Start camera preview thread, reinitialize UI controls and open camera
+     */
     @Override
     public void onResume() {
         super.onResume();
@@ -253,6 +265,9 @@ public class CameraFragment extends Fragment {
         }
     }
 
+    /**
+     * Close camera and stop camera preview thread
+     */
     @Override
     public void onPause() {
         cameraPreview.closeCamera();
@@ -265,10 +280,19 @@ public class CameraFragment extends Fragment {
         super.onDestroy();
     }
 
+    /**
+     * Set the photo button's icon
+     *
+     * @param state
+     */
     private void togglePhotoButtonIcon(boolean state) {
         photoButton.setImageResource(!state ? R.drawable.ic_photo_camera_black_48dp: R.drawable.ic_refresh_black_48dp);
     }
 
+    /**
+     * Set the save button's state
+     * @param pictureTaken
+     */
     private void enableSaveButton(boolean pictureTaken) {
         this.pictureTaken = pictureTaken;
 
@@ -277,6 +301,9 @@ public class CameraFragment extends Fragment {
         saveButton.setEnabled(enabled);
     }
 
+    /**
+     * Set the save button's state
+     */
     private void enableSaveButton() {
         boolean enabled = !isSumEmpty && this.pictureTaken;
         saveButton.setImageResource(enabled ? R.drawable.ic_save_black_48dp : R.drawable.ic_save_white_48dp);

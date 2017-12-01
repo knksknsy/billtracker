@@ -23,6 +23,9 @@ import java.util.Date;
 
 import de.hdm.project.billtracker.models.Bill;
 
+/**
+ * Helper class for creating images and manipulate its location.
+ */
 public class ImageHelper {
 
     private Activity activity;
@@ -50,7 +53,7 @@ public class ImageHelper {
      * @param reader
      */
     public void createImage(ImageReader reader) {
-        createTempImageFile();
+        createImageFile();
         Image image = null;
         Bitmap bitmap = null;
         OutputStream output = null;
@@ -90,7 +93,7 @@ public class ImageHelper {
     /**
      * Create a temporary file without content
      */
-    private void createTempImageFile() {
+    private void createImageFile() {
         try {
             String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
             String imageFileName = "JPEG_" + timeStamp + "_";
@@ -142,7 +145,7 @@ public class ImageHelper {
      *
      * @param category
      */
-    public void moveImageOnDevice(String category) {
+    public void moveToPicturesDir(String category) {
         String outputPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).toString() + "/Billtracker/" + category;
 
         File outDir = new File(outputPath);
@@ -178,7 +181,7 @@ public class ImageHelper {
             new File(imageFile.toString()).delete();
 
             imagePath = outFile;
-            this.saveThumbnail();
+            this.createThumbnail();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (Exception e2) {
@@ -189,7 +192,7 @@ public class ImageHelper {
     /**
      * Create a thumbnail image
      */
-    public void saveThumbnail() {
+    public void createThumbnail() {
         Bitmap thumbnail;
         FileOutputStream out = null;
         FileInputStream fis = null;
@@ -227,6 +230,12 @@ public class ImageHelper {
         }
     }
 
+    /**
+     * Check if a given file is existent in the provided path
+     *
+     * @param path
+     * @return
+     */
     public static boolean fileExists(String path) {
         File file = new File(path);
         if (file.exists()) {
@@ -240,7 +249,7 @@ public class ImageHelper {
      *
      * @param path
      */
-    public static void deleteImageOnDevice(String path) {
+    public static void deleteFromPicturesDir(String path) {
         File dir = new File(path);
         if (dir.exists()) {
             dir.delete();
@@ -248,7 +257,7 @@ public class ImageHelper {
     }
 
     /**
-     * Create a category directory for an image's missing parent directory
+     * Create a category folder in pictures directory holding images of a specific category
      *
      * @param path
      */
@@ -262,7 +271,7 @@ public class ImageHelper {
     }
 
     /**
-     * Delete a category directory with all its files
+     * Delete a category folder with all its files
      *
      * @param category
      */
@@ -278,7 +287,10 @@ public class ImageHelper {
         }
     }
 
-    public void deleteTempImages() {
+    /**
+     * Delete temporarily created images which were not saved
+     */
+    public void deleteTmpImage() {
         File path = activity.getExternalFilesDir(Environment.DIRECTORY_PICTURES + "/tmpImages");
 
         if (path.isDirectory()) {
