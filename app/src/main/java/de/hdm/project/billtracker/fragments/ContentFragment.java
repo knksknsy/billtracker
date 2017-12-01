@@ -40,22 +40,15 @@ public class ContentFragment extends Fragment {
         setupTabLayout();
 
         fDatabase = new FirebaseDatabaseHelper(getActivity());
+        // check for missing local images and synchronize if needed
         fDatabase.synchronizeImages();
 
         return view;
     }
 
-    private void setCurrentTabFragment(int tabPosition) {
-        switch (tabPosition) {
-            case 0:
-                replaceFragment(categories);
-                break;
-            case 1:
-                replaceFragment(bills);
-                break;
-        }
-    }
-
+    /**
+     * Initialize TabSelectedListener
+     */
     private void bindWidgetsWithEvent() {
         tabs.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
@@ -75,20 +68,41 @@ public class ContentFragment extends Fragment {
         });
     }
 
-    private void setupTabLayout() {
-        categories = new CategoriesFragment();
-        bills = new BillsFragment();
-
-        tabs.addTab(tabs.newTab().setText("Categories"), true);
-        tabs.addTab(tabs.newTab().setText("All Bills"));
+    /**
+     * Handle setting current TabFragment
+     *
+     * @param tabPosition
+     */
+    private void setCurrentTabFragment(int tabPosition) {
+        switch (tabPosition) {
+            case 0:
+                replaceFragment(categories);
+                break;
+            case 1:
+                replaceFragment(bills);
+                break;
+        }
     }
 
+    /**
+     * Open Fragment
+     *
+     * @param fragment
+     */
     private void replaceFragment(Fragment fragment) {
         FragmentManager fm = getFragmentManager();
         FragmentTransaction ft = fm.beginTransaction();
         ft.replace(R.id.frame_container, fragment);
         ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
         ft.commit();
+    }
+
+    private void setupTabLayout() {
+        categories = new CategoriesFragment();
+        bills = new BillsFragment();
+
+        tabs.addTab(tabs.newTab().setText("Categories"), true);
+        tabs.addTab(tabs.newTab().setText("All Bills"));
     }
 
 }

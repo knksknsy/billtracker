@@ -63,6 +63,9 @@ public class BillsFragment extends Fragment {
         return view;
     }
 
+    /**
+     * Retrieve all bills regardless of it's category
+     */
     private void fetchBills() {
         fDatabase.getDbCategories().child(fDatabase.getUserUid()).addValueEventListener(new ValueEventListener() {
             @Override
@@ -80,6 +83,11 @@ public class BillsFragment extends Fragment {
         });
     }
 
+    /**
+     * Retrieve bills by category
+     *
+     * @param category
+     */
     private void initBillsByCategory(String category) {
         fDatabase.getDbBills().child(fDatabase.getUserUid()).child(category).addValueEventListener(new ValueEventListener() {
             @Override
@@ -107,6 +115,13 @@ public class BillsFragment extends Fragment {
         startActivityForResult(intent, REQUEST_CODE);
     }
 
+    /**
+     * Retrieve updated bills
+     *
+     * @param requestCode
+     * @param resultCode
+     * @param data
+     */
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_CODE) {

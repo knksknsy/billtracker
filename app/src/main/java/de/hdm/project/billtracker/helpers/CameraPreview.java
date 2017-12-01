@@ -39,15 +39,13 @@ public class CameraPreview {
     private Activity activity;
     private ImageHelper imageHelper;
 
-    protected CameraDevice cameraDevice;
-    private String cameraId;
+    private CameraDevice cameraDevice;
 
-    protected CameraCaptureSession cameraCaptureSessions;
-    protected CaptureRequest.Builder captureRequestBuilder;
+    private CameraCaptureSession cameraCaptureSessions;
+    private CaptureRequest.Builder captureRequestBuilder;
 
     private TextureView textureView;
     private ImageReader imageReader;
-    private List<Surface> outputSurfaces;
     private Size imageDimension;
 
     private Handler mBackgroundHandler;
@@ -63,6 +61,9 @@ public class CameraPreview {
         ORIENTATIONS.append(Surface.ROTATION_270, 180);
     }
 
+    /**
+     * Listener for TextureView
+     */
     private TextureView.SurfaceTextureListener textureListener = new TextureView.SurfaceTextureListener() {
         @Override
         public void onSurfaceTextureAvailable(SurfaceTexture surfaceTexture, int i, int i1) {
@@ -83,10 +84,13 @@ public class CameraPreview {
         }
     };
 
+    /**
+     * Callback register when camera is opened, disconnected or has an error
+     */
     private final CameraDevice.StateCallback stateCallback = new CameraDevice.StateCallback() {
         @Override
         public void onOpened(@NonNull CameraDevice camera) {
-            // This is called when the camera is open
+            // This is called when the camera is opened
             cameraDevice = camera;
             createCameraPreview(textureView);
         }
@@ -111,6 +115,13 @@ public class CameraPreview {
         }
     };
 
+    /**
+     * Create an instance of CameraPreview
+     *
+     * @param activity
+     * @param textureView
+     * @param imageHelper
+     */
     public CameraPreview(Activity activity, TextureView textureView, ImageHelper imageHelper) {
         this.activity = activity;
         this.imageHelper = imageHelper;
@@ -140,9 +151,10 @@ public class CameraPreview {
                 height = jpegSizes[0].getHeight();
             }
 
+            // ImageReader will provide captured picture
             ImageReader reader = ImageReader.newInstance(width, height, ImageFormat.JPEG, 1);
 
-            outputSurfaces = new ArrayList<>(2);
+            List<Surface> outputSurfaces = new ArrayList<>(2);
             outputSurfaces.add(reader.getSurface());
             outputSurfaces.add(new Surface(textureView.getSurfaceTexture()));
 
@@ -244,7 +256,7 @@ public class CameraPreview {
     public void openCamera() {
         CameraManager manager = (CameraManager) activity.getSystemService(Context.CAMERA_SERVICE);
         try {
-            cameraId = manager.getCameraIdList()[0];
+            String cameraId = manager.getCameraIdList()[0];
             CameraCharacteristics characteristics = manager.getCameraCharacteristics(cameraId);
             StreamConfigurationMap map = characteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
             assert map != null;
@@ -261,7 +273,7 @@ public class CameraPreview {
         }
     }
 
-    public void updatePreview() {
+    private void updatePreview() {
         captureRequestBuilder.set(CaptureRequest.CONTROL_MODE, CameraMetadata.CONTROL_MODE_AUTO);
         try {
             cameraCaptureSessions.setRepeatingRequest(captureRequestBuilder.build(), null, mBackgroundHandler);

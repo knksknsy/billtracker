@@ -27,6 +27,9 @@ import java.util.List;
 import de.hdm.project.billtracker.R;
 import de.hdm.project.billtracker.helpers.FirebaseDatabaseHelper;
 
+/**
+ * A DialogFragment for assigning a bill to a category
+ */
 public class CategoryDialogFragment extends DialogFragment {
 
     private FirebaseDatabaseHelper fDatabase;
@@ -124,6 +127,11 @@ public class CategoryDialogFragment extends DialogFragment {
         }
     }
 
+    /**
+     * Create an Intent
+     *
+     * @return
+     */
     private Intent getIntent() {
         Intent intent = getActivity().getIntent();
         intent.putExtra("category", autocompleteCategory.getText().toString().toUpperCase());

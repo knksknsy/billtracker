@@ -67,7 +67,7 @@ public class BillListAdapter extends ArrayAdapter<Bill> {
                         // create thumbnail
                         ImageHelper imageHelper = new ImageHelper(this.activity, bill);
                         if (!new File(bill.getThumbnailPath()).exists()) {
-                            imageHelper.saveThumbnail();
+                            imageHelper.createThumbnail();
                         }
                     }
                 }
