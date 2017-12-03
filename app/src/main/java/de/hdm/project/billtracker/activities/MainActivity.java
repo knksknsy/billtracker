@@ -40,13 +40,13 @@ public class MainActivity extends AppCompatActivity {
 
             // Set action to perform when any navigation item is selected.
             bottomNavigationView.setOnNavigationItemSelectedListener(
-                new BottomNavigationView.OnNavigationItemSelectedListener() {
-                    @Override
-                    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                    activeFragment(item);
-                    return false;
+                    new BottomNavigationView.OnNavigationItemSelectedListener() {
+                        @Override
+                        public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                            activeFragment(item);
+                            return false;
+                        }
                     }
-                }
             );
         }
     }

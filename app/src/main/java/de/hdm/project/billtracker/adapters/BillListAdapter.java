@@ -58,10 +58,10 @@ public class BillListAdapter extends ArrayAdapter<Bill> {
                 TextView sumText = (TextView) v.findViewById(R.id.sumText);
 
                 if (thumbnail != null) {
-                    File thumbnaildFile = new File(bill.getThumbnailPath());
+                    File thumbnailFile = new File(bill.getThumbnailPath());
 
-                    if (thumbnaildFile.exists()) {
-                        Bitmap bitmap = BitmapFactory.decodeFile(thumbnaildFile.getAbsolutePath());
+                    if (thumbnailFile.exists()) {
+                        Bitmap bitmap = BitmapFactory.decodeFile(thumbnailFile.getAbsolutePath());
                         thumbnail.setImageBitmap(bitmap);
                     } else {
                         // create thumbnail
@@ -81,7 +81,6 @@ public class BillListAdapter extends ArrayAdapter<Bill> {
                 }
 
                 if (sumText != null) {
-                    // TODO save user currency
                     sumText.setText("Sum: " + String.valueOf(bill.getSum()) + " €");
                 }
 
@@ -103,6 +102,12 @@ public class BillListAdapter extends ArrayAdapter<Bill> {
         return bills.size();
     }
 
+    /**
+     * Open confirmation dialog for deleting a bill
+     *
+     * @param position
+     * @param bill
+     */
     private void openDialog(final int position, final Bill bill) {
         AlertDialog.Builder builder;
         builder = new AlertDialog.Builder(this.activity);
@@ -124,6 +129,12 @@ public class BillListAdapter extends ArrayAdapter<Bill> {
                 .show();
     }
 
+    /**
+     * Delete bill locally and in firebase
+     *
+     * @param position
+     * @param bill
+     */
     private void deleteBill(int position, Bill bill) {
         bills.remove(position);
         FirebaseDatabaseHelper fDatabase = new FirebaseDatabaseHelper(this.activity);

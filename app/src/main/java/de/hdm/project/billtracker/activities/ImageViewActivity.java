@@ -21,8 +21,6 @@ public class ImageViewActivity extends AppCompatActivity implements View.OnTouch
     private Bill bill;
     private ImageView imageView;
 
-    private static final float MIN_ZOOM = 1f, MAX_ZOOM = 1f;
-
     // These matrices will be used to scale points of the image
     Matrix matrix = new Matrix();
     Matrix savedMatrix = new Matrix();
@@ -33,7 +31,7 @@ public class ImageViewActivity extends AppCompatActivity implements View.OnTouch
     static final int ZOOM = 2;
     int mode = NONE;
 
-    // these PointF objects are used to record the point(s) the user is touching
+    // These PointF objects are used to record the point(s) the user is touching
     PointF start = new PointF();
     PointF mid = new PointF();
     float oldDist = 1f;
@@ -48,6 +46,7 @@ public class ImageViewActivity extends AppCompatActivity implements View.OnTouch
         setContentView(R.layout.activity_image_view);
 
         imageView = (ImageView) findViewById(R.id.imageView);
+
         File imgFile = new File(bill.getImagePath());
         if (imgFile.exists()) {
             Bitmap bitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
@@ -63,20 +62,18 @@ public class ImageViewActivity extends AppCompatActivity implements View.OnTouch
         float scale;
 
         switch (event.getAction() & MotionEvent.ACTION_MASK) {
-            case MotionEvent.ACTION_DOWN:   // first finger down only
+            case MotionEvent.ACTION_DOWN:           // first finger down only
                 savedMatrix.set(matrix);
                 start.set(event.getX(), event.getY());
                 mode = DRAG;
                 break;
 
-            case MotionEvent.ACTION_UP: // first finger lifted
-
-            case MotionEvent.ACTION_POINTER_UP: // second finger lifted
-
+            case MotionEvent.ACTION_UP:             // first finger lifted
+            case MotionEvent.ACTION_POINTER_UP:     // second finger lifted
                 mode = NONE;
                 break;
 
-            case MotionEvent.ACTION_POINTER_DOWN: // first and second finger down
+            case MotionEvent.ACTION_POINTER_DOWN:   // first and second finger down
 
                 oldDist = spacing(event);
                 if (oldDist > 5f) {
@@ -97,9 +94,8 @@ public class ImageViewActivity extends AppCompatActivity implements View.OnTouch
                     if (newDist > 5f) {
                         matrix.set(savedMatrix);
                         scale = newDist / oldDist; // setting the scaling of the
-                        // matrix...if scale > 1 means
-                        // zoom in...if scale < 1 means
-                        // zoom out
+                        // if scale > 1 means zoom in
+                        // if scale < 1 means zoom out
                         matrix.postScale(scale, scale, mid.x, mid.y);
                     }
                 }
@@ -111,26 +107,24 @@ public class ImageViewActivity extends AppCompatActivity implements View.OnTouch
         return true; // indicate event was handled
     }
 
-    /*
-     * --------------------------------------------------------------------------
-     * Method: spacing Parameters: MotionEvent Returns: float Description:
-     * checks the spacing between the two fingers on touch
-     * ----------------------------------------------------
+    /**
+     * Checks the spacing between the two fingers on touch
+     *
+     * @param event
+     * @return
      */
-
     private float spacing(MotionEvent event) {
         float x = event.getX(0) - event.getX(1);
         float y = event.getY(0) - event.getY(1);
         return (float) Math.sqrt(x * x + y * y);
     }
 
-    /*
-     * --------------------------------------------------------------------------
-     * Method: midPoint Parameters: PointF object, MotionEvent Returns: void
-     * Description: calculates the midpoint between the two fingers
-     * ------------------------------------------------------------
+    /**
+     * Calculates the midpoint between the two fingers
+     *
+     * @param point
+     * @param event
      */
-
     private void midPoint(PointF point, MotionEvent event) {
         float x = event.getX(0) + event.getX(1);
         float y = event.getY(0) + event.getY(1);

@@ -16,7 +16,6 @@ import android.widget.Toast;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 import de.hdm.project.billtracker.R;
@@ -75,6 +74,11 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Redirection to MainActivity if user is logged in
+     *
+     * @param user
+     */
     public void updateUI(FirebaseUser user) {
         if (user != null) {
             onLoginSuccess();
@@ -83,6 +87,9 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Log in a user
+     */
     public void login() {
         Log.d(TAG, "Login");
 
@@ -117,17 +124,6 @@ public class LoginActivity extends AppCompatActivity {
                         }
                     }
                 });
-
-        /*new android.os.Handler().postDelayed(
-                new Runnable() {
-                    @Override
-                    public void run() {
-                        // On complete call either onLoginSuccess or onLoginFailed
-                        onLoginSuccess();
-                        // onLoginFailed();
-                        progressDialog.dismiss();
-                    }
-                }, 3000);*/
     }
 
     @Override
@@ -147,17 +143,28 @@ public class LoginActivity extends AppCompatActivity {
         moveTaskToBack(true);
     }
 
+    /**
+     * Close LoginActivity on successful registration
+     */
     public void onLoginSuccess() {
         loginButton.setEnabled(true);
         finish();
     }
 
+    /**
+     * Notify login error
+     */
     public void onLoginFailed() {
         Toast.makeText(getBaseContext(), "Login failed", Toast.LENGTH_LONG).show();
 
         loginButton.setEnabled(true);
     }
 
+    /**
+     * Validate user's credential inputs
+     *
+     * @return
+     */
     public boolean validate() {
         boolean valid = true;
 
