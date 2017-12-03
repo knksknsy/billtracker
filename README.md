@@ -1,17 +1,52 @@
-# BillTracker Android-Version
+# BillTracker
 
-## Installation
+Billtracker is a APP that can catalog bills. In doing so, invoices are scanned in
+first after a purchase. After the invoice has been scanned, the invoice amount must
+be entered. In an extended version, the sum of the invoice is automatically recognized
+via [tesseract](https://github.com/tesseract-ocr/tesseract)
+([tess-two](https://github.com/rmtheis/tess-two)), an OCR. After the invoice amount
+has been entered, you will be asked to assign the invoice to a category and to
+enter a valid corresponding name for the invoice. In the following step, the bill
+must be saved, this happens by pressing the appropriate button. With the click on
+save, the image is encoded with bytestream and uploaded to Firebase. There we have
+created a cloud-hosted database, so if a picture is missing this will be
+automatically synced. Actually if you want to view all or individual invoices in
+the categories, you can switch to the corresponding window. Here you will find 
+an overview of all invoices. Click on a special category and continue with the
+click on a special invoice to get to the detail view. In this detail view,
+the defined amount or further details can optionally be edited again. Also the
+deletion of individual invoices or entire categories was considered. In doing so,
+app data is either paged on firebase or deleted. For this we have created a
+testaccount:
 
-TODO: Describe the prod run
+```Credentials
+USR: `billtracker2017@gmail.com`
+PSW: `hdmstuttgart`
+```
 
-## Used Frameworks
+## Requirements
+ * Camrea and Media
+    - in Android we use [camera2](https://developer.android.com/reference/android/hardware/camera2/package-summary.html)
+ * Networking
+    - here we use [Firebase](https://console.firebase.google.com)
 
-TODO: Write it down! For OCR we probably use the [Tesseract](https://github.com/rmtheis/tess-two) framework
 
-## Credits
+## Testing
 
-Artur B., Kaan K., Valdet D.
+For the test we have created an instrumented test case. To run this test  under android go to `app/src/andoridTest` and press right mousekey on `java` and select `Run 'All Test'`. This will test:
+
+ * take and save a bill
+ * check if bill exist
+ * edit bill
+ * delete bill
+
+
+## Team
+
+* Artur B.
+* Valdet D.
+* Kaan K.
 
 ## License
 
-TODO: AGPL, MIT or WTFPL
+[MIT License](LICENSE.md)
