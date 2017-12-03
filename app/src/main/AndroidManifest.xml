@@ -41,16 +41,24 @@
                 android:resource="@xml/file_paths" />
         </provider>
 
-        <activity android:name=".activities.LoginActivity" />
-        <activity android:name=".activities.SignupActivity" />
+        <activity
+            android:name=".activities.LoginActivity"
+            android:screenOrientation="portrait" />
+
+        <activity
+            android:name=".activities.SignupActivity"
+            android:screenOrientation="portrait" />
+
         <activity
             android:name=".activities.BillDetailsActivity"
             android:label="@string/title_activity_bill_details"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
+
         <activity
             android:name=".activities.ImageViewActivity"
             android:label="@string/title_activity_image_view"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
     </application>
 
 </manifest>
