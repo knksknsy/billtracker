@@ -72,6 +72,7 @@ public class BillDetailsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_bill_details);
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -84,6 +85,7 @@ public class BillDetailsActivity extends AppCompatActivity {
         fDatabase = new FirebaseDatabaseHelper(BillDetailsActivity.this);
 
         imageView = (ImageView) findViewById(R.id.billImageView);
+
         File imgFile = new File(bill.getImagePath());
         if (imgFile.exists()) {
             Bitmap bitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
@@ -157,6 +159,9 @@ public class BillDetailsActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Update bill's information
+     */
     private void updateBill() {
         String newTitle = titleText.getText().toString();
         String oldCategory = bill.getCategory();
@@ -181,12 +186,9 @@ public class BillDetailsActivity extends AppCompatActivity {
         }
     }
 
-    private void openImageActivity() {
-        Intent imageIntent = new Intent(this, ImageViewActivity.class);
-        imageIntent.putExtra("bill", (Parcelable) bill);
-        startActivity(imageIntent);
-    }
-
+    /**
+     * Open confirmation dialog for deleting a bill
+     */
     private void openDialog() {
         AlertDialog.Builder builder;
         builder = new AlertDialog.Builder(this);
@@ -195,7 +197,7 @@ public class BillDetailsActivity extends AppCompatActivity {
                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        deleteBill();
+                        fDatabase.deleteBill(bill);
                         finish();
                     }
                 })
@@ -209,8 +211,13 @@ public class BillDetailsActivity extends AppCompatActivity {
                 .show();
     }
 
-    private void deleteBill() {
-        fDatabase.deleteBill(bill);
+    /**
+     * Open ImageViewActivity for viewing and zooming the bill's image
+     */
+    private void openImageActivity() {
+        Intent imageIntent = new Intent(this, ImageViewActivity.class);
+        imageIntent.putExtra("bill", (Parcelable) bill);
+        startActivity(imageIntent);
     }
 
     private void openImageInBrowser() {

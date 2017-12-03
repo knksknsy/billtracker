@@ -31,6 +31,11 @@ public class Bill implements Parcelable {
 
     }
 
+    /**
+     * Constructor for parcel bill instantiation
+     *
+     * @param in
+     */
     public Bill(Parcel in) {
         id = in.readString();
         title = in.readString();

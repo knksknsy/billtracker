@@ -67,6 +67,11 @@ public class CategoryListAdapter extends ArrayAdapter<String> {
         return null;
     }
 
+    /**
+     * Open confirmation dialog for deleting a category
+     *
+     * @param category
+     */
     private void openDialog(final String category) {
         AlertDialog.Builder builder;
         builder = new AlertDialog.Builder(this.activity);
@@ -88,6 +93,11 @@ public class CategoryListAdapter extends ArrayAdapter<String> {
                 .show();
     }
 
+    /**
+     * Delete category and its' bills locally and in firebase
+     *
+     * @param category
+     */
     private void deleteCategory(String category) {
         FirebaseDatabaseHelper fDatabase = new FirebaseDatabaseHelper(this.activity);
         fDatabase.deleteCategory(category);

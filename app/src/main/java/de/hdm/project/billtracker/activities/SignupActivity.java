@@ -15,10 +15,7 @@ import android.widget.Toast;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 
 import de.hdm.project.billtracker.R;
 import de.hdm.project.billtracker.helpers.FirebaseDatabaseHelper;
@@ -33,8 +30,6 @@ public class SignupActivity extends AppCompatActivity {
     EditText reEnterPasswordText;
     Button signupButton;
     TextView loginLink;
-
-    ProgressDialog progressDialog;
 
     private FirebaseDatabaseHelper fDatabase;
 
@@ -80,6 +75,11 @@ public class SignupActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Redirection to MainActivity if user is logged in or registered
+     *
+     * @param user
+     */
     public void updateUI(FirebaseUser user) {
         if (user != null) {
             onSignupSuccess();
@@ -88,6 +88,9 @@ public class SignupActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Sign up a new user
+     */
     public void signup() {
         Log.d(TAG, "Signup");
 
@@ -125,19 +128,29 @@ public class SignupActivity extends AppCompatActivity {
                 });
     }
 
-
+    /**
+     * Close SignupActivity on successful registration
+     */
     public void onSignupSuccess() {
         signupButton.setEnabled(true);
         setResult(RESULT_OK, null);
         finish();
     }
 
+    /**
+     * Notify sign up error
+     */
     public void onSignupFailed() {
         Toast.makeText(getBaseContext(), "Login failed", Toast.LENGTH_LONG).show();
 
         signupButton.setEnabled(true);
     }
 
+    /**
+     * Validate user's credential inputs
+     *
+     * @return
+     */
     public boolean validate() {
         boolean valid = true;
 
