@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/navigation_chart"
+        android:icon="@drawable/ic_pie_chart_black_24dp"
+        android:state_checked="true"
+        android:color="@android:color/holo_blue_bright"
+        android:title="Charts"
+        android:layout_gravity="center_vertical"
+        android:gravity="center"
+        />
+
+    <item
+        android:id="@+id/navigation_camera"
+        android:icon="@drawable/ic_photo_camera_black_24dp"
+        android:title="Scan Bill"
+        android:layout_gravity="center_vertical"
+        android:gravity="center"
+        />
+
+    <item
+        android:id="@+id/navigation_content"
+        android:icon="@drawable/ic_folder_black_24dp"
+        android:title="Bills"
+        android:layout_gravity="center_vertical"
+        android:gravity="center"
+        />
+        <!-- android:title="@string/title_chart" -->
+
+</menu>
