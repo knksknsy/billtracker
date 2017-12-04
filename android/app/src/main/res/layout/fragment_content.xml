@@ -11,6 +11,10 @@
         android:background="?attr/colorPrimary"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        app:tabTextColor="@color/aluminum"
+        app:tabSelectedTextColor="@color/white"
+        app:tabIndicatorColor="@color/colorTabIndicator"
+        app:tabIndicatorHeight="4dp"
         app:tabMaxWidth="0dp"
         app:tabGravity="fill"
         app:tabMode="fixed" />
