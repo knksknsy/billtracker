@@ -32,17 +32,17 @@ PSW: ***REMOVED***
 
 ## Testing
 
-* Android
+#### Android
 
   For the test we have created an instrumented test case. To run this test  under android go to `app/src/andoridTest` and press right mousekey on `java` and select `Run 'All Test'`. This will test:
 
-   * take and save a bill
-   * check if bill exist
-   * edit bill
-   * delete bill
+* take and save a bill
+* check if bill exist
+* edit bill
+* delete bill
 
 
-* iOS
+#### iOS
 
   * *WIP*
 
