@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">Billtracker</string>
+    <string name="title_intro">Intro</string>
+    <string name="title_chart">Chart</string>
+    <string name="title_camera">Camera</string>
+    <string name="title_content">Content</string>
+    <string name="take_picture">Take Picture</string>
+    <string name="title_category_dialog">Choose a category</string>
+    <string name="category_preference">CategoryPreference</string>
+    <string name="title_activity_bill_details">BillDetailsActivity</string>
+    <string name="title_activity_image_view">ImageViewActivity</string>
+
+</resources>
