@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_marginBottom="@dimen/bottomNavigationViewHeight" >
+
+    <android.support.design.widget.TabLayout
+        android:id="@+id/tablayout"
+        android:background="?attr/colorPrimary"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:tabTextColor="@color/aluminum"
+        app:tabSelectedTextColor="@color/white"
+        app:tabIndicatorColor="@color/colorTabIndicator"
+        app:tabIndicatorHeight="4dp"
+        app:tabMaxWidth="0dp"
+        app:tabGravity="fill"
+        app:tabMode="fixed" />
+
+    <FrameLayout
+        android:id="@+id/frame_container"
+        android:layout_below="@+id/tablayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"></FrameLayout>
+
+
+</RelativeLayout>
