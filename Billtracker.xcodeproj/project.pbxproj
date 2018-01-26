@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		490D843E2017ABDB008DF846 /* CutomnTabbarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 490D843D2017ABDB008DF846 /* CutomnTabbarController.swift */; };
 		4916CD851FE88DF300C08E93 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4916CD841FE88DF200C08E93 /* Assets.xcassets */; };
 		4973D3451FE9879300524174 /* CameraViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4973D3441FE9879300524174 /* CameraViewController.swift */; };
 		49808C741FE890C600D12A83 /* ic_logo_light.png in Resources */ = {isa = PBXBuildFile; fileRef = 49808C731FE890C600D12A83 /* ic_logo_light.png */; };
@@ -37,6 +38,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		490D843D2017ABDB008DF846 /* CutomnTabbarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CutomnTabbarController.swift; sourceTree = "<group>"; };
 		4916CD841FE88DF200C08E93 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		4973D3441FE9879300524174 /* CameraViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraViewController.swift; sourceTree = "<group>"; };
 		49808C731FE890C600D12A83 /* ic_logo_light.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = ic_logo_light.png; sourceTree = "<group>"; };
@@ -106,6 +108,7 @@
 				49F1FE7B1FE8868D00738832 /* AppDelegate.swift */,
 				49F1FE7D1FE8868D00738832 /* ViewController.swift */,
 				49F1FE7F1FE8868D00738832 /* Main.storyboard */,
+				490D843D2017ABDB008DF846 /* CutomnTabbarController.swift */,
 				4973D3441FE9879300524174 /* CameraViewController.swift */,
 				4916CD841FE88DF200C08E93 /* Assets.xcassets */,
 				49808C751FE893BF00D12A83 /* AppIcon.appiconset */,
@@ -271,6 +274,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				49F1FE7E1FE8868D00738832 /* ViewController.swift in Sources */,
+				490D843E2017ABDB008DF846 /* CutomnTabbarController.swift in Sources */,
 				49F1FE7C1FE8868D00738832 /* AppDelegate.swift in Sources */,
 				4973D3451FE9879300524174 /* CameraViewController.swift in Sources */,
 			);
