@@ -11,8 +11,6 @@
 		34654563F10698630E6AE6FB /* Pods_BilltrackerUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9DE4C28D48FFF75E4115954A /* Pods_BilltrackerUITests.framework */; };
 		43693FA9201F88E100C13580 /* Bill.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43693FA8201F88E100C13580 /* Bill.swift */; };
 		43693FAD201F892300C13580 /* FirebaseHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43693FAC201F892300C13580 /* FirebaseHelper.swift */; };
-		490D843E2017ABDB008DF846 /* CutomnTabbarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 490D843D2017ABDB008DF846 /* CutomnTabbarController.swift */; };
-		490D8440201CD267008DF846 /* SavedPhotosViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 490D843F201CD267008DF846 /* SavedPhotosViewController.swift */; };
 		4916CD851FE88DF300C08E93 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4916CD841FE88DF200C08E93 /* Assets.xcassets */; };
 		4971B6E7201F29520096DCB4 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 4971B6E6201F29520096DCB4 /* GoogleService-Info.plist */; };
 		4971B6EB201F39B30096DCB4 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4971B6EA201F39B30096DCB4 /* LoginViewController.swift */; };
@@ -48,8 +46,6 @@
 /* Begin PBXFileReference section */
 		43693FA8201F88E100C13580 /* Bill.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Bill.swift; sourceTree = "<group>"; };
 		43693FAC201F892300C13580 /* FirebaseHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseHelper.swift; sourceTree = "<group>"; };
-		490D843D2017ABDB008DF846 /* CutomnTabbarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CutomnTabbarController.swift; sourceTree = "<group>"; };
-		490D843F201CD267008DF846 /* SavedPhotosViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SavedPhotosViewController.swift; sourceTree = "<group>"; };
 		4916CD841FE88DF200C08E93 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		4971B6E6201F29520096DCB4 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		4971B6EA201F39B30096DCB4 /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
@@ -120,6 +116,48 @@
 			name = Pods;
 			sourceTree = "<group>";
 		};
+		4971B6F2201FB2F70096DCB4 /* App Template */ = {
+			isa = PBXGroup;
+			children = (
+				49F1FE7B1FE8868D00738832 /* AppDelegate.swift */,
+			);
+			path = "App Template";
+			sourceTree = "<group>";
+		};
+		4971B6F3201FB3210096DCB4 /* UI */ = {
+			isa = PBXGroup;
+			children = (
+				49F1FE7F1FE8868D00738832 /* Main.storyboard */,
+				4916CD841FE88DF200C08E93 /* Assets.xcassets */,
+				49808C751FE893BF00D12A83 /* AppIcon.appiconset */,
+				49808C731FE890C600D12A83 /* ic_logo_light.png */,
+				49F1FE841FE8868D00738832 /* LaunchScreen.storyboard */,
+			);
+			name = UI;
+			path = "App Template/UI";
+			sourceTree = "<group>";
+		};
+		4971B6F5201FB3620096DCB4 /* Firebase */ = {
+			isa = PBXGroup;
+			children = (
+				4971B6E6201F29520096DCB4 /* GoogleService-Info.plist */,
+			);
+			name = Firebase;
+			path = ..;
+			sourceTree = "<group>";
+		};
+		4971B6F6201FB3BC0096DCB4 /* ViewControllers */ = {
+			isa = PBXGroup;
+			children = (
+				49F1FE7D1FE8868D00738832 /* ViewController.swift */,
+				4971B6EA201F39B30096DCB4 /* LoginViewController.swift */,
+				4973D3441FE9879300524174 /* CameraViewController.swift */,
+				43693FA8201F88E100C13580 /* Bill.swift */,
+				43693FAC201F892300C13580 /* FirebaseHelper.swift */,
+			);
+			path = ViewControllers;
+			sourceTree = "<group>";
+		};
 		49F1FE6F1FE8868D00738832 = {
 			isa = PBXGroup;
 			children = (
@@ -144,21 +182,11 @@
 		49F1FE7A1FE8868D00738832 /* Billtracker */ = {
 			isa = PBXGroup;
 			children = (
-				49F1FE7B1FE8868D00738832 /* AppDelegate.swift */,
-				49F1FE7D1FE8868D00738832 /* ViewController.swift */,
-				4971B6EA201F39B30096DCB4 /* LoginViewController.swift */,
-				49F1FE7F1FE8868D00738832 /* Main.storyboard */,
-				490D843D2017ABDB008DF846 /* CutomnTabbarController.swift */,
-				4973D3441FE9879300524174 /* CameraViewController.swift */,
-				490D843F201CD267008DF846 /* SavedPhotosViewController.swift */,
-				4916CD841FE88DF200C08E93 /* Assets.xcassets */,
-				49808C751FE893BF00D12A83 /* AppIcon.appiconset */,
-				49808C731FE890C600D12A83 /* ic_logo_light.png */,
-				49F1FE841FE8868D00738832 /* LaunchScreen.storyboard */,
-				4971B6E6201F29520096DCB4 /* GoogleService-Info.plist */,
 				49F1FE871FE8868D00738832 /* Info.plist */,
-				43693FA8201F88E100C13580 /* Bill.swift */,
-				43693FAC201F892300C13580 /* FirebaseHelper.swift */,
+				4971B6F2201FB2F70096DCB4 /* App Template */,
+				4971B6F3201FB3210096DCB4 /* UI */,
+				4971B6F6201FB3BC0096DCB4 /* ViewControllers */,
+				4971B6F5201FB3620096DCB4 /* Firebase */,
 			);
 			path = Billtracker;
 			sourceTree = "<group>";
@@ -494,8 +522,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				49F1FE7E1FE8868D00738832 /* ViewController.swift in Sources */,
-				490D843E2017ABDB008DF846 /* CutomnTabbarController.swift in Sources */,
-				490D8440201CD267008DF846 /* SavedPhotosViewController.swift in Sources */,
 				4971B6EB201F39B30096DCB4 /* LoginViewController.swift in Sources */,
 				43693FAD201F892300C13580 /* FirebaseHelper.swift in Sources */,
 				49F1FE7C1FE8868D00738832 /* AppDelegate.swift in Sources */,

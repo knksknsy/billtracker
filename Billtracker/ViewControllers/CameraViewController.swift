@@ -12,7 +12,7 @@ import Photos
 
 
 class CameraViewController: UIViewController, UITextFieldDelegate, UINavigationControllerDelegate, AVCapturePhotoCaptureDelegate {
-
+    
     @IBOutlet weak var previewView: UIView!
     @IBOutlet weak var sumInput: UITextField!
     @IBOutlet weak var categoryInput: UITextField!
@@ -38,19 +38,19 @@ class CameraViewController: UIViewController, UITextFieldDelegate, UINavigationC
     //var photos = [UIImage]()
     
     
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
         firebaseHelper = FirebaseHelper()
-
+        
         
         // Set the output on the capture session
         //captureSession.addOutput (photoOut)
-
+        
         
         sumInput.delegate = self
-//        savePhoto.isEnabled = false
+        //        savePhoto.isEnabled = false
         
         // Kamera wählen
         let device: AVCaptureDevice!
@@ -81,7 +81,7 @@ class CameraViewController: UIViewController, UITextFieldDelegate, UINavigationC
         
         
         // Zugriff auf PreviewLayer der Session
-
+        
         previewLayer = AVCaptureVideoPreviewLayer(session: captureSession)
         previewLayer.videoGravity = AVLayerVideoGravity.resizeAspectFill
         //videoPreviewLayer?.frame = view.layer.bounds
@@ -106,35 +106,35 @@ class CameraViewController: UIViewController, UITextFieldDelegate, UINavigationC
         
     }
     
-
+    
     
     @IBAction func takePhoto(_ sender: Any) {
         //let settings = AVCapturePhotoSettings()
         // capturePhoto führt die Aufnahme durch --> Ergebnis wird dann später in der Delegate-Methode photoOutput mit dem Param. didFinischProcessingPhoto
-
+        
         // Make sure capturePhotoOutput is valid
         //guard let photoOut = self.photoOut else { return }
         
-//
+        //
         let photoSettings : AVCapturePhotoSettings!
         photoSettings = AVCapturePhotoSettings.init(format: [AVVideoCodecKey: AVVideoCodecType.jpeg])
         photoSettings.isAutoStillImageStabilizationEnabled = true
         photoSettings.flashMode = .auto
         photoSettings.isHighResolutionPhotoEnabled = false
-
+        
         self.photoOut.capturePhoto(with: photoSettings, delegate: self)
         //captureSession.sessionPreset = AVCaptureSession.Preset.photo
         captureSession.stopRunning()
-//
-//        let alert = UIAlertController(title: "Information", message: "Bild wurde erfolgreich gespeichert", preferredStyle: .alert)
-//        alert.addAction(UIAlertAction(title: NSLocalizedString("OK", comment: "Default action"), style: .`default`, handler: { _ in
-//            NSLog("The \"OK\" alert occured.")
-//        }))
-//        self.present(alert, animated: true, completion: nil)
+        //
+        //        let alert = UIAlertController(title: "Information", message: "Bild wurde erfolgreich gespeichert", preferredStyle: .alert)
+        //        alert.addAction(UIAlertAction(title: NSLocalizedString("OK", comment: "Default action"), style: .`default`, handler: { _ in
+        //            NSLog("The \"OK\" alert occured.")
+        //        }))
+        //        self.present(alert, animated: true, completion: nil)
         
-
-
-   }
+        
+        
+    }
     
     @IBAction func savePhoto(_ sender: Any) {
         captureSession.startRunning()
@@ -144,10 +144,10 @@ class CameraViewController: UIViewController, UITextFieldDelegate, UINavigationC
         }))
         let bill: Bill = Bill(category: categoryInput.text!, date: UInt(Date().timeIntervalSinceReferenceDate), sum: Double(sumInput.text!)!)
         firebaseHelper.createBill(bill, data: capturedImage)
-    
+        
     }
     
-    // Für iOS 11
+    //
     
     func photoOutput(_ output: AVCapturePhotoOutput,
                      didFinishProcessingPhoto photo: AVCapturePhoto,
@@ -163,16 +163,16 @@ class CameraViewController: UIViewController, UITextFieldDelegate, UINavigationC
         capturedImage = photo.fileDataRepresentation()!
     }
     
-   //****** ab hier Textfeld
+    //Textfield
     
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
         let currentText = sumInput.text ?? ""
         
-//        if (sumInput.hasText && categoryInput.hasText) {
-//            savePhoto.isEnabled = true
-//        } else if (!sumInput.hasText || !categoryInput.hasText){
-//            savePhoto.isEnabled = false
-//        }
+        //        if (sumInput.hasText && categoryInput.hasText) {
+        //            savePhoto.isEnabled = true
+        //        } else if (!sumInput.hasText || !categoryInput.hasText){
+        //            savePhoto.isEnabled = false
+        //        }
         
         let replacementText = (currentText as NSString).replacingCharacters(in: range, with: string)
         
@@ -201,10 +201,10 @@ class CameraViewController: UIViewController, UITextFieldDelegate, UINavigationC
     }
     
     // Hide the keyboard when the return key pressed
-//    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-//        textField.resignFirstResponder()
-//        return true
-//    }
+    //    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+    //        textField.resignFirstResponder()
+    //        return true
+    //    }
     
     // Move the text field in a pretty animation!
     func moveTextField(_ textField: UITextField, moveDistance: Int, up: Bool) {
@@ -218,7 +218,6 @@ class CameraViewController: UIViewController, UITextFieldDelegate, UINavigationC
         UIView.commitAnimations()
     }
     
-    //.....
     
     
     
@@ -226,22 +225,9 @@ class CameraViewController: UIViewController, UITextFieldDelegate, UINavigationC
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
-    //override var prefersStatusBarHidden: Bool {
-    //      return true
-    // }
-
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
-    }
-    */
-
-  }
+    
+    
+}
 
 
 
