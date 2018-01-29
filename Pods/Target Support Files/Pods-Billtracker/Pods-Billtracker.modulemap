@@ -1,0 +1,6 @@
+framework module Pods_Billtracker {
+  umbrella header "Pods-Billtracker-umbrella.h"
+
+  export *
+  module * { export * }
+}
