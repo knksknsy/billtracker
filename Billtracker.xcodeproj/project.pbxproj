@@ -9,12 +9,12 @@
 /* Begin PBXBuildFile section */
 		33BF794F74D2BD43312C463B /* Pods_BilltrackerTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F65A24BB3741648DF150885D /* Pods_BilltrackerTests.framework */; };
 		34654563F10698630E6AE6FB /* Pods_BilltrackerUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9DE4C28D48FFF75E4115954A /* Pods_BilltrackerUITests.framework */; };
+		43693FA9201F88E100C13580 /* Bill.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43693FA8201F88E100C13580 /* Bill.swift */; };
+		43693FAD201F892300C13580 /* FirebaseHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43693FAC201F892300C13580 /* FirebaseHelper.swift */; };
 		490D843E2017ABDB008DF846 /* CutomnTabbarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 490D843D2017ABDB008DF846 /* CutomnTabbarController.swift */; };
 		490D8440201CD267008DF846 /* SavedPhotosViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 490D843F201CD267008DF846 /* SavedPhotosViewController.swift */; };
 		4916CD851FE88DF300C08E93 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4916CD841FE88DF200C08E93 /* Assets.xcassets */; };
-		4971B6E5201E56890096DCB4 /* PopupCategoryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4971B6E4201E56890096DCB4 /* PopupCategoryViewController.swift */; };
 		4971B6E7201F29520096DCB4 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 4971B6E6201F29520096DCB4 /* GoogleService-Info.plist */; };
-		4971B6E9201F32130096DCB4 /* FirebaseHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4971B6E8201F32130096DCB4 /* FirebaseHelper.swift */; };
 		4971B6EB201F39B30096DCB4 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4971B6EA201F39B30096DCB4 /* LoginViewController.swift */; };
 		4973D3451FE9879300524174 /* CameraViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4973D3441FE9879300524174 /* CameraViewController.swift */; };
 		49808C741FE890C600D12A83 /* ic_logo_light.png in Resources */ = {isa = PBXBuildFile; fileRef = 49808C731FE890C600D12A83 /* ic_logo_light.png */; };
@@ -46,15 +46,12 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		155B6501DD6F599D71ABD79F /* Pods-BilltrackerUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BilltrackerUITests.release.xcconfig"; path = "Pods/Target Support Files/Pods-BilltrackerUITests/Pods-BilltrackerUITests.release.xcconfig"; sourceTree = "<group>"; };
-		432C5B73201F62A5002234FD /* FirebaseHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseHelper.swift; sourceTree = "<group>"; };
-		432C5B75201F6B29002234FD /* Bill.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Bill.swift; sourceTree = "<group>"; };
+		43693FA8201F88E100C13580 /* Bill.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Bill.swift; sourceTree = "<group>"; };
+		43693FAC201F892300C13580 /* FirebaseHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseHelper.swift; sourceTree = "<group>"; };
 		490D843D2017ABDB008DF846 /* CutomnTabbarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CutomnTabbarController.swift; sourceTree = "<group>"; };
 		490D843F201CD267008DF846 /* SavedPhotosViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SavedPhotosViewController.swift; sourceTree = "<group>"; };
 		4916CD841FE88DF200C08E93 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		4971B6E4201E56890096DCB4 /* PopupCategoryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PopupCategoryViewController.swift; sourceTree = "<group>"; };
 		4971B6E6201F29520096DCB4 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
-		4971B6E8201F32130096DCB4 /* FirebaseHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseHelper.swift; sourceTree = "<group>"; };
 		4971B6EA201F39B30096DCB4 /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
 		4973D3441FE9879300524174 /* CameraViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraViewController.swift; sourceTree = "<group>"; };
 		49808C731FE890C600D12A83 /* ic_logo_light.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = ic_logo_light.png; sourceTree = "<group>"; };
@@ -148,7 +145,6 @@
 			isa = PBXGroup;
 			children = (
 				49F1FE7B1FE8868D00738832 /* AppDelegate.swift */,
-				4971B6E4201E56890096DCB4 /* PopupCategoryViewController.swift */,
 				49F1FE7D1FE8868D00738832 /* ViewController.swift */,
 				4971B6EA201F39B30096DCB4 /* LoginViewController.swift */,
 				49F1FE7F1FE8868D00738832 /* Main.storyboard */,
@@ -159,11 +155,10 @@
 				49808C751FE893BF00D12A83 /* AppIcon.appiconset */,
 				49808C731FE890C600D12A83 /* ic_logo_light.png */,
 				49F1FE841FE8868D00738832 /* LaunchScreen.storyboard */,
-				4971B6E8201F32130096DCB4 /* FirebaseHelper.swift */,
 				4971B6E6201F29520096DCB4 /* GoogleService-Info.plist */,
 				49F1FE871FE8868D00738832 /* Info.plist */,
-				432C5B73201F62A5002234FD /* FirebaseHelper.swift */,
-				432C5B75201F6B29002234FD /* Bill.swift */,
+				43693FA8201F88E100C13580 /* Bill.swift */,
+				43693FAC201F892300C13580 /* FirebaseHelper.swift */,
 			);
 			path = Billtracker;
 			sourceTree = "<group>";
@@ -498,14 +493,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4971B6E9201F32130096DCB4 /* FirebaseHelper.swift in Sources */,
 				49F1FE7E1FE8868D00738832 /* ViewController.swift in Sources */,
 				490D843E2017ABDB008DF846 /* CutomnTabbarController.swift in Sources */,
 				490D8440201CD267008DF846 /* SavedPhotosViewController.swift in Sources */,
 				4971B6EB201F39B30096DCB4 /* LoginViewController.swift in Sources */,
+				43693FAD201F892300C13580 /* FirebaseHelper.swift in Sources */,
 				49F1FE7C1FE8868D00738832 /* AppDelegate.swift in Sources */,
 				4973D3451FE9879300524174 /* CameraViewController.swift in Sources */,
-				4971B6E5201E56890096DCB4 /* PopupCategoryViewController.swift in Sources */,
+				43693FA9201F88E100C13580 /* Bill.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -673,7 +668,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = R8T4QFYA49;
+				DEVELOPMENT_TEAM = DYMS7QD4YN;
 				INFOPLIST_FILE = Billtracker/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = de.hdm.project.billtracker;
@@ -689,7 +684,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = R8T4QFYA49;
+				DEVELOPMENT_TEAM = DYMS7QD4YN;
 				INFOPLIST_FILE = Billtracker/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = de.hdm.project.billtracker;

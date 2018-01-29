@@ -11,16 +11,19 @@ import AVFoundation
 import Photos
 
 
-class CameraViewController: UIViewController, UITextFieldDelegate,UIImagePickerControllerDelegate, UINavigationControllerDelegate, AVCapturePhotoCaptureDelegate {
+class CameraViewController: UIViewController, UITextFieldDelegate, UINavigationControllerDelegate, AVCapturePhotoCaptureDelegate {
 
     @IBOutlet weak var previewView: UIView!
     @IBOutlet weak var sumInput: UITextField!
+    @IBOutlet weak var categoryInput: UITextField!
     @IBOutlet weak var captureButton: UIBarButtonItem!
     @IBOutlet weak var savePhoto: UIBarButtonItem!
     //@IBOutlet weak var capturedPhoto: UIImageView!
     
+    
     // verbindet alle weiteren Objekte, die zur Bildaufnahme,- anzeige und -speicherung erforderlich sind
     let captureSession = AVCaptureSession()
+    var capturedImage: Data!
     var photoOut = AVCapturePhotoOutput()
     
     
@@ -28,7 +31,7 @@ class CameraViewController: UIViewController, UITextFieldDelegate,UIImagePickerC
     var previewLayer: AVCaptureVideoPreviewLayer!
     //var useRearCamera = true
     
-    
+    var firebaseHelper: FirebaseHelper!
     
     
     // hier werden Fotos gespeichert
@@ -38,6 +41,8 @@ class CameraViewController: UIViewController, UITextFieldDelegate,UIImagePickerC
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        firebaseHelper = FirebaseHelper()
 
         
         // Set the output on the capture session
@@ -45,7 +50,7 @@ class CameraViewController: UIViewController, UITextFieldDelegate,UIImagePickerC
 
         
         sumInput.delegate = self
-        savePhoto.isEnabled = false
+//        savePhoto.isEnabled = false
         
         // Kamera wählen
         let device: AVCaptureDevice!
@@ -119,8 +124,7 @@ class CameraViewController: UIViewController, UITextFieldDelegate,UIImagePickerC
 
         self.photoOut.capturePhoto(with: photoSettings, delegate: self)
         //captureSession.sessionPreset = AVCaptureSession.Preset.photo
-        
-captureSession.stopRunning()
+        captureSession.stopRunning()
 //
 //        let alert = UIAlertController(title: "Information", message: "Bild wurde erfolgreich gespeichert", preferredStyle: .alert)
 //        alert.addAction(UIAlertAction(title: NSLocalizedString("OK", comment: "Default action"), style: .`default`, handler: { _ in
@@ -132,91 +136,43 @@ captureSession.stopRunning()
 
    }
     
-//    @IBAction func savePhoto(_ sender: Any) {
-        // hier die Funktion
-        
-//        
-//        let photoSettings : AVCapturePhotoSettings!
-//        photoSettings = AVCapturePhotoSettings.init(format: [AVVideoCodecKey: AVVideoCodecType.jpeg])
-//        photoSettings.isAutoStillImageStabilizationEnabled = true
-//        photoSettings.flashMode = .auto
-//        photoSettings.isHighResolutionPhotoEnabled = false
-//        
-//        self.photoOut.capturePhoto(with: photoSettings, delegate: self)
-        
-//        let alert = UIAlertController(title: "Information", message: "Bild wurde erfolgreich gespeichert", preferredStyle: .alert)
-//        alert.addAction(UIAlertAction(title: NSLocalizedString("OK", comment: "Default action"), style: .`default`, handler: { _ in
-//            NSLog("The \"OK\" alert occured.")
-//        }))
-//        self.present(alert, animated: true, completion: nil)
-        //captureSession.stopRunning()
-
-//        imagePickerController = UIImagePickerController()
-//
-//        imagePickerController.delegate = self
-//        imagePickerController.sourceType = .camera
-//        imagePickerController.allowsEditing = true
-//        present(imagePickerController, animated: true, completion: nil)
+    @IBAction func savePhoto(_ sender: Any) {
+        captureSession.startRunning()
+        let alert = UIAlertController(title: "Information", message: "Bild wurde erfolgreich gespeichert", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: NSLocalizedString("OK", comment: "Default action"), style: .`default`, handler: { _ in
+            NSLog("The \"OK\" alert occured.")
+        }))
+        let bill: Bill = Bill(category: categoryInput.text!, date: UInt(Date().timeIntervalSinceReferenceDate), sum: Double(sumInput.text!)!)
+        firebaseHelper.createBill(bill, data: capturedImage)
     
-//    }
-    
-//    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
-//        imagePickerController.dismiss(animated: true, completion: nil)
-//        capturedPhoto.image = info[UIImagePickerControllerOriginalImage] as? UIImage
-//    }
-//
-    
-    
+    }
     
     // Für iOS 11
     
-    func photoOutput(_ output: AVCapturePhotoOutput, didFinishProcessingPhoto photo: AVCapturePhoto, error: Error?) {
-        PHPhotoLibrary.shared().performChanges( {
-            let creationRequest = PHAssetCreationRequest.forAsset()
-            creationRequest.addResource(with: PHAssetResourceType.photo, data: photo.fileDataRepresentation()!, options: nil)
-        }, completionHandler: nil)
-    }
-    
-    func photoOutput(_ captureOutput: AVCapturePhotoOutput,
-                     didFinishCaptureFor resolvedSettings: AVCaptureResolvedPhotoSettings,
+    func photoOutput(_ output: AVCapturePhotoOutput,
+                     didFinishProcessingPhoto photo: AVCapturePhoto,
                      error: Error?) {
-        
+        PHPhotoLibrary.shared().performChanges( {
+            let creationRequest: PHAssetCreationRequest? = PHAssetCreationRequest.forAsset()
+            creationRequest?.addResource(with: PHAssetResourceType.photo, data: photo.fileDataRepresentation()!, options: nil)
+        }, completionHandler: nil)
         guard error == nil else {
-            print("Error in capture process: \(String(describing: error))")
+            print("Error capturing photo: \(String(describing: error))")
             return
         }
+        capturedImage = photo.fileDataRepresentation()!
     }
-    
-
     
    //****** ab hier Textfeld
     
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
-        // User pressed the delete-key to remove a character, this is always valid, return true to allow change
-//        if string.isEmpty { return true }
-//
-//
-//        if sumInput.text == ""{
-//            self.savePhoto.isEnabled = false
-//        } else {
-//            self.savePhoto.isEnabled = true
-//        }
-        
-        //Return false if you don't want the textfield to be updated
-        //return true
-        
-//
         let currentText = sumInput.text ?? ""
-
-                if currentText == ""{
-                    self.savePhoto.isEnabled = false
-                } else {
-                    self.savePhoto.isEnabled = true
-                }
-
-       // Return false if you don't want the textfield to be updated
-        //return true
         
+//        if (sumInput.hasText && categoryInput.hasText) {
+//            savePhoto.isEnabled = true
+//        } else if (!sumInput.hasText || !categoryInput.hasText){
+//            savePhoto.isEnabled = false
+//        }
         
         let replacementText = (currentText as NSString).replacingCharacters(in: range, with: string)
         
@@ -226,6 +182,7 @@ captureSession.stopRunning()
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         sumInput.resignFirstResponder()
+        categoryInput.resignFirstResponder()
         return true
     }
     
