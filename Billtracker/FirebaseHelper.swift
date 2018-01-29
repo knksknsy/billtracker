@@ -1,7 +1,4 @@
 //
-//  FirebaseHelper.swift
-//  Billtracker
-//
 //  Created by Kaan K. on 29.01.18.
 //  Copyright © 2018 Valdet D.. All rights reserved.
 //
@@ -136,5 +133,4 @@ class FirebaseHelper {
         }
 
     }
-
 }

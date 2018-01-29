@@ -17,20 +17,17 @@ class CameraViewController: UIViewController, UITextFieldDelegate,UIImagePickerC
     @IBOutlet weak var sumInput: UITextField!
     @IBOutlet weak var captureButton: UIBarButtonItem!
     @IBOutlet weak var savePhoto: UIBarButtonItem!
+    //@IBOutlet weak var capturedPhoto: UIImageView!
     
-     // verbindet alle weiteren Objekte, die zur Bildaufnahme,- anzeige und -speicherung erforderlich sind
+    // verbindet alle weiteren Objekte, die zur Bildaufnahme,- anzeige und -speicherung erforderlich sind
     let captureSession = AVCaptureSession()
     var photoOut = AVCapturePhotoOutput()
-    //var photoOut = AVCapturePhotoOutput()
+    
     
     var videoInput: AVCaptureDeviceInput!
     var previewLayer: AVCaptureVideoPreviewLayer!
     //var useRearCamera = true
     
-    //var videoPreviewLayer: AVCaptureVideoPreviewLayer?
-    //.....
-    //var capturePhotoOutput: AVCapturePhotoOutput?
-    //...
     
     
     
@@ -44,11 +41,11 @@ class CameraViewController: UIViewController, UITextFieldDelegate,UIImagePickerC
 
         
         // Set the output on the capture session
-        ///captureSession.addOutput (photoOut)
+        //captureSession.addOutput (photoOut)
 
         
         sumInput.delegate = self
-        
+        savePhoto.isEnabled = false
         
         // Kamera wählen
         let device: AVCaptureDevice!
@@ -113,24 +110,61 @@ class CameraViewController: UIViewController, UITextFieldDelegate,UIImagePickerC
         // Make sure capturePhotoOutput is valid
         //guard let photoOut = self.photoOut else { return }
         
-        
+//
         let photoSettings : AVCapturePhotoSettings!
         photoSettings = AVCapturePhotoSettings.init(format: [AVVideoCodecKey: AVVideoCodecType.jpeg])
         photoSettings.isAutoStillImageStabilizationEnabled = true
         photoSettings.flashMode = .auto
         photoSettings.isHighResolutionPhotoEnabled = false
-        
+
         self.photoOut.capturePhoto(with: photoSettings, delegate: self)
         //captureSession.sessionPreset = AVCaptureSession.Preset.photo
-        captureSession.stopRunning()
+        
+captureSession.stopRunning()
+//
+//        let alert = UIAlertController(title: "Information", message: "Bild wurde erfolgreich gespeichert", preferredStyle: .alert)
+//        alert.addAction(UIAlertAction(title: NSLocalizedString("OK", comment: "Default action"), style: .`default`, handler: { _ in
+//            NSLog("The \"OK\" alert occured.")
+//        }))
+//        self.present(alert, animated: true, completion: nil)
+        
 
 
    }
     
-    @IBAction func savePhoto(_ sender: Any) {
+//    @IBAction func savePhoto(_ sender: Any) {
+        // hier die Funktion
         
+//        
+//        let photoSettings : AVCapturePhotoSettings!
+//        photoSettings = AVCapturePhotoSettings.init(format: [AVVideoCodecKey: AVVideoCodecType.jpeg])
+//        photoSettings.isAutoStillImageStabilizationEnabled = true
+//        photoSettings.flashMode = .auto
+//        photoSettings.isHighResolutionPhotoEnabled = false
+//        
+//        self.photoOut.capturePhoto(with: photoSettings, delegate: self)
         
-    }
+//        let alert = UIAlertController(title: "Information", message: "Bild wurde erfolgreich gespeichert", preferredStyle: .alert)
+//        alert.addAction(UIAlertAction(title: NSLocalizedString("OK", comment: "Default action"), style: .`default`, handler: { _ in
+//            NSLog("The \"OK\" alert occured.")
+//        }))
+//        self.present(alert, animated: true, completion: nil)
+        //captureSession.stopRunning()
+
+//        imagePickerController = UIImagePickerController()
+//
+//        imagePickerController.delegate = self
+//        imagePickerController.sourceType = .camera
+//        imagePickerController.allowsEditing = true
+//        present(imagePickerController, animated: true, completion: nil)
+    
+//    }
+    
+//    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
+//        imagePickerController.dismiss(animated: true, completion: nil)
+//        capturedPhoto.image = info[UIImagePickerControllerOriginalImage] as? UIImage
+//    }
+//
     
     
     
@@ -143,9 +177,6 @@ class CameraViewController: UIViewController, UITextFieldDelegate,UIImagePickerC
         }, completionHandler: nil)
     }
     
-    
-
-    
     func photoOutput(_ captureOutput: AVCapturePhotoOutput,
                      didFinishCaptureFor resolvedSettings: AVCaptureResolvedPhotoSettings,
                      error: Error?) {
@@ -156,112 +187,37 @@ class CameraViewController: UIViewController, UITextFieldDelegate,UIImagePickerC
         }
     }
     
-    
-    
-    // für iOS 10
-    
-//    func photoOutput(_ captureOutput: AVCapturePhotoOutput,
-//                     didFinishProcessingPhoto photoSampleBuffer: CMSampleBuffer?,
-//                     previewPhoto previewPhotoSampleBuffer: CMSampleBuffer?,
-//                 resolvedSettings: AVCaptureResolvedPhotoSettings,
-//                 bracketSettings: AVCaptureBracketedStillImageSettings?,
-//                 error: Error?) {
-//        // get captured image
-//
-//        guard error == nil,
-//            let photoSampleBuffer = photoSampleBuffer else {
-//                print("Error capturing photo: \(String(describing: error))")
-//                return
-//        }
-//
-//        // Convert photo same buffer to a jpeg image data by using // AVCapturePhotoOutput
-//        guard let imageData =
-//            AVCapturePhotoOutput.jpegPhotoDataRepresentation(forJPEGSampleBuffer: photoSampleBuffer, previewPhotoSampleBuffer: previewPhotoSampleBuffer) else {
-//                return
-//        }
-//
-//
-//        let capturedImage = UIImage.init(data: imageData , scale: 1.0)
-//        if let image = capturedImage {
-//            // Save our captured image to photos album
-//            UIImageWriteToSavedPhotosAlbum(image, nil, nil, nil)
-//        }
-//
-//    }
-    
-    
-    
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // CaptureSession pausieren
-        //captureSession.stopRunning()
-    }
-    
-
-    
-    
-//    func setupCaptureSession() {
-//        captureSession.sessionPreset = AVCaptureSession.Preset.photo
-//    }
-
-    
-//    func setupDevice() {
-//        let deviceDicoverySession = AVCaptureDevice.DiscoverySession(deviceTypes: [AVCaptureDevice.DeviceType.builtInWideAngleCamera], mediaType: AVMediaType.video, position: AVCaptureDevice.Position.unspecified)
-//        // AVCaptureDevice.Position.back
-//        let devices = deviceDicoverySession.devices
-//        for device in devices {
-//            if device.position == AVCaptureDevice.Position.back{
-//                backCamera = device
-//
-//            } else if device.position == AVCaptureDevice.Position.front {
-//                frontCamera = device
-//
-//            }
-//        }
-//        currentCamera = backCamera
-//    }
-
-
-//    func setupInputOutput() {
-//        do {
-//            let captureDeviceInput = try AVCaptureDeviceInput(device: currentCamera!)
-//            captureSession.addInput(captureDeviceInput)
-//            photoOutput = AVCapturePhotoOutput()
-//            photoOutput?.setPreparedPhotoSettingsArray([AVCapturePhotoSettings(format: [AVVideoCodecKey: AVVideoCodecType.jpeg])], completionHandler: nil)
-//            captureSession.addOutput(photoOutput!)
-//        } catch  {
-//            print(error)
-//        }
-//
-//    }
-
-//    func setuptPreviewLayer() {
-//        cameraPreviewLayer = AVCaptureVideoPreviewLayer(session: captureSession)
-//        cameraPreviewLayer?.videoGravity = AVLayerVideoGravity.resizeAspectFill
-//        cameraPreviewLayer?.connection?.videoOrientation = AVCaptureVideoOrientation.portrait
-//        cameraPreviewLayer?.frame = self.view.frame
-//        self.view.layer.insertSublayer(cameraPreviewLayer!, at: 0)
-//    }
-
-
-//    func startRunningCaptureSession() {
-//        captureSession.startRunning()
-//
-//    }
-
-    
-    // Textfeld: Beim Drücken von Enter soll die Tastatur verschwinden
-    
-   
 
     
    //****** ab hier Textfeld
     
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
         // User pressed the delete-key to remove a character, this is always valid, return true to allow change
-        if string.isEmpty { return true }
+//        if string.isEmpty { return true }
+//
+//
+//        if sumInput.text == ""{
+//            self.savePhoto.isEnabled = false
+//        } else {
+//            self.savePhoto.isEnabled = true
+//        }
         
+        //Return false if you don't want the textfield to be updated
+        //return true
         
+//
         let currentText = sumInput.text ?? ""
+
+                if currentText == ""{
+                    self.savePhoto.isEnabled = false
+                } else {
+                    self.savePhoto.isEnabled = true
+                }
+
+       // Return false if you don't want the textfield to be updated
+        //return true
+        
+        
         let replacementText = (currentText as NSString).replacingCharacters(in: range, with: string)
         
         return replacementText.isValidDouble(maxDecimalPlaces: 2)
@@ -282,6 +238,9 @@ class CameraViewController: UIViewController, UITextFieldDelegate,UIImagePickerC
     // Finish Editing The Text Field
     func textFieldDidEndEditing(_ textField: UITextField) {
         moveTextField(textField, moveDistance: -208, up: false)
+        
+        
+        
     }
     
     // Hide the keyboard when the return key pressed
@@ -329,7 +288,7 @@ class CameraViewController: UIViewController, UITextFieldDelegate,UIImagePickerC
 
 
 
-// im Summeneingabe nur zahlen und mit komma getrennt und nur zwei Nochkommastellen
+// im Summeneingabe nur zahlen und mit Komma getrennt und nur zwei Nochkommastellen
 extension String {
     func isValidDouble(maxDecimalPlaces: Int) -> Bool {
         
@@ -348,7 +307,7 @@ extension String {
             return digits.count <= maxDecimalPlaces
         }
         
-        return false // couldn't turn string into a valid number
+        return false
     }
 }
 
