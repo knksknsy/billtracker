@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		432C5B74201F62A5002234FD /* FirebaseHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 432C5B73201F62A5002234FD /* FirebaseHelper.swift */; };
+		432C5B76201F6B29002234FD /* Bill.swift in Sources */ = {isa = PBXBuildFile; fileRef = 432C5B75201F6B29002234FD /* Bill.swift */; };
 		490D843E2017ABDB008DF846 /* CutomnTabbarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 490D843D2017ABDB008DF846 /* CutomnTabbarController.swift */; };
 		4916CD851FE88DF300C08E93 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4916CD841FE88DF200C08E93 /* Assets.xcassets */; };
 		4973D3451FE9879300524174 /* CameraViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4973D3441FE9879300524174 /* CameraViewController.swift */; };
@@ -18,6 +20,9 @@
 		49F1FE861FE8868D00738832 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 49F1FE841FE8868D00738832 /* LaunchScreen.storyboard */; };
 		49F1FE911FE8868D00738832 /* BilltrackerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49F1FE901FE8868D00738832 /* BilltrackerTests.swift */; };
 		49F1FE9C1FE8868E00738832 /* BilltrackerUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49F1FE9B1FE8868E00738832 /* BilltrackerUITests.swift */; };
+		78C83E364FCE76A16426711C /* Pods_Billtracker.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 73C1992A7B2D82888EB6FDBD /* Pods_Billtracker.framework */; };
+		B669CD4382A471C962893CFD /* Pods_BilltrackerUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 555150D00A023886DAADBD58 /* Pods_BilltrackerUITests.framework */; };
+		F2A835B7314D481A7A3BEB41 /* Pods_BilltrackerTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ED4BF905325C531AB303E5E4 /* Pods_BilltrackerTests.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -38,6 +43,9 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		155B6501DD6F599D71ABD79F /* Pods-BilltrackerUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BilltrackerUITests.release.xcconfig"; path = "Pods/Target Support Files/Pods-BilltrackerUITests/Pods-BilltrackerUITests.release.xcconfig"; sourceTree = "<group>"; };
+		432C5B73201F62A5002234FD /* FirebaseHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseHelper.swift; sourceTree = "<group>"; };
+		432C5B75201F6B29002234FD /* Bill.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Bill.swift; sourceTree = "<group>"; };
 		490D843D2017ABDB008DF846 /* CutomnTabbarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CutomnTabbarController.swift; sourceTree = "<group>"; };
 		4916CD841FE88DF200C08E93 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		4973D3441FE9879300524174 /* CameraViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraViewController.swift; sourceTree = "<group>"; };
@@ -55,6 +63,14 @@
 		49F1FE971FE8868E00738832 /* BilltrackerUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BilltrackerUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		49F1FE9B1FE8868E00738832 /* BilltrackerUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BilltrackerUITests.swift; sourceTree = "<group>"; };
 		49F1FE9D1FE8868E00738832 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		555150D00A023886DAADBD58 /* Pods_BilltrackerUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_BilltrackerUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		73C1992A7B2D82888EB6FDBD /* Pods_Billtracker.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Billtracker.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		87ADD4235B4B79F9AF2A73CC /* Pods-Billtracker.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Billtracker.release.xcconfig"; path = "Pods/Target Support Files/Pods-Billtracker/Pods-Billtracker.release.xcconfig"; sourceTree = "<group>"; };
+		B39D129C83F1FF721ACA9612 /* Pods-BilltrackerTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BilltrackerTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-BilltrackerTests/Pods-BilltrackerTests.debug.xcconfig"; sourceTree = "<group>"; };
+		B5C359060E1CA1F594E8C921 /* Pods-Billtracker.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Billtracker.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Billtracker/Pods-Billtracker.debug.xcconfig"; sourceTree = "<group>"; };
+		EA4BEC6D5590EFE097A38D28 /* Pods-BilltrackerTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BilltrackerTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-BilltrackerTests/Pods-BilltrackerTests.release.xcconfig"; sourceTree = "<group>"; };
+		ED4BF905325C531AB303E5E4 /* Pods_BilltrackerTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_BilltrackerTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		F7466BB21E4D89A0062682FB /* Pods-BilltrackerUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BilltrackerUITests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-BilltrackerUITests/Pods-BilltrackerUITests.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -62,6 +78,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				78C83E364FCE76A16426711C /* Pods_Billtracker.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -69,6 +86,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F2A835B7314D481A7A3BEB41 /* Pods_BilltrackerTests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -76,12 +94,23 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B669CD4382A471C962893CFD /* Pods_BilltrackerUITests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		47C52940B2B285C633D0089C /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				73C1992A7B2D82888EB6FDBD /* Pods_Billtracker.framework */,
+				ED4BF905325C531AB303E5E4 /* Pods_BilltrackerTests.framework */,
+				555150D00A023886DAADBD58 /* Pods_BilltrackerUITests.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		49F1FE6F1FE8868D00738832 = {
 			isa = PBXGroup;
 			children = (
@@ -89,6 +118,8 @@
 				49F1FE8F1FE8868D00738832 /* BilltrackerTests */,
 				49F1FE9A1FE8868E00738832 /* BilltrackerUITests */,
 				49F1FE791FE8868D00738832 /* Products */,
+				F3BC5BF0692FA6D2CB1D264F /* Pods */,
+				47C52940B2B285C633D0089C /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -115,6 +146,8 @@
 				49808C731FE890C600D12A83 /* ic_logo_light.png */,
 				49F1FE841FE8868D00738832 /* LaunchScreen.storyboard */,
 				49F1FE871FE8868D00738832 /* Info.plist */,
+				432C5B73201F62A5002234FD /* FirebaseHelper.swift */,
+				432C5B75201F6B29002234FD /* Bill.swift */,
 			);
 			path = Billtracker;
 			sourceTree = "<group>";
@@ -137,6 +170,19 @@
 			path = BilltrackerUITests;
 			sourceTree = "<group>";
 		};
+		F3BC5BF0692FA6D2CB1D264F /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				B5C359060E1CA1F594E8C921 /* Pods-Billtracker.debug.xcconfig */,
+				87ADD4235B4B79F9AF2A73CC /* Pods-Billtracker.release.xcconfig */,
+				B39D129C83F1FF721ACA9612 /* Pods-BilltrackerTests.debug.xcconfig */,
+				EA4BEC6D5590EFE097A38D28 /* Pods-BilltrackerTests.release.xcconfig */,
+				F7466BB21E4D89A0062682FB /* Pods-BilltrackerUITests.debug.xcconfig */,
+				155B6501DD6F599D71ABD79F /* Pods-BilltrackerUITests.release.xcconfig */,
+			);
+			name = Pods;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -144,9 +190,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 49F1FEA01FE8868E00738832 /* Build configuration list for PBXNativeTarget "Billtracker" */;
 			buildPhases = (
+				F363563CEEFB668AD50D6554 /* [CP] Check Pods Manifest.lock */,
 				49F1FE741FE8868D00738832 /* Sources */,
 				49F1FE751FE8868D00738832 /* Frameworks */,
 				49F1FE761FE8868D00738832 /* Resources */,
+				53E913C0E6F6395CCE33BC8A /* [CP] Embed Pods Frameworks */,
+				83A5FE9E9200B7B356A4A7A8 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -161,9 +210,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 49F1FEA31FE8868E00738832 /* Build configuration list for PBXNativeTarget "BilltrackerTests" */;
 			buildPhases = (
+				36958CDC9A90DCCE0C509E1A /* [CP] Check Pods Manifest.lock */,
 				49F1FE881FE8868D00738832 /* Sources */,
 				49F1FE891FE8868D00738832 /* Frameworks */,
 				49F1FE8A1FE8868D00738832 /* Resources */,
+				87E7B8963EADBD0CEF102271 /* [CP] Embed Pods Frameworks */,
+				F524B3C52784BE1E52644BCB /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -179,9 +231,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 49F1FEA61FE8868E00738832 /* Build configuration list for PBXNativeTarget "BilltrackerUITests" */;
 			buildPhases = (
+				009EC14FA46AEB04F3FAD9AE /* [CP] Check Pods Manifest.lock */,
 				49F1FE931FE8868E00738832 /* Sources */,
 				49F1FE941FE8868E00738832 /* Frameworks */,
 				49F1FE951FE8868E00738832 /* Resources */,
+				E05E60FE697E0ECED890D567 /* [CP] Embed Pods Frameworks */,
+				373D1368730C6FA960A1BF4A /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -268,6 +323,164 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		009EC14FA46AEB04F3FAD9AE /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-BilltrackerUITests-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		36958CDC9A90DCCE0C509E1A /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-BilltrackerTests-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		373D1368730C6FA960A1BF4A /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-BilltrackerUITests/Pods-BilltrackerUITests-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		53E913C0E6F6395CCE33BC8A /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${SRCROOT}/Pods/Target Support Files/Pods-Billtracker/Pods-Billtracker-frameworks.sh",
+				"${BUILT_PRODUCTS_DIR}/GTMSessionFetcher/GTMSessionFetcher.framework",
+				"${BUILT_PRODUCTS_DIR}/GoogleToolboxForMac/GoogleToolboxForMac.framework",
+				"${BUILT_PRODUCTS_DIR}/Protobuf/Protobuf.framework",
+				"${BUILT_PRODUCTS_DIR}/leveldb-library/leveldb.framework",
+				"${BUILT_PRODUCTS_DIR}/nanopb/nanopb.framework",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GTMSessionFetcher.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GoogleToolboxForMac.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Protobuf.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/leveldb.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/nanopb.framework",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Billtracker/Pods-Billtracker-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		83A5FE9E9200B7B356A4A7A8 /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Billtracker/Pods-Billtracker-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		87E7B8963EADBD0CEF102271 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-BilltrackerTests/Pods-BilltrackerTests-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		E05E60FE697E0ECED890D567 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-BilltrackerUITests/Pods-BilltrackerUITests-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		F363563CEEFB668AD50D6554 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-Billtracker-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		F524B3C52784BE1E52644BCB /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-BilltrackerTests/Pods-BilltrackerTests-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		49F1FE741FE8868D00738832 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
@@ -277,6 +490,8 @@
 				490D843E2017ABDB008DF846 /* CutomnTabbarController.swift in Sources */,
 				49F1FE7C1FE8868D00738832 /* AppDelegate.swift in Sources */,
 				4973D3451FE9879300524174 /* CameraViewController.swift in Sources */,
+				432C5B76201F6B29002234FD /* Bill.swift in Sources */,
+				432C5B74201F62A5002234FD /* FirebaseHelper.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -440,13 +655,14 @@
 		};
 		49F1FEA11FE8868E00738832 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = B5C359060E1CA1F594E8C921 /* Pods-Billtracker.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = DYMS7QD4YN;
+				DEVELOPMENT_TEAM = R8T4QFYA49;
 				INFOPLIST_FILE = Billtracker/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = de.hdm.Billtracker;
+				PRODUCT_BUNDLE_IDENTIFIER = de.hdm.Billtracker2;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = 1;
@@ -455,13 +671,14 @@
 		};
 		49F1FEA21FE8868E00738832 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 87ADD4235B4B79F9AF2A73CC /* Pods-Billtracker.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = DYMS7QD4YN;
+				DEVELOPMENT_TEAM = R8T4QFYA49;
 				INFOPLIST_FILE = Billtracker/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = de.hdm.Billtracker;
+				PRODUCT_BUNDLE_IDENTIFIER = de.hdm.Billtracker2;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = 1;
@@ -470,6 +687,7 @@
 		};
 		49F1FEA41FE8868E00738832 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = B39D129C83F1FF721ACA9612 /* Pods-BilltrackerTests.debug.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
@@ -487,6 +705,7 @@
 		};
 		49F1FEA51FE8868E00738832 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = EA4BEC6D5590EFE097A38D28 /* Pods-BilltrackerTests.release.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
@@ -504,6 +723,7 @@
 		};
 		49F1FEA71FE8868E00738832 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = F7466BB21E4D89A0062682FB /* Pods-BilltrackerUITests.debug.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
@@ -520,6 +740,7 @@
 		};
 		49F1FEA81FE8868E00738832 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 155B6501DD6F599D71ABD79F /* Pods-BilltrackerUITests.release.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
