@@ -18,7 +18,7 @@
 		49808C741FE890C600D12A83 /* ic_logo_light.png in Resources */ = {isa = PBXBuildFile; fileRef = 49808C731FE890C600D12A83 /* ic_logo_light.png */; };
 		49808C761FE893BF00D12A83 /* AppIcon.appiconset in Resources */ = {isa = PBXBuildFile; fileRef = 49808C751FE893BF00D12A83 /* AppIcon.appiconset */; };
 		49F1FE7C1FE8868D00738832 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49F1FE7B1FE8868D00738832 /* AppDelegate.swift */; };
-		49F1FE7E1FE8868D00738832 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49F1FE7D1FE8868D00738832 /* ViewController.swift */; };
+		49F1FE7E1FE8868D00738832 /* ContentViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49F1FE7D1FE8868D00738832 /* ContentViewController.swift */; };
 		49F1FE811FE8868D00738832 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 49F1FE7F1FE8868D00738832 /* Main.storyboard */; };
 		49F1FE861FE8868D00738832 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 49F1FE841FE8868D00738832 /* LaunchScreen.storyboard */; };
 		49F1FE911FE8868D00738832 /* BilltrackerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49F1FE901FE8868D00738832 /* BilltrackerTests.swift */; };
@@ -54,7 +54,7 @@
 		49808C751FE893BF00D12A83 /* AppIcon.appiconset */ = {isa = PBXFileReference; lastKnownFileType = folder; path = AppIcon.appiconset; sourceTree = "<group>"; };
 		49F1FE781FE8868D00738832 /* Billtracker.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Billtracker.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		49F1FE7B1FE8868D00738832 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		49F1FE7D1FE8868D00738832 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		49F1FE7D1FE8868D00738832 /* ContentViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentViewController.swift; sourceTree = "<group>"; };
 		49F1FE801FE8868D00738832 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		49F1FE851FE8868D00738832 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		49F1FE871FE8868D00738832 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -149,7 +149,7 @@
 		4971B6F6201FB3BC0096DCB4 /* ViewControllers */ = {
 			isa = PBXGroup;
 			children = (
-				49F1FE7D1FE8868D00738832 /* ViewController.swift */,
+				49F1FE7D1FE8868D00738832 /* ContentViewController.swift */,
 				4971B6EA201F39B30096DCB4 /* LoginViewController.swift */,
 				4973D3441FE9879300524174 /* CameraViewController.swift */,
 				43693FA8201F88E100C13580 /* Bill.swift */,
@@ -521,7 +521,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				49F1FE7E1FE8868D00738832 /* ViewController.swift in Sources */,
+				49F1FE7E1FE8868D00738832 /* ContentViewController.swift in Sources */,
 				4971B6EB201F39B30096DCB4 /* LoginViewController.swift in Sources */,
 				43693FAD201F892300C13580 /* FirebaseHelper.swift in Sources */,
 				49F1FE7C1FE8868D00738832 /* AppDelegate.swift in Sources */,
