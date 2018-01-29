@@ -274,10 +274,21 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <view contentMode="scaleAspectFit" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="kH2-Wt-kJ3">
-                                <rect key="frame" x="0.0" y="44" width="375" height="467"/>
+                                <rect key="frame" x="0.0" y="44" width="375" height="574"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             </view>
+                            <navigationBar contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="jrU-aQ-3ye">
+                                <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
+                                <color key="barTintColor" red="0.23921568630000001" green="0.58039215690000001" blue="0.44705882349999998" alpha="1" colorSpace="calibratedRGB"/>
+                                <textAttributes key="titleTextAttributes">
+                                    <color key="textColor" name="highlightColor" catalog="System" colorSpace="catalog"/>
+                                </textAttributes>
+                                <items>
+                                    <navigationItem title="Billtracker" id="ogl-SW-MGk"/>
+                                </items>
+                            </navigationBar>
                             <toolbar opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="kaf-LY-alm">
                                 <rect key="frame" x="0.0" y="574" width="375" height="44"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
@@ -291,6 +302,15 @@
                                             <textInputTraits key="textInputTraits" returnKeyType="done"/>
                                         </textField>
                                     </barButtonItem>
+                                    <barButtonItem style="plain" id="NMH-dK-TAT">
+                                        <textField key="customView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="category" textAlignment="natural" minimumFontSize="17" id="WQz-ip-DvD">
+                                            <rect key="frame" x="113" y="7" width="97" height="30"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                            <nil key="textColor"/>
+                                            <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                            <textInputTraits key="textInputTraits"/>
+                                        </textField>
+                                    </barButtonItem>
                                     <barButtonItem style="plain" systemItem="flexibleSpace" id="Eo9-KL-6ck"/>
                                     <barButtonItem systemItem="camera" id="7J6-mL-0L6">
                                         <color key="tintColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -302,24 +322,11 @@
                                     <barButtonItem image="save" id="iyV-fQ-fQz">
                                         <color key="tintColor" cocoaTouchSystemColor="darkTextColor"/>
                                         <connections>
-                                            <segue destination="mur-qz-cf7" kind="popoverPresentation" popoverAnchorBarButtonItem="iyV-fQ-fQz" id="hnS-F3-rgm">
-                                                <popoverArrowDirection key="popoverArrowDirection" up="YES" down="YES" left="YES" right="YES"/>
-                                            </segue>
+                                            <action selector="savePhoto:" destination="XHy-ps-z93" id="mkB-OV-xm9"/>
                                         </connections>
                                     </barButtonItem>
                                 </items>
                             </toolbar>
-                            <navigationBar contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="jrU-aQ-3ye">
-                                <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
-                                <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
-                                <color key="barTintColor" red="0.23921568630000001" green="0.58039215690000001" blue="0.44705882349999998" alpha="1" colorSpace="calibratedRGB"/>
-                                <textAttributes key="titleTextAttributes">
-                                    <color key="textColor" name="highlightColor" catalog="System" colorSpace="catalog"/>
-                                </textAttributes>
-                                <items>
-                                    <navigationItem title="Billtracker" id="ogl-SW-MGk"/>
-                                </items>
-                            </navigationBar>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <viewLayoutGuide key="safeArea" id="0qc-o9-zv5"/>
@@ -327,8 +334,10 @@
                     <tabBarItem key="tabBarItem" title="Scan Bill" image="camera" id="nWk-sG-yDc"/>
                     <connections>
                         <outlet property="captureButton" destination="7J6-mL-0L6" id="ShB-XD-cCf"/>
-                        <outlet property="previewView" destination="kH2-Wt-kJ3" id="DQf-Y3-3NS"/>
-                        <outlet property="sumInput" destination="lOP-Gn-mL5" id="W4J-0o-h3E"/>
+                        <outlet property="categoryInput" destination="WQz-ip-DvD" id="fPU-7Y-FNZ"/>
+                        <outlet property="previewView" destination="kH2-Wt-kJ3" id="jbS-iS-LFk"/>
+                        <outlet property="savePhoto" destination="iyV-fQ-fQz" id="JmH-sA-QrL"/>
+                        <outlet property="sumInput" destination="lOP-Gn-mL5" id="ehs-mq-mOG"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="wN1-Bj-tJ1" userLabel="First Responder" sceneMemberID="firstResponder"/>
