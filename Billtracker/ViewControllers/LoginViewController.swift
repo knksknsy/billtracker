@@ -13,7 +13,6 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
 
     @IBOutlet weak var emailTextfield: UITextField!
     @IBOutlet weak var passwordTextfield: UITextField!
-    
     @IBOutlet weak var confirmButton: UIButton!
     
     var auth: Auth!
@@ -35,6 +34,10 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
         return true
     }
     
+    // Global (View), damit die Tastatur verschwindet, wenn man neben dem Textfeld klickt etc.
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        view.endEditing(true)
+    }
     
     @IBAction func buttonLoginHandler(_ sender: UIButton) {
         print("buttonLoginHandler")
