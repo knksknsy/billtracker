@@ -151,9 +151,6 @@
                                                     <constraints>
                                                         <constraint firstAttribute="width" constant="159" id="si8-BU-eeq"/>
                                                     </constraints>
-                                                    <connections>
-                                                        <action selector="openBill:" destination="aNX-TL-QmP" eventType="touchUpInside" id="Xsv-En-ZtX"/>
-                                                    </connections>
                                                 </button>
                                             </subviews>
                                             <constraints>

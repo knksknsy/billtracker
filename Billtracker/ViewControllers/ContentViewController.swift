@@ -10,9 +10,9 @@ import UIKit
 import Firebase
 
 class ContentViewController: UIViewController, UITableViewDelegate {
-    @IBAction func openBill(_ sender: Any) {
-        performSegue(withIdentifier: "categoryParameter", sender: self)
-    }
+//    @IBAction func openBill(_ sender: Any) {
+//        performSegue(withIdentifier: "categoryParameter", sender: self)
+//    }
     
     @IBOutlet weak var tableView: UITableView!
     
@@ -59,7 +59,7 @@ extension ContentViewController: UITableViewDataSource {
         
         let categoryName = self.categoryArray[indexPath.row]
         cell.categoryLabel?.text = categoryName
-        valueToPass = categoryName
+        valueToPass = self.categoryArray[indexPath.row]
         return cell
     }
     
@@ -72,6 +72,10 @@ extension ContentViewController: UITableViewDataSource {
             //Reload tableView
             self.tableView.reloadData()
         }
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        performSegue(withIdentifier: "categoryParameter", sender: self)
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
