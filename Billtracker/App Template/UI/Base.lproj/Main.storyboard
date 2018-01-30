@@ -142,6 +142,7 @@
                                                     </constraints>
                                                     <state key="normal" image="trash"/>
                                                     <connections>
+                                                        <action selector="deleteCategory:" destination="bHi-Kh-Rgg" eventType="touchUpInside" id="Dw7-6x-UJ4"/>
                                                         <action selector="deleteCategory:" destination="aNX-TL-QmP" eventType="touchUpInside" id="fNo-Yt-5RZ"/>
                                                     </connections>
                                                 </button>

@@ -10,7 +10,13 @@ import UIKit
 
 class CategoryTableViewCell: UITableViewCell {
     
+    var firebaseHelper = FirebaseHelper()
+    
     @IBOutlet weak var categoryLabel: UILabel!
+    
+    @IBAction func deleteCategory(_ sender: Any) {
+        firebaseHelper.deleteCategory(category: categoryLabel.text!)
+    }
     
     override func awakeFromNib() {
         super.awakeFromNib()

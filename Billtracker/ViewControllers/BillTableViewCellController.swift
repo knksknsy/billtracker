@@ -10,10 +10,18 @@ import UIKit
 
 class BillTableViewCellController: UITableViewCell {
     
+    var firebaseHelper = FirebaseHelper()
+    
+    var bill: Bill?
+    
     @IBOutlet weak var billDate: UILabel!
     @IBOutlet weak var billSum: UILabel!
     @IBOutlet weak var billImage: UIImageView!
-
+    @IBAction func deleteBill(_ sender: Any) {
+        print("bill to be deleted", bill?.id)
+        firebaseHelper.deleteBill(bill!)
+    }
+    
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code

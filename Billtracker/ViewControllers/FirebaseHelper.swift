@@ -90,8 +90,10 @@ class FirebaseHelper {
             dbBills.child(userUid).child(category).observe(DataEventType.value, with: { (snapshot: DataSnapshot) in
                 let enumerator = snapshot.children
                 while let rest = enumerator.nextObject() as? DataSnapshot {
-                    let bill: Bill = rest.value as! Bill
-                    self.imageStorage.child("user").child(userUid).child(bill.imageId!).delete()
+                    let value = rest.value as! NSDictionary
+                    print(value)
+                    let imageId: String = value.value(forKey: "imageId") as! String
+                    self.imageStorage.child("user").child(userUid).child(imageId).delete()
                 }
                 self.dbBills.child(userUid).child(category).removeValue()
                 self.dbCategories.child(userUid).child(category).removeValue()
