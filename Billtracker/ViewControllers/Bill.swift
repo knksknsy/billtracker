@@ -28,6 +28,15 @@ class Bill {
         self.sum = sum
     }
     
+    init(category: String, date: UInt, sum: Double, downloadUrl: String, id: String, imageId: String) {
+        self.category = category
+        self.date = date
+        self.sum = sum
+        self.downloadUrl = downloadUrl
+        self.id = id
+        self.imageId = imageId
+    }
+    
     
     func printDate() -> String {
         let d = Date(timeIntervalSinceReferenceDate: TimeInterval(date))

@@ -28,11 +28,13 @@ class BillTableViewController: UIViewController, UITableViewDelegate {
             while let rest = enumerator.nextObject() as? DataSnapshot {
                 let value = rest.value as! NSDictionary
                 print(value)
+                let imageId: String = value.value(forKey: "imageId") as! String
+                let id: String = value.value(forKey: "id") as! String
                 let date: UInt = value.value(forKey: "date") as! UInt
                 let sum: Double = value.value(forKey: "sum") as! Double
                 let category: String = value.value(forKey: "category") as! String
-                let bill = Bill(category: category, date: date, sum: sum)
-                bill.downloadUrl = value.value(forKey: "downloadUrl") as! String
+                let downloadUrl: String = value.value(forKey: "downloadUrl") as! String
+                let bill = Bill(category: category, date: date, sum: sum, downloadUrl: downloadUrl, id: id, imageId: imageId)
                 self.billArray.append(bill)
                 self.billTableView.reloadData()
             }
@@ -58,10 +60,23 @@ extension BillTableViewController: UITableViewDataSource {
         return self.billArray.count
     }
     
+    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
+        if editingStyle == .delete {
+            
+            //Remove object from array
+            billArray.remove(at: indexPath.row)
+            
+            //Reload tableView
+            self.billTableView.reloadData()
+        }
+    }
+    
     func tableView(_ billTableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = billTableView.dequeueReusableCell(withIdentifier: "billCell", for: indexPath) as! BillTableViewCellController
         
         let bill = self.billArray[indexPath.row]
+        cell.bill = bill
+        cell.bill?.id = bill.id
         cell.billSum?.text = String(bill.sum)
         cell.billDate?.text = bill.printDate()
         let imageUrl:URL = URL(string: bill.downloadUrl!)!

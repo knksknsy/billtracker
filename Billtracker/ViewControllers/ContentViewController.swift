@@ -16,11 +16,6 @@ class ContentViewController: UIViewController, UITableViewDelegate {
     
     @IBOutlet weak var tableView: UITableView!
     
-    @IBAction func deleteCategory(_ sender: Any) {
-//        firebaseHelper.deleteCategory(category: String)
-        
-    }
-    
     var firebaseHelper = FirebaseHelper()
     
     var categoryArray = [String]()
@@ -39,6 +34,7 @@ class ContentViewController: UIViewController, UITableViewDelegate {
         })
         tableView.delegate = self
         tableView.dataSource = self
+        self.tableView.reloadData()
     }
     
     override func didReceiveMemoryWarning() {
@@ -65,6 +61,17 @@ extension ContentViewController: UITableViewDataSource {
         cell.categoryLabel?.text = categoryName
         valueToPass = categoryName
         return cell
+    }
+    
+    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
+        if editingStyle == .delete {
+            
+            //Remove object from array
+            categoryArray.remove(at: indexPath.row)
+            
+            //Reload tableView
+            self.tableView.reloadData()
+        }
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
