@@ -9,6 +9,9 @@
 /* Begin PBXBuildFile section */
 		33BF794F74D2BD43312C463B /* Pods_BilltrackerTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F65A24BB3741648DF150885D /* Pods_BilltrackerTests.framework */; };
 		34654563F10698630E6AE6FB /* Pods_BilltrackerUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9DE4C28D48FFF75E4115954A /* Pods_BilltrackerUITests.framework */; };
+		4362949B201FFA1C003A55E4 /* BillTableViewCellController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4362949A201FFA1C003A55E4 /* BillTableViewCellController.swift */; };
+		4362949D201FFC1D003A55E4 /* CategoryTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4362949C201FFC1D003A55E4 /* CategoryTableViewCell.swift */; };
+		4362949F202007B4003A55E4 /* BillTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4362949E202007B4003A55E4 /* BillTableViewController.swift */; };
 		43693FA9201F88E100C13580 /* Bill.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43693FA8201F88E100C13580 /* Bill.swift */; };
 		43693FAD201F892300C13580 /* FirebaseHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43693FAC201F892300C13580 /* FirebaseHelper.swift */; };
 		4916CD851FE88DF300C08E93 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4916CD841FE88DF200C08E93 /* Assets.xcassets */; };
@@ -44,6 +47,9 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		4362949A201FFA1C003A55E4 /* BillTableViewCellController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BillTableViewCellController.swift; sourceTree = "<group>"; };
+		4362949C201FFC1D003A55E4 /* CategoryTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryTableViewCell.swift; sourceTree = "<group>"; };
+		4362949E202007B4003A55E4 /* BillTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BillTableViewController.swift; sourceTree = "<group>"; };
 		43693FA8201F88E100C13580 /* Bill.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Bill.swift; sourceTree = "<group>"; };
 		43693FAC201F892300C13580 /* FirebaseHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseHelper.swift; sourceTree = "<group>"; };
 		4916CD841FE88DF200C08E93 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -154,6 +160,9 @@
 				4973D3441FE9879300524174 /* CameraViewController.swift */,
 				43693FA8201F88E100C13580 /* Bill.swift */,
 				43693FAC201F892300C13580 /* FirebaseHelper.swift */,
+				4362949A201FFA1C003A55E4 /* BillTableViewCellController.swift */,
+				4362949C201FFC1D003A55E4 /* CategoryTableViewCell.swift */,
+				4362949E202007B4003A55E4 /* BillTableViewController.swift */,
 			);
 			path = ViewControllers;
 			sourceTree = "<group>";
@@ -524,9 +533,12 @@
 				49F1FE7E1FE8868D00738832 /* ContentViewController.swift in Sources */,
 				4971B6EB201F39B30096DCB4 /* LoginViewController.swift in Sources */,
 				43693FAD201F892300C13580 /* FirebaseHelper.swift in Sources */,
+				4362949B201FFA1C003A55E4 /* BillTableViewCellController.swift in Sources */,
 				49F1FE7C1FE8868D00738832 /* AppDelegate.swift in Sources */,
 				4973D3451FE9879300524174 /* CameraViewController.swift in Sources */,
 				43693FA9201F88E100C13580 /* Bill.swift in Sources */,
+				4362949F202007B4003A55E4 /* BillTableViewController.swift in Sources */,
+				4362949D201FFC1D003A55E4 /* CategoryTableViewCell.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -25,6 +25,14 @@ class FirebaseHelper {
         imageStorage = Storage.storage().reference()
     }
     
+    func getDbCategories() -> DatabaseReference {
+        return dbCategories
+    }
+    
+    func getDbBills() -> DatabaseReference {
+        return dbBills
+    }
+    
     func createBill(_ bill: Bill, data: Data) {
         let userUid = getUserUid()
         if (userUid != "") {
