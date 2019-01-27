@@ -33,3 +33,4 @@ app/google-services.json
 *.iml
 build
 /gradle.properties
+android/app/google-services.json
