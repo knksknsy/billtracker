@@ -34,3 +34,4 @@ app/google-services.json
 build
 /gradle.properties
 android/app/google-services.json
+passwords.txt
