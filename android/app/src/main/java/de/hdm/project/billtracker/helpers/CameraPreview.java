@@ -19,9 +19,9 @@ import android.hardware.camera2.params.StreamConfigurationMap;
 import android.media.ImageReader;
 import android.os.Handler;
 import android.os.HandlerThread;
-import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.LocalBroadcastManager;
+import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import android.util.Size;
 import android.util.SparseIntArray;
 import android.view.Surface;
@@ -51,6 +51,14 @@ public class CameraPreview {
     private Handler mBackgroundHandler;
     private HandlerThread mBackgroundThread;
     private CaptureRequest.Builder captureBuilder;
+
+    ImageReader.OnImageAvailableListener readerListener = new ImageReader.OnImageAvailableListener() {
+        @Override
+        public void onImageAvailable(ImageReader reader) {
+            // Save image on device
+            imageHelper.createImage(reader);
+        }
+    };
 
     private static final SparseIntArray ORIENTATIONS = new SparseIntArray();
 
@@ -165,14 +173,6 @@ public class CameraPreview {
             // Orientation
             int rotation = activity.getWindowManager().getDefaultDisplay().getRotation();
             captureBuilder.set(CaptureRequest.JPEG_ORIENTATION, ORIENTATIONS.get(rotation));
-
-            ImageReader.OnImageAvailableListener readerListener = new ImageReader.OnImageAvailableListener() {
-                @Override
-                public void onImageAvailable(ImageReader reader) {
-                    // Save image on device
-                    imageHelper.createImage(reader);
-                }
-            };
 
             reader.setOnImageAvailableListener(readerListener, mBackgroundHandler);
 

@@ -4,11 +4,15 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.net.Uri;
-import android.support.annotation.NonNull;
-import android.support.v4.content.LocalBroadcastManager;
+import android.util.Log;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -34,6 +38,8 @@ import de.hdm.project.billtracker.models.Bill;
  */
 public class FirebaseDatabaseHelper {
 
+    private static final String TAG = "FirebaseDatabaseHelper";
+
     private Activity activity;
 
     private FirebaseAuth auth;
@@ -44,7 +50,6 @@ public class FirebaseDatabaseHelper {
     private DatabaseReference dbCategories;
     private DatabaseReference dbBills;
     private StorageReference imageStorage;
-
 
     /**
      * Create an instance of FirebaseDatabaseHelper
@@ -120,10 +125,14 @@ public class FirebaseDatabaseHelper {
             }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                 @Override
                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                    Uri downloadUrl = taskSnapshot.getMetadata().getDownloadUrl();
-                    bill.setDownloadUrl(downloadUrl.toString());
-                    updateBill(bill);
-                    progressDialog.dismiss();
+                    taskSnapshot.getMetadata().getReference().getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                        @Override
+                        public void onSuccess(Uri downloadUrl) {
+                            bill.setDownloadUrl(downloadUrl.toString());
+                            updateBill(bill);
+                            progressDialog.dismiss();
+                        }
+                    });
                 }
             });
         }
