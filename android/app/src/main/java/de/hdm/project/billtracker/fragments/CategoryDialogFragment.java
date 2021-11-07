@@ -6,8 +6,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 
-import android.support.annotation.Nullable;
-import android.support.v4.app.DialogFragment;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.DialogFragment;
 import android.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -66,6 +66,11 @@ public class CategoryDialogFragment extends DialogFragment {
 
         titleText = view.findViewById(R.id.titleText);
 
+        categories = new ArrayList<>();
+        autocompleteCategory = view.findViewById(R.id.autocompleteCategory);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(), R.layout.category_autocomplete, R.id.autoTextView, categories);
+        autocompleteCategory.setAdapter(adapter);
+
         // Fetch categories from firebase for auto completion
         fDatabase.getDbCategories().child(fDatabase.getUserUid()).addValueEventListener(new ValueEventListener() {
             @Override
@@ -114,7 +119,7 @@ public class CategoryDialogFragment extends DialogFragment {
             positiveButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    if (autocompleteCategory.getText().toString().isEmpty()) {
+                    if (autocompleteCategory != null && autocompleteCategory.getText().toString().isEmpty()) {
                         errorTextView.setText("Please enter a valid category.");
                         return;
                     } else {
